@@ -1,0 +1,319 @@
+@import "../../assets/scss/common/variable";
+@import "../../assets/scss/common/mixins";
+
+.sectHeader {    
+    width: 100%;
+    z-index: 101;
+    background: #fff;
+    box-shadow: 0 3px 16px -8px rgba(#000, 0.6);
+    &--fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    &:before{
+        content: "";
+        display: none;
+        width: 100vw;
+        height: 100vh;
+        top: 77px;
+        left: 0;
+        position: fixed;
+        background: rgba(#000, 0.6);
+        z-index: 90;
+    }
+    &.show-menu{
+        &::before{
+            display: block;
+        }
+    }
+    .header-reseau-sociaux{
+        display: flex;
+        grid-gap: 12px;
+        @include max(1200px){
+            padding: 24px 50px;
+        }
+    }
+    .header-rs-link{
+        color:$grey;
+        text-decoration: none;
+        i{
+            font-size: 20px;
+        }
+        &:hover{
+            color: #000;
+        }
+    }
+    .headerTop{
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.20);
+        position: relative;
+        z-index: 3;
+        @include max(1200px){
+            display: none;
+        }
+        .headerTopContent{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .dropdown-language{
+            padding-right: 20px;
+            position: relative;
+            button{
+                text-decoration: none;
+                color: $grey-4A;
+                font-size: 12px;
+                text-transform: uppercase;
+            }
+            .dropdown-default{
+                position: relative;
+                width: 20px;
+                &::after{
+                    content: '';
+                    position: absolute;
+                    top:5px;
+                    margin-left: 5px;
+                    width: 0; 
+                    height: 0; 
+                    border-left: 4px solid transparent;
+                    border-right: 4px solid transparent;
+                    border-top: 4px solid #000;
+                }
+            }
+            .dropdown-language-list{
+                display: none;
+                &.show-dropdown{
+                    display: block;
+                    position: absolute;
+                    border-radius: 2px;
+                    padding: 5px;
+                    background: $white-f7;
+                    margin-top: 2px;
+                }
+                li{
+                    &:first-child{
+                        margin-bottom: 2px;
+                    }
+                    .dropdown-link{
+                        transition: all 0.3s ease;
+                        &:hover{
+                            color: rgba($grey, 0.8);
+                        }
+                    }
+                }
+            }
+        }
+        .headerTopCol{
+            line-height: 1;
+            &:last-child{
+                padding-left: 16px;
+                border-left: 1px solid rgba(0, 0, 0, 0.20);
+            }
+        }
+    }
+}
+
+.headerIntern {
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.20);
+    position: relative;
+    z-index: 2;
+    @include max(1200px){
+        border-bottom: none;
+        padding: 13px 0;
+        z-index: initial;
+    }
+    @include max(768px){
+        padding: 10px 0;
+    }
+    .headerInternContent{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        
+        &.show-menu{
+            transform: translate(0);
+            width: 333px;
+        }
+        @include max(1200px){
+            position: fixed;
+            top: 0px;
+            right: 0;
+            height: 100vh;
+            width: 0;
+            z-index: 100;
+            background-color: #FFF;
+            flex-direction: column;
+            justify-content: initial;
+            align-items: flex-start;
+            padding: 121px 49px 0;
+            overflow: hidden;
+            transform: translateX(+100vw);
+            transition: transform ease-in-out 0.2s;
+        }
+        @include max(768px){
+            top: 61px;
+            padding: 40px 49px 0;
+            height: calc(100vh - 61px);
+        }
+    }
+    .cntLogoMobile{
+        display: none;
+        @include max(1200px){
+            display: inline-block;
+        }
+        a{
+            display: flex;
+            align-items: center;
+            figure{
+                width: 50px;
+                height: 50px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: start;
+            }
+            img{
+                @include max(768px){
+                    width: 125px;
+                    height: auto;
+                    border-radius: 100%;
+                }
+            }
+            .cntLogo-text{
+                margin-left: 10px;
+                font-weight: 600;
+                font-size: 14px;
+            }
+        }
+    }
+    .cntlogo {
+        @include max(1200px){
+            display: none;
+        }
+        a {
+            display: flex;
+            align-items: center;
+            figure{
+                width: 50px;
+                height: 50px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: start;
+            }
+            img {
+                width: 100%;
+                height: auto;
+                border-radius: 100%;
+            }
+            .cntLogo-text{
+                margin-left: 10px;
+                font-weight: 600;
+            }
+        }
+    }   
+    .cntNav{
+        display: flex;
+        align-items: center;
+        @include max(1200px){
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        li{
+            padding-right: 35px;
+            &:last-child{
+                padding-right: 0;
+            }
+            @include max(1200px){
+                width: 100%;
+                padding-right: 0;
+                padding-bottom: 16px;
+                margin-bottom: 16px;
+                border-bottom: 1Px solid rgba($grey-6A, 0.20);
+            }
+        }
+        .cntNav-link{
+            text-decoration: none;
+            color:$grey-4A;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 22px;
+            position: relative;
+            height: 100%;
+            display: inline-block;
+            &:hover{
+                color:#000;
+            }
+            &::after{
+                content: "";
+                display: none;
+                width: 100%;
+                height: 3px;
+                background: $color-primary;
+                position: absolute;
+                bottom: -29px;
+            }
+            &.active{
+                color: $color-primary;
+                &:after{
+                    display: block;
+                    @include max(1200px){
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    .btnBox{
+        display: none;
+        @include max(1200px){
+            display: block;
+            position: absolute;
+            top: 25px;
+            right: 50px;
+            z-index: 101;
+        }
+        @include max(768px){
+            right: 15px;
+        }
+    }
+    .nav-right{
+        @include max(1200px){
+            position: absolute;
+            top: 25px;
+            right: 94px;
+        }
+        @include max(768px){
+            position: static;
+            padding-top: 24px;
+        }
+    }
+    .block-bottom-mobile{
+        display: none;
+        @include max(1200px){
+            display: block;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        .list-language{
+            @include max(1200px){
+                padding: 24px 50px;
+                border-top: 1px solid rgba(#000, 0.2);
+            }
+            .list-language-link{
+                text-transform: uppercase;
+                margin-right: 11px;
+                font-size: 12px;
+                color: $grey-4A;
+                font-weight: 300;
+                text-decoration: none;
+                &.active{
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+}
