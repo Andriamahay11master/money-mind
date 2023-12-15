@@ -7,9 +7,9 @@ import '../assets/scss/main.scss'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Andriamahay IRIMANANA | Portfolio | Developer Frontend',
-  description: "Experienced front-end developer with a passion for crafting responsive and user-friendly web applications. Proficient in HTML, CSS, and JavaScript, emphasizing modern frameworks like React.js. Expert in transforming design concepts into efficient, clean, and maintainable code. Collaborative team player, skilled in delivering high-quality digital experiences. Check out my portfolio to witness the fusion of creativity and technical expertise in building compelling websites.",
-  keywords: 'Andriamahay, Andriamahay IRIMANANA, Andriamahay IRIMANANA Portfolio, Andriamahay IRIMANANA Developer Frontend',
+  title: 'MindMoney',
+  description: "MoneyMind, your online financial companion. Easily track and manage your daily and monthly expenses. Explore detailed statistics and customize categories for complete control over your finances. Simplify your money management with MoneyMind.",
+  keywords: 'Expense Tracker, Financial Management, Budgeting App, Money Manager, Personal Finance',
   robots: {
     index: true,
     follow: true,

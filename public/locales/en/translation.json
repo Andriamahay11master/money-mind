@@ -4,11 +4,14 @@
       "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
       "part2": "Switch language between english and german using buttons above."
     },
+    "meta":{
+      "desc": "MoneyMind, votre allié financier en ligne. Suivez et gérez vos dépenses quotidiennes et mensuelles avec facilité. Explorez des statistiques détaillées et personnalisez vos catégories pour un contrôle total de vos finances. Simplifiez la gestion de votre argent avec MoneyMind."
+    },
     "menu":{
-      "home": "Home",
-      "about": "About",
-      "contact": "Contact",
-      "projects": "Projects"
+      "home": "Dashboard",
+      "about": "Expenses",
+      "contact": "Category",
+      "projects": "Statistics"
     },
     "banner" : {
       "title": "Greetings, my name is Mahay.",

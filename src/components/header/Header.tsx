@@ -79,18 +79,18 @@ export default function Header({linkMenu} : HeaderProps) {
                     <div className="cntLogoMobile">
                             <Link href="/#home" title='Ancre to top'>
                                 <figure>
-                                    <Image src="/images/Mahay.jpg" alt="Logo Site" width={200} height={200} title='Mahay image'/>
+                                    <Image src="/images/mindmoney.jpg" alt="Logo Site" width={200} height={200} title='mindmoney logo image'/>
                                 </figure>
-                                <span className='cntLogo-text'>IRIMANANA Henikaja Andriamahay</span>
+                                <span className='cntLogo-text'>MoneyMind</span>
                             </Link>
                     </div>
                     <div className={`headerInternContent${navbarOpen ? ' show-menu' : ''}`}>
                         <div className="cntlogo">
                             <Link href="/" title='Ancre to top'>
                                 <figure>
-                                    <Image src="/images/Mahay.jpg" alt="Logo Site" width={200} height={200} title='Mahay image'/>
+                                    <Image src="/images/mindmoney.jpg" alt="Logo Site" width={200} height={200} title='mindmoney logo image'/>
                                 </figure>
-                                <span className='cntLogo-text'>IRIMANANA Henikaja Andriamahay</span>
+                                <span className='cntLogo-text'>MoneyMind</span>
                             </Link>
                         </div>
                         <div className="boxNavIntern"> 
