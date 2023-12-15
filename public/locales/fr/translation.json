@@ -4,11 +4,14 @@
       "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
       "part2": "Switch language between english and german using buttons above."
     },
+    "meta":{
+      "desc": "MoneyMind, your online financial companion. Easily track and manage your daily and monthly expenses. Explore detailed statistics and customize categories for complete control over your finances. Simplify your money management with MoneyMind."
+    },
     "menu":{
-      "home": "Accueil",
-      "about": "A propos",
-      "contact": "Contact",
-      "projects": "Projets"
+      "home": "Tableau de bord",
+      "about": "Dépenses",
+      "contact": "Catégorie",
+      "projects": "Statistiques"
     },
     "banner" : {
       "title": "Bonjour, je m'appelle Mahay.",

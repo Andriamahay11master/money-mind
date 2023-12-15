@@ -1,16 +1,16 @@
 "use client"
-import * as React from 'react';
+import Header from '@/src/components/header/Header';
 import '@/src/app/i18n';
 import { useTranslation } from 'next-i18next';
-import Header from '../components/header/Header';
-import Footer from '../components/footer/Footer';
+import './page.scss'
+import * as React from 'react';
+import Footer from '@/src/components/footer/Footer';
 
-export default function Home() {
+export default function Expenses() {
+    const { t } = useTranslation('translation');
 
-  const { t } = useTranslation('translation');
-
-  //Data Nav
-  const dataNav = [
+    //Data Nav
+    const dataNav = [
     {
         name: `${t('menu.home')}`,
         href: '/'   
@@ -36,11 +36,13 @@ export default function Home() {
     copyright: `${t('footer.copyright')}`,
   }
 
-  return (
-    <>
-      <Header linkMenu={dataNav}/>
-      <Footer {...dataFooter}/>
-    </>
-    
-  );
+    return (
+        <div>
+            <Header linkMenu={dataNav}/>
+            <main className='main-page'>
+                <h1>Expenses</h1>   
+            </main>
+            <Footer {...dataFooter}/>
+        </div>
+    )
 }

@@ -14,7 +14,7 @@ export default function Footer({desc, title, copyright} : FooterProps) {
         <footer className='footerPage'>
             <div className="cntFooter">
                 <div className="colFooter">
-                    <h2 className='title-h2 titleFooter'>IRIMANANA Henikaja Andriamahay </h2>
+                    <h2 className='title-h2 titleFooter'>MindMoney </h2>
                     <p className="txtFooter">
                         {desc}
                     </p>
