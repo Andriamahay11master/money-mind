@@ -1,0 +1,71 @@
+{
+    "title": "Bienvenue using react-i18next",
+    "description": {
+      "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
+      "part2": "Switch language between english and german using buttons above."
+    },
+    "menu":{
+      "home": "Accueil",
+      "about": "A propos",
+      "contact": "Contact",
+      "projects": "Projets"
+    },
+    "banner" : {
+      "title": "Bonjour, je m'appelle Mahay.",
+      "description": "Un développeur web axé sur le frontend construisant l'interface utilisateur et l'expérience utilisateur des sites web et des applications web, contribuant ainsi au succès global du produit.",
+      "textButton": "Voir mes projets",
+      "altImage": "Bannière front"
+    },
+    "aboutTitle": {
+      "title": "À propos de moi",
+      "desc": "Dans cette section, vous trouverez une présentation détaillée de ma passion pour le développement front-end et des compétences que je mets en œuvre. Je m'engage à créer des interfaces visuellement attrayantes et fonctionnelles, avec une expertise dans divers outils et technologies. Explorez pour en savoir plus sur mon engagement à fournir des solutions front-end de haute qualité"
+    },
+    "blockInfo":{
+      "title": "Développeur web front-end",
+      "desc":"👋 Bonjour le monde ! Je suis Mahay, un développeur front-end passionné avec un talent pour transformer des idées en expériences numériques captivantes. 💻✨ <br/><br/>🚀 Armé d'un esprit créatif et d'un amour pour un code propre et efficace, je prospère face aux défis de donner vie aux interfaces utilisateur. De la conception de parcours utilisateur fluides à la mise en œuvre d'un design parfaitement détaillé, je suis déterminé à fournir des solutions web qui non seulement répondent aux attentes mais les dépassent. <br/><br/>🎨 Mon arsenal comprend les dernières technologies front-end telles que HTML5, CSS3 et JavaScript, et je suis toujours désireux de rester à la pointe avec les tendances émergentes comme React.js et Vue.js. Je crois en la puissance du design réactif, garantissant que l'expérience utilisateur reste impeccable sur tous les appareils. <br/><br/>🛠️ Que ce soit pour optimiser les performances des sites web, améliorer l'interactivité, ou collaborer avec des équipes pluridisciplinaires, je m'engage à créer des applications web qui résonnent avec les utilisateurs et laissent une impression durable. <br/><br/> 💡 Construisons quelque chose d'extraordinaire ensemble - là où le design rencontre la fonctionnalité, et la satisfaction de l'utilisateur prend le devant de la scène. N'hésitez pas à me contacter pour des collaborations, des idées, ou simplement une bonne discussion sur la programmation ! 🚀🌐",
+      "valBtn": "Voir mes projets"
+    },
+    "skillsTitle":"Mes compétences",
+    "aboutProjects": {
+      "title": "Projets",
+      "desc": "Dans cette section, explorez mes réalisations personnelles pour obtenir un aperçu concret de mon expertise."
+    },
+    "projet":{
+      "1":{
+        "title": "FIrst IMMO",
+        "desc": "Le site internet de First IMMO, accessible via www.firstimmo.mg, se consacre exclusivement à l'immobilier à Madagascar. Doté d'une interface conviviale, il propose une variété étendue de services destinés à ceux en quête de biens immobiliers, que ce soit pour la location ou l'acquisition.",
+        "valBtn": "Voir le projet",
+        "altImage": "Image Projet 1"
+      },
+      "2":{
+        "title": "Sanko",
+        "desc": " J'ai créé le landing page de la société SANKO. SANKO est une entreprise de courtage d'assurances et de conseil en organisation basée à Madagascar et présente sur le continent Afrique.",
+        "valBtn": "Voir le projet",
+        "altImage": "Image Projet 2"
+      },
+      "3":{
+        "title": "TOA",
+        "desc": "TOA est une entreprise leader sur le marché de l'infrastructure des tours de télécommunication. J'ai développé avec l'équipe Elementor le front du site vitrine",
+        "valBtn": "Voir le projet",
+        "altImage": "Image Projet 3"
+      }
+    },
+    "contact":{
+      "title": "Contact",
+      "desc": "N'hésitez pas à me contacter en remplissant le formulaire ci-dessous, et je vous répondrai dans les plus brefs délais."
+    },
+    "form":{
+      "name": "Nom",
+      "email": "Email",
+      "message": "Message",
+      "valBtn": "Envoyer",
+      "popupVal": "Votre message a bien été prise en compte!",
+      "valTxtBtn": "Valider"
+    },
+    "footer":{
+      "title": "Suivez-moi",
+      "desc": "Un développeur web axé sur le frontend construisant l'interface utilisateur et l'expérience utilisateur des sites web et des applications web, contribuant ainsi au succès global du produit.",
+      "copyright": "Développé par"
+    }
+  
+  }

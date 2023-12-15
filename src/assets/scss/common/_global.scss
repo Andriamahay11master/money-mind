@@ -1,0 +1,166 @@
+html{
+  scroll-behavior:smooth;
+}
+
+
+
+::selection {
+  color: white;
+  background: $color-primary;
+}
+
+body {
+  font-family: $font-family;
+  font-size: 16px;
+  line-height: 1.45;
+  overflow-x: hidden;
+  scroll-behavior:smooth;
+  @include max(1280px) {
+    font-size: 15px;
+  }
+}
+
+.main-page{
+  padding-top: 116px;
+  @include max(1200px){
+    padding-top: 75px;
+  }
+}
+h1, .title-h1{
+  font-size: 60px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #000;
+  @include max(1440px){
+    font-size: 40px;
+  }
+  @include max(768px){
+    font-size: 34px;
+  }
+}
+
+
+h2, .title-h2{
+  font-size: 44px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #000;
+  @include max(1440px){
+    font-size: 34px;
+  }
+  @include max(768px){
+    font-size: 28px;
+  }
+
+  &.white {
+    color: #fff;
+  }
+}
+
+h3, .title-h3{
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #000;
+  @include max(1440px){
+    font-size: 24px;
+  }
+  @include max(768px){
+    font-size: 20px;
+  }
+}
+
+h4, .title-h4{
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #000;
+  @include max(1440px){
+    font-size: 15px;
+  }
+  @include max(768px){
+    font-size: 14px;
+  }
+}
+
+.paragraphe {
+  color: #000;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1;
+  font-family: $font-family;
+
+  @include max(1280px){
+    font-size: 18px;
+  }
+}
+
+.container {
+  margin: auto;
+  width: 1200px;
+  @include max(1440px) {
+    width: auto;
+    margin: 0 50px;
+  }
+  @include max(768px) {
+    margin: 0 15px;
+  }
+
+}
+
+.container-transverse{
+  margin: 0 135px;
+  @include max(1440px){
+    margin: 0 50px;
+  }
+  @include max(768px){
+    margin: 0 15px;
+  }
+}
+
+.text-limit-1-lines {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.text-limit-2-lines {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.text-limit-3-lines {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.main-section{
+  padding: 50px 0;
+  @include max(768px){
+    padding: 30px 0;
+  }
+  .about-block{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 50px;
+    @include max(768px){
+      grid-template-columns: 100%;
+      grid-gap: 30px;
+    }
+  }
+
+  .project-block{
+    
+  }
+}
