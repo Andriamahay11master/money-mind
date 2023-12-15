@@ -1,0 +1,70 @@
+{
+    "title": "Welcome to react using react-i18next",
+    "description": {
+      "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
+      "part2": "Switch language between english and german using buttons above."
+    },
+    "menu":{
+      "home": "Home",
+      "about": "About",
+      "contact": "Contact",
+      "projects": "Projects"
+    },
+    "banner" : {
+      "title": "Greetings, my name is Mahay.",
+      "description": "A Frontend Developer specialized in web development, committed to crafting compelling user interfaces and experiences for websites and web applications, thereby contributing to the overall success of the products.",
+      "textButton": "See my projects",
+      "altImage": "Banner front"
+    },
+    "aboutTitle": {
+      "title": "About me",
+      "desc": "In this section, you'll find a detailed overview of my passion for front-end development and the skills I bring to the table. I'm dedicated to creating visually appealing and functional interfaces, with expertise in various tools and technologies. Explore to discover more about my commitment to delivering high-quality front-end solutions."
+    },
+    "blockInfo":{
+      "title": "Front-End Developer",
+      "desc":"👋 Hello World! I'm Mahay, a passionate front-end developer with a knack for transforming ideas into captivating digital experiences. 💻✨ <br/><br/>🚀 Armed with a creative mindset and a love for clean, efficient code, I thrive on the challenges of bringing user interfaces to life. From crafting seamless user journeys to ensuring pixel-perfect design implementation, I am dedicated to delivering web solutions that not only meet but exceed expectations. <br/><br/>🎨 My toolkit includes the latest front-end technologies such as HTML5, CSS3, and JavaScript, and I'm always eager to stay ahead of the curve with emerging trends like React.js and Vue.js. I believe in the power of responsive design, ensuring that the user experience remains flawless across devices. <br/><br/>🛠️ Whether it's optimizing website performance, enhancing interactivity, or collaborating with cross-functional teams, I'm committed to creating web applications that resonate with users and leave a lasting impression.  <br/><br/> 💡 Let's build something extraordinary together – where design meets functionality, and user satisfaction takes center stage. Feel free to reach out for collaborations, ideas, or just a good coding chat! 🚀🌐",
+      "valBtn": "See my projects"
+    },
+    "skillsTitle":"My skills",
+    "aboutProjects": {
+      "title": "Projects",
+      "desc": "In this section, explore my personal achievements for a tangible glimpse into my expertise."
+    },
+    "projet":{
+      "1":{
+        "title": "First IMMO",
+        "desc": "The website of First IMMO, available at www.firstimmo.mg, is a platform specialized in real estate in Madagascar. With a user-friendly interface, the site provides a comprehensive range of services for individuals seeking real estate properties, whether for rent or purchase.",
+        "valBtn": "See project",
+        "altImage": "Project image 1"
+      },
+      "2":{
+        "title": "SANKO",
+        "desc": "I created the landing page for the company SANKO. SANKO is an insurance brokerage and organizational consulting firm based in Madagascar and operating across the African continent.",
+        "valBtn": "See project",
+        "altImage": "Project image 2"
+      },
+      "3":{
+        "title": "TOA",
+        "desc": "TOA is a market leader in the telecommunications tower infrastructure. I developed the front end of the showcase website with the Elementor team.",
+        "valBtn": "See project",
+        "altImage": "Project image 3"
+      }
+    },
+    "contact":{
+      "title": "Contact",
+      "desc": "Feel free to get in touch by completing the form below, and I'll promptly respond at your earliest convenience."
+    },
+    "form":{
+      "name": "name",
+      "email": "email",
+      "message": "message",
+      "valBtn": "submit",
+      "popupVal": "Your message has been sent!",
+      "valTxtBtn": "Validate"
+    },
+    "footer":{
+      "title": "Follow me",
+      "desc": "A Web Developer specializing in Frontend development, dedicated to constructing the user interface and experience for websites and web applications, contributing to the overall success of the product.",
+      "copyright": "made by"
+    }
+  }
