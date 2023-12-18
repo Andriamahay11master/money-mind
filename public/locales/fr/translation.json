@@ -80,6 +80,10 @@
       "2":{
         "title": "Solde restante"
       }
+    },
+    "breadcrumb":{
+      "home": "Tableau de bord",
+      "expenses": "Mes Dépenses"
     }
-  
+
   }

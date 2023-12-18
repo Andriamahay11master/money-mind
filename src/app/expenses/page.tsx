@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import './page.scss'
 import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
+import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -36,11 +37,25 @@ export default function Expenses() {
     copyright: `${t('footer.copyright')}`,
   }
 
+  //data Breadcrumb
+  const itemsBreadcrumb = [
+    {
+      label: `${t('breadcrumb.home')}`,
+      path: '/',
+    },
+    {
+      label: `${t('breadcrumb.expenses')}`,
+      path: '/expenses',
+    }
+  ];
+
     return (
         <div>
             <Header linkMenu={dataNav}/>
             <main className='main-page'>
-                <h1>Expenses</h1>   
+                <div className="container">
+                    <Breadcrumb items={itemsBreadcrumb}/>
+                </div>
             </main>
             <Footer {...dataFooter}/>
         </div>
