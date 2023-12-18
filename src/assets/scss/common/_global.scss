@@ -150,33 +150,21 @@ h4, .title-h4{
   @include max(768px){
     padding: 30px 0;
   }
-  .about-block{
+  &.listKpi{
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 50px;
+    column-gap: 25px;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 30px 0;
+    @include max(1200px){
+      grid-template-columns: repeat(3, 1fr);
+    }
     @include max(768px){
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include max(575px){
       grid-template-columns: 100%;
-      grid-gap: 30px;
+      row-gap: 20px;
     }
   }
-
-  .project-block{
-    
-  }
 }
 
-.listKpi{
-  display: grid;
-  column-gap: 25px;
-  grid-template-columns: repeat(4, 1fr);
-  @include max(1200px){
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @include max(768px){
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @include max(575px){
-    grid-template-columns: 100%;
-    row-gap: 20px;
-  }
-}

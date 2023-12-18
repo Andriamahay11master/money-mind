@@ -80,5 +80,9 @@
       "2":{
         "title": "Remaining balance"
       }
+    },
+    "breadcrumb":{
+      "home": "Dashboard",
+      "expenses": "Expenses"
     }
   }
