@@ -69,5 +69,16 @@
       "title": "Follow me",
       "desc": "A Web Developer specializing in Frontend development, dedicated to constructing the user interface and experience for websites and web applications, contributing to the overall success of the product.",
       "copyright": "made by"
+    },
+    "kpi":{
+      "0":{
+        "title": "Monthly balance"
+      },
+      "1":{
+        "title": "Current expense"
+      },
+      "2":{
+        "title": "Remaining balance"
+      }
     }
   }
