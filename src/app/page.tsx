@@ -4,6 +4,8 @@ import '@/src/app/i18n';
 import { useTranslation } from 'next-i18next';
 import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
+import Kpi from '../components/kpi/Kpi';
+import {formatNumber} from '../data/function';
 
 export default function Home() {
 
@@ -36,9 +38,34 @@ export default function Home() {
     copyright: `${t('footer.copyright')}`,
   }
 
+  //data KPI 
+  const kpi = [
+    {
+      title: `${t('kpi.0.title')}`,
+      value: formatNumber(1600000)
+    },
+    {
+      title: `${t('kpi.1.title')}`,
+      value: formatNumber(0)
+    },
+    {
+      title: `${t('kpi.2.title')}`,
+      value: formatNumber(0)
+    }
+  ]
+
   return (
     <>
       <Header linkMenu={dataNav}/>
+      <main className='main-page'>
+        <div className="container">
+          <section className="main-section listKpi">
+            {kpi.map((item, index) => (
+              <Kpi key={index} title={item.title} value={item.value}/>
+            ))}
+          </section>
+        </div>
+      </main>
       <Footer {...dataFooter}/>
     </>
     

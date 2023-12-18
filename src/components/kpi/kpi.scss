@@ -1,0 +1,29 @@
+@import "../../assets/scss/common/variable";
+@import "../../assets/scss/common/mixins";
+
+.kpi-item{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFF;
+    padding: 25px;
+    .kpi-col{
+        flex: 50%;
+        max-width: 50%;
+    }
+    .kpi-title{
+        color: $color-primary;
+        max-width: 50%;
+    }
+    .kpi-text{
+        font-size: 17px;
+        line-height: 1.2;
+        font-weight: 600;
+        text-align: right;
+        span{
+            display: block;
+            font-size: 10px;
+            text-align: right;
+        }
+    }
+}

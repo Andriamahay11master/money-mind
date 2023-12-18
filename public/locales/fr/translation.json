@@ -69,6 +69,17 @@
       "title": "Suivez-moi",
       "desc": "Un développeur web axé sur le frontend construisant l'interface utilisateur et l'expérience utilisateur des sites web et des applications web, contribuant ainsi au succès global du produit.",
       "copyright": "Développé par"
+    },
+    "kpi":{
+      "0":{
+        "title": "Solde mensuel"
+      },
+      "1":{
+        "title": "Dépense actuelle"
+      },
+      "2":{
+        "title": "Solde restante"
+      }
     }
   
   }
