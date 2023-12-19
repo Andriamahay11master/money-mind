@@ -84,5 +84,16 @@
     "breadcrumb":{
       "home": "Dashboard",
       "expenses": "Expenses"
+    },
+    "detailKpi" :{
+      "title": "Detail of expenses",
+      "text": "In this section, you can see the details of your expenses."
+    },
+    "category":{
+      "0": "Groceries",
+      "1": "Fuel",
+      "2": "Vehicle maintenance",
+      "3": "Parking",
+      "4": "Restaurant outing"
     }
   }
