@@ -7,6 +7,8 @@ import Footer from '../components/footer/Footer';
 import Kpi from '../components/kpi/Kpi';
 import {formatNumber} from '../data/function';
 import Breadcrumb from '../components/breadcrumb/Breadcrumb';
+import ListExpense from '../components/expense/ListExpense';
+
 
 export default function Home() {
 
@@ -63,6 +65,40 @@ export default function Home() {
     }
   ];
 
+  //data ListExpense
+  const dataList = [
+    {
+      id: 1,
+      date: '2023-12-01',
+      category: `${t('category.0')})`,
+      value: formatNumber(10000)
+    },
+    {
+      id: 2,
+      date: '2023-12-02',
+      category: `${t('category.1')})`,
+      value: formatNumber(20000)
+    },
+    {
+      id: 3,
+      date: '2023-12-03',
+      category: `${t('category.2')})`,
+      value: formatNumber(30000)
+    },
+    {
+      id: 4,
+      date: '2023-12-04',
+      category: `${t('category.3')})`,
+      value: formatNumber(40000)
+    },
+    {
+      id: 5,
+      date: '2023-12-05',
+      category: `${t('category.4')})`,
+      value: formatNumber(500000)
+    }
+  ];
+
   return (
     <>
       <Header linkMenu={dataNav}/>
@@ -73,6 +109,14 @@ export default function Home() {
             {kpi.map((item, index) => (
               <Kpi key={index} title={item.title} value={item.value}/>
             ))}
+          </section>
+          <section className='main-section detailKpi'>
+              <div className="detailKpi-item">
+                  <h2 className="title-h2 detailKpi-title">{t('detailKpi.title')}</h2>
+                  <p className='detailKpi-text'>{t('detailKpi.text')}</p>
+                  <ListExpense dataList={dataList}/>
+              </div>
+              <div className="detailKpi-item"></div>
           </section>
         </div>
       </main>

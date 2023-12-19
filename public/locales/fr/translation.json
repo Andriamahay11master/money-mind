@@ -84,6 +84,17 @@
     "breadcrumb":{
       "home": "Tableau de bord",
       "expenses": "Mes Dépenses"
+    },
+    "detailKpi" :{
+      "title": "Détail des dépenses",
+      "text": "Dans cette section, vous pouvez consulter les détails de vos dépenses."
+    },
+    "category":{
+      "0": "Alimentation",
+      "1": "Carburant",
+      "2": "Entretien véhicule",
+      "3": "Parking",
+      "4": "Sortie Restaurant"
     }
 
   }

@@ -146,15 +146,14 @@ h4, .title-h4{
 }
 
 .main-section{
-  padding: 50px 0;
+  padding: 0 0 50px;
   @include max(768px){
-    padding: 30px 0;
+    padding: 0 0 30px;
   }
   &.listKpi{
     display: grid;
     column-gap: 25px;
     grid-template-columns: repeat(4, 1fr);
-    padding: 30px 0;
     @include max(1200px){
       grid-template-columns: repeat(3, 1fr);
     }
@@ -164,6 +163,20 @@ h4, .title-h4{
     @include max(575px){
       grid-template-columns: 100%;
       row-gap: 20px;
+    }
+  }
+  &.detailKpi{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 40px;
+    @include max(768px){
+      grid-template-columns: 100%;
+    }
+    .detailKpi-item{
+    
+    }
+    .title-h2{
+      margin-bottom: 15px;
     }
   }
 }
