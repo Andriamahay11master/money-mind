@@ -5,15 +5,15 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
         
 
-interface ListExpenseProps {
+interface ListExpenseFiveProps {
     dataList: any
 }
 
-export default function ListExpense({dataList} : ListExpenseProps) {
+export default function ListExpenseFive({dataList} : ListExpenseFiveProps) {
 
     return (
         <div className='list-expenses-block'>
-            <DataTable className='list-expenses-table' value={dataList} sortMode="multiple">
+            <DataTable className='list-expenses-table' stripedRows value={dataList} sortMode="multiple">
                 <Column field="id" header="Réference" sortable></Column>
                 <Column field="date" header="Date" sortable></Column>
                 <Column field="category" header="Category" sortable></Column>

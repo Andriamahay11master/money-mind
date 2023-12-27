@@ -86,8 +86,8 @@
       "expenses": "Expenses"
     },
     "detailKpi" :{
-      "title": "Detail of expenses",
-      "text": "In this section, you can see the details of your expenses."
+      "title": "The recent expenses",
+      "titleGraphe": "Expense graph"
     },
     "category":{
       "0": "Groceries",
