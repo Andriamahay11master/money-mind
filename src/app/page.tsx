@@ -46,15 +46,15 @@ export default function Home() {
   const kpi = [
     {
       title: `${t('kpi.0.title')}`,
-      value: formatNumber(1600000)
+      value: formatNumber('1600000')
     },
     {
       title: `${t('kpi.1.title')}`,
-      value: formatNumber(0)
+      value: formatNumber('0')
     },
     {
       title: `${t('kpi.2.title')}`,
-      value: formatNumber(0)
+      value: formatNumber('0')
     }
   ];
 
@@ -72,31 +72,31 @@ export default function Home() {
       id: 1,
       date: '2023-12-01',
       category: `${t('category.0')}`,
-      value: formatNumber(10000)
+      value: formatNumber('10000')
     },
     {
       id: 2,
       date: '2023-12-02',
       category: `${t('category.1')}`,
-      value: formatNumber(20000)
+      value: formatNumber('20000')
     },
     {
       id: 3,
       date: '2023-12-03',
       category: `${t('category.2')}`,
-      value: formatNumber(30000)
+      value: formatNumber('30000')
     },
     {
       id: 4,
       date: '2023-12-04',
       category: `${t('category.3')}`,
-      value: formatNumber(40000)
+      value: formatNumber('40000')
     },
     {
       id: 5,
       date: '2023-12-05',
       category: `${t('category.4')}`,
-      value: formatNumber(500000)
+      value: formatNumber('500000')
     }
   ];
 

@@ -6,6 +6,7 @@ import './page.scss'
 import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
+import FormExpense from '@/src/components/expense/FormExpense';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -49,12 +50,39 @@ export default function Expenses() {
     }
   ];
 
+  //data Form
+  const labelData = [
+    `${t('form.title')}`,
+    `${t('form.description')}`,
+    `${t('form.value')}`,
+    `${t('form.date')}`,
+    `${t('form.category')}`,
+    `${t('form.save')}`
+  ]
+
+  const dataCategory = [
+    `${t('category.0')}`,
+    `${t('category.1')}`,
+    `${t('category.2')}`,
+    `${t('category.3')}`,
+    `${t('category.4')}`,
+  ]
+
+  const placeholderInput = [
+    `${t('placeholder.0')}`,
+    `${t('placeholder.1')}`,
+    `${t('placeholder.2')}`,
+  ]
+
     return (
         <div>
             <Header linkMenu={dataNav}/>
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
+                    <div className="main-section">
+                      <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput}/>
+                    </div>
                 </div>
             </main>
             <Footer {...dataFooter}/>

@@ -58,12 +58,17 @@
       "desc": "N'hésitez pas à me contacter en remplissant le formulaire ci-dessous, et je vous répondrai dans les plus brefs délais."
     },
     "form":{
-      "name": "Nom",
-      "email": "Email",
-      "message": "Message",
-      "valBtn": "Envoyer",
-      "popupVal": "Votre message a bien été prise en compte!",
-      "valTxtBtn": "Valider"
+      "title": "Nouvelle dépense",
+      "description": "Description",
+      "value": "Montant",
+      "date": "Date transaction",
+      "category": "Catégorie",
+      "save": "Ajouter"
+    },
+    "placeholder":{
+      "0": "Saisir une description",
+      "1": "Saisir le montant",
+      "2": "Choisir une date"
     },
     "footer":{
       "title": "Suivez-moi",

@@ -25,6 +25,8 @@ export default function ChartExpense({listCategory, listData, listColor} : Chart
             ]
         }
         const options = {
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     labels: {
