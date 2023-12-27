@@ -4,11 +4,14 @@
       "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
       "part2": "Switch language between english and german using buttons above."
     },
+    "meta":{
+      "desc": "MoneyMind, votre allié financier en ligne. Suivez et gérez vos dépenses quotidiennes et mensuelles avec facilité. Explorez des statistiques détaillées et personnalisez vos catégories pour un contrôle total de vos finances. Simplifiez la gestion de votre argent avec MoneyMind."
+    },
     "menu":{
-      "home": "Home",
-      "about": "About",
-      "contact": "Contact",
-      "projects": "Projects"
+      "home": "Dashboard",
+      "about": "Expenses",
+      "contact": "Category",
+      "projects": "Statistics"
     },
     "banner" : {
       "title": "Greetings, my name is Mahay.",
@@ -66,5 +69,31 @@
       "title": "Follow me",
       "desc": "A Web Developer specializing in Frontend development, dedicated to constructing the user interface and experience for websites and web applications, contributing to the overall success of the product.",
       "copyright": "made by"
+    },
+    "kpi":{
+      "0":{
+        "title": "Monthly balance"
+      },
+      "1":{
+        "title": "Current expense"
+      },
+      "2":{
+        "title": "Remaining balance"
+      }
+    },
+    "breadcrumb":{
+      "home": "Dashboard",
+      "expenses": "Expenses"
+    },
+    "detailKpi" :{
+      "title": "The recent expenses",
+      "titleGraphe": "Expense graph"
+    },
+    "category":{
+      "0": "Groceries",
+      "1": "Fuel",
+      "2": "Vehicle maintenance",
+      "3": "Parking",
+      "4": "Restaurant outing"
     }
   }

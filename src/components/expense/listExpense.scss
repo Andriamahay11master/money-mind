@@ -1,0 +1,28 @@
+@import "../../assets/scss/common/variable";
+@import "../../assets/scss/common/mixins";
+
+.list-expenses-block{
+    margin-top: 30px;
+    .list-expenses-table{
+        thead{
+            th{
+                background: rgba($color-secondary, 0.7);
+                padding: 10px;
+                color: #FFF;
+                font-weight: 600;
+                .p-column-title{
+                    margin-right: 5px;
+                }
+            }
+        }
+        tbody{
+            tr{
+                border-bottom: 1px solid $grey;
+                background: $white-f7;
+            }
+            td{
+                padding: 10px;
+            }
+        }
+    }
+}
