@@ -7,6 +7,8 @@ import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormExpense from '@/src/components/expense/FormExpense';
+import ListAll from '@/src/components/expense/ListAll';
+import { formatNumber } from '@/src/data/function';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -74,14 +76,62 @@ export default function Expenses() {
     `${t('placeholder.2')}`,
   ]
 
+  //data ListExpense
+  const dataList = [
+    {
+      id: 1,
+      description: 'Course chez Leader',
+      date: '2023-12-01',
+      category: `${t('category.0')}`,
+      value: formatNumber('10000')
+    },
+    {
+      id: 2,
+      description: 'Gasoil chez Jovenna',
+      date: '2023-12-02',
+      category: `${t('category.1')}`,
+      value: formatNumber('20000')
+    },
+    {
+      id: 3,
+      date: '2023-12-03',
+      description: 'Entretien véhicule chez KOMADA',
+      category: `${t('category.2')}`,
+      value: formatNumber('30000')
+    },
+    {
+      id: 4,
+      description: 'Parking easy park',
+      date: '2023-12-04',
+      category: `${t('category.3')}`,
+      value: formatNumber('40000')
+    },
+    {
+      id: 5,
+      description: 'Déjeuner chez Tana water front',
+      date: '2023-12-05',
+      category: `${t('category.4')}`,
+      value: formatNumber('500000')
+    },
+    {
+      id: 6,
+      description: 'Diné chez Paladios',
+      date: '2023-12-05',
+      category: `${t('category.4')}`,
+      value: formatNumber('500000')
+    }
+  ];
     return (
         <div>
             <Header linkMenu={dataNav}/>
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
-                    <div className="main-section">
+                    <div className="main-section section-form">
                       <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput}/>
+                    </div>
+                    <div className="main-section">
+                      <ListAll dataList={dataList}/>
                     </div>
                 </div>
             </main>
