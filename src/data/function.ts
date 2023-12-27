@@ -1,3 +1,5 @@
-export const formatNumber = (number: number) => {
-    return number.toLocaleString('en-US', { useGrouping: true }).replace(/,/g, ' ');;
+
+  export const formatNumber = (value : string) => {
+    // Format the number with spaces as a separator
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };

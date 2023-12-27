@@ -58,12 +58,17 @@
       "desc": "Feel free to get in touch by completing the form below, and I'll promptly respond at your earliest convenience."
     },
     "form":{
-      "name": "name",
-      "email": "email",
-      "message": "message",
-      "valBtn": "submit",
-      "popupVal": "Your message has been sent!",
-      "valTxtBtn": "Validate"
+      "title": "New expense",
+      "description": "Description",
+      "value": "Amount",
+      "date": "Transaction date",
+      "category": "Category",
+      "save": "Add"
+    },
+    "placeholder":{
+      "0": "Enter the description",
+      "1": "Enter the amount",
+      "2": "Choose a date"
     },
     "footer":{
       "title": "Follow me",
