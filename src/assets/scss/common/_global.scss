@@ -2,8 +2,6 @@ html{
   scroll-behavior:smooth;
 }
 
-
-
 ::selection {
   color: white;
   background: $color-primary;
@@ -173,7 +171,11 @@ h4, .title-h4{
       grid-template-columns: 100%;
     }
     .detailKpi-item{
-    
+      &:last-child{
+        @include max(768px){
+          padding-top: 40px;
+        }
+      }
     }
     .title-h2{
       margin-bottom: 15px;

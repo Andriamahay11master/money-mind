@@ -7,7 +7,8 @@ import Footer from '../components/footer/Footer';
 import Kpi from '../components/kpi/Kpi';
 import {formatNumber} from '../data/function';
 import Breadcrumb from '../components/breadcrumb/Breadcrumb';
-import ListExpense from '../components/expense/ListExpense';
+import ListExpenseFive from '../components/expense/ListExpenseFive';
+import ChartExpense from '../components/expense/ChartExpense';
 
 
 export default function Home() {
@@ -70,33 +71,58 @@ export default function Home() {
     {
       id: 1,
       date: '2023-12-01',
-      category: `${t('category.0')})`,
+      category: `${t('category.0')}`,
       value: formatNumber(10000)
     },
     {
       id: 2,
       date: '2023-12-02',
-      category: `${t('category.1')})`,
+      category: `${t('category.1')}`,
       value: formatNumber(20000)
     },
     {
       id: 3,
       date: '2023-12-03',
-      category: `${t('category.2')})`,
+      category: `${t('category.2')}`,
       value: formatNumber(30000)
     },
     {
       id: 4,
       date: '2023-12-04',
-      category: `${t('category.3')})`,
+      category: `${t('category.3')}`,
       value: formatNumber(40000)
     },
     {
       id: 5,
       date: '2023-12-05',
-      category: `${t('category.4')})`,
+      category: `${t('category.4')}`,
       value: formatNumber(500000)
     }
+  ];
+
+  //data Chart Expense
+  const listCategory = [
+    `${t('category.0')}`,
+    `${t('category.1')}`,
+    `${t('category.2')}`,
+    `${t('category.3')}`,
+    `${t('category.4')}`
+  ];
+
+  const listData = [
+    10000,
+    20000,
+    30000,
+    40000,
+    500000
+  ];
+
+  const listColor = [
+    '#336699',
+    '#0099cc',
+    '#D30E3F',
+    '#FFD301',
+    '#5B5B5B'
   ];
 
   return (
@@ -113,10 +139,12 @@ export default function Home() {
           <section className='main-section detailKpi'>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.title')}</h2>
-                  <p className='detailKpi-text'>{t('detailKpi.text')}</p>
-                  <ListExpense dataList={dataList}/>
+                  <ListExpenseFive dataList={dataList}/>
               </div>
-              <div className="detailKpi-item"></div>
+              <div className="detailKpi-item">
+                  <h2 className="title-h2 detailKpi-title">{t('detailKpi.titleGraphe')}</h2>
+                <ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>
+              </div>
           </section>
         </div>
       </main>

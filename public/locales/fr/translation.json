@@ -86,8 +86,8 @@
       "expenses": "Mes Dépenses"
     },
     "detailKpi" :{
-      "title": "Détail des dépenses",
-      "text": "Dans cette section, vous pouvez consulter les détails de vos dépenses."
+      "title": "Les dépenses récentes",
+      "titleGraphe": "Graphe des dépenses"
     },
     "category":{
       "0": "Alimentation",
