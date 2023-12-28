@@ -88,7 +88,8 @@
     },
     "breadcrumb":{
       "home": "Tableau de bord",
-      "expenses": "Mes Dépenses"
+      "expenses": "Mes Dépenses",
+      "category": "Mes Catégories"
     },
     "detailKpi" :{
       "title": "Les dépenses récentes",
