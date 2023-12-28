@@ -88,7 +88,8 @@
     },
     "breadcrumb":{
       "home": "Dashboard",
-      "expenses": "Expenses"
+      "expenses": "Expenses",
+      "category": "Category"
     },
     "detailKpi" :{
       "title": "The recent expenses",
