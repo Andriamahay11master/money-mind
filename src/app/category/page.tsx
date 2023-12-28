@@ -7,6 +7,7 @@ import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import { formatNumber } from '@/src/data/function';
+import FormCategory from '@/src/components/category/FormCategory';
 
 export default function Category(){
     const { t } = useTranslation('translation');
@@ -38,17 +39,25 @@ export default function Category(){
         copyright: `${t('footer.copyright')}`,
     }
 
-  //data Breadcrumb
-  const itemsBreadcrumb = [
-    {
-      label: `${t('breadcrumb.home')}`,
-      path: '/',
-    },
-    {
-      label: `${t('breadcrumb.category')}`,
-      path: '/category',
-    }
-  ];
+    //data Breadcrumb
+    const itemsBreadcrumb = [
+        {
+        label: `${t('breadcrumb.home')}`,
+        path: '/',
+        },
+        {
+        label: `${t('breadcrumb.category')}`,
+        path: '/category',
+        }
+    ];
+
+    //dataFOrm
+    const labelData = [
+        `${t('formCategory.title')}`,
+        `${t('formCategory.description')}`,
+        `${t('formCategory.placeholder')}`,
+        `${t('formCategory.save')}`
+    ]
 
     return (
         <div>
@@ -56,6 +65,9 @@ export default function Category(){
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
+                    <div className="main-section section-form">
+                        <FormCategory labelData={labelData}/>
+                    </div>
                 </div>
             </main>
             <Footer {...dataFooter}/>
