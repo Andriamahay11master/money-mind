@@ -21,10 +21,10 @@ export default function FormExpense({labelData, dataCategory, placeholderInput} 
     };
 
     return (
-        <div className="form-expense-block">
+        <div className="form-block">
             <h3 className="title-h3">{labelData[0]}</h3>
 
-            <form action="" className='form-expense'>
+            <form action="" className='form-content'>
                 <div className="form-group">
                     <label htmlFor="descriptionForm">{labelData[1]}</label>
                     <input type="text" placeholder={placeholderInput[0]} id="descriptionForm"/>

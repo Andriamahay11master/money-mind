@@ -101,6 +101,12 @@
       "2": "Entretien véhicule",
       "3": "Parking",
       "4": "Sortie Restaurant"
+    },
+    "formCategory":{
+      "title": "Nouvelle catégorie",
+      "description": "Description",
+      "placeholder": "Saisir une nouvelle catégorie",
+      "save": "Ajouter"
     }
 
   }
