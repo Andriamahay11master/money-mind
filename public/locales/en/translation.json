@@ -101,5 +101,11 @@
       "2": "Vehicle maintenance",
       "3": "Parking",
       "4": "Restaurant outing"
+    },
+    "formCategory":{
+      "title": "New category",
+      "description": "Description",
+      "placeholder": "Add a new category",
+      "save": "Add"
     }
   }
