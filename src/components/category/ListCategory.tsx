@@ -4,19 +4,17 @@ import { useState } from "react";
 import { FilterMatchMode } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import './listExpense.scss'
+import './listCategory.scss'
 
-interface ListAllProps {
+interface ListCategoryProps {
     dataList: any
 }
 
-export default function ListAll({dataList} : ListAllProps) {
+export default function ListCategory({dataList} : ListCategoryProps) {
 
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        description: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        date: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        category: { value: null, matchMode: FilterMatchMode.IN }
+        category: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
     });
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
@@ -37,12 +35,9 @@ export default function ListAll({dataList} : ListAllProps) {
                 <input value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
             </div>
             <DataTable className='list-table' paginator rows={10} dataKey="id" value={dataList} sortMode="multiple"
-                filters={filters} globalFilterFields={['description', 'date', 'category']}>
+                filters={filters} globalFilterFields={['category']}>
                 <Column field="id" header="Réference" sortable></Column>
-                <Column field="description" header="Description" sortable></Column>
-                <Column field="date" header="Date" sortable></Column>
                 <Column field="category" header="Category" sortable></Column>
-                <Column field="value" header="Value" sortable></Column>
             </DataTable>
         </div>
     )
