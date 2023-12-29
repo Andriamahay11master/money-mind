@@ -12,8 +12,8 @@ interface ListExpenseFiveProps {
 export default function ListExpenseFive({dataList} : ListExpenseFiveProps) {
 
     return (
-        <div className='list-expenses-block'>
-            <DataTable className='list-expenses-table' stripedRows value={dataList} sortMode="multiple">
+        <div className='list-block'>
+            <DataTable className='list-table' stripedRows value={dataList} sortMode="multiple">
                 <Column field="id" header="Réference" sortable></Column>
                 <Column field="date" header="Date" sortable></Column>
                 <Column field="category" header="Category" sortable></Column>
