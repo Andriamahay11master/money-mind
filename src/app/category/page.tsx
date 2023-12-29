@@ -8,6 +8,7 @@ import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import { formatNumber } from '@/src/data/function';
 import FormCategory from '@/src/components/category/FormCategory';
+import ListCategory from '@/src/components/category/ListCategory';
 
 export default function Category(){
     const { t } = useTranslation('translation');
@@ -59,6 +60,30 @@ export default function Category(){
         `${t('formCategory.save')}`
     ]
 
+    //data List
+    const dataList = [
+        {
+            id: 1,
+            category: `${t('category.0')}`,
+        },
+        {
+            id: 2,
+            category: `${t('category.1')}`,
+        },
+        {
+            id: 3,
+            category: `${t('category.2')}`,
+        },
+        {
+            id: 4,
+            category: `${t('category.3')}`,
+        },
+        {
+            id: 5,
+            category: `${t('category.4')}`,
+        }
+    ];
+
     return (
         <div>
             <Header linkMenu={dataNav}/>
@@ -67,6 +92,9 @@ export default function Category(){
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
                         <FormCategory labelData={labelData}/>
+                    </div>
+                    <div className="main-section">
+                      <ListCategory dataList={dataList}/>
                     </div>
                 </div>
             </main>
