@@ -9,10 +9,18 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormExpense from '@/src/components/expense/FormExpense';
 import ListAll from '@/src/components/expense/ListAll';
 import { formatNumber } from '@/src/data/function';
+import { useEffect, useState, useRef } from 'react';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
 
+    interface ExpenseType {
+      idExpenses: number;
+      descriptionForm: string;
+      dateExpenses: string;
+      categoryExpenses: string;
+      valueExpenses: string;
+    }
     //Data Nav
     const dataNav = [
     {
@@ -121,6 +129,41 @@ export default function Expenses() {
       value: formatNumber('500000')
     }
   ];
+
+  const expenseDescRef = useRef();
+  const [expenses, setExpenses] = useState([]);
+  const [created, setCreated] = useState(false);
+
+  async function getExpenses(){
+    const postData = {
+      method: "GET",
+      headers :{
+        "Content-Type": "application/json",
+      }
+    };
+    const res = await fetch(`api/expense`, postData);
+    const response = await res.json();
+    console.log(response.expenses);
+    setExpenses(response.expenses)
+  }
+
+  
+  const dataList2 = (expenses as ExpenseType[]).map((expense) => ({
+        id: expense.idExpenses,
+        description: expense.descriptionForm,
+        date: expense.dateExpenses,
+        category: expense.categoryExpenses,
+        value: formatNumber(expense.valueExpenses)
+  }))
+
+  async function addExpenses(){
+
+  }
+
+  useEffect(() => {
+    getExpenses();
+  }, []);
+  
     return (
         <div>
             <Header linkMenu={dataNav}/>
@@ -131,7 +174,7 @@ export default function Expenses() {
                       <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput}/>
                     </div>
                     <div className="main-section">
-                      <ListAll dataList={dataList}/>
+                      <ListAll dataList={dataList2}/>
                     </div>
                 </div>
             </main>
