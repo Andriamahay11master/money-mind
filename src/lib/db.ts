@@ -8,14 +8,16 @@ interface QueryProps {
 export async function query({sql, values} : QueryProps) {
     
     const dbconnection = await mysql.createConnection({
-        host: process.env.MYSQL_HOST,
-        user: process.env.MYSQL_USER,
-        password: process.env.MYSQL_PASSWORD,
-        database: process.env.MYSQL_DATABASE
+        host: '127.0.0.1',
+        user: 'root',
+        password: '',
+        port: 3306,
+        database: 'moneymind'
     });
 
     try{
         const [rows] = await dbconnection.execute(sql, values);
+        console.log(dbconnection)
         dbconnection.end();
         return rows;
     }
