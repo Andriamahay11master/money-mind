@@ -157,7 +157,7 @@ export default function Expenses() {
   }))
 
   async function addExpenses(){
-
+    
   }
 
   useEffect(() => {
