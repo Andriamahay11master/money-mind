@@ -21,6 +21,12 @@ export default function Expenses() {
       categoryExpenses: string;
       valueExpenses: string;
     }
+
+    interface ExpenseProp{
+      description: string
+      formattedValue: string
+      category: string
+    }
     //Data Nav
     const dataNav = [
     {
@@ -130,9 +136,12 @@ export default function Expenses() {
     }
   ];
 
-  const expenseDescRef = useRef();
   const [expenses, setExpenses] = useState([]);
   const [created, setCreated] = useState(false);
+
+  const inputRefDescription = React.useRef<HTMLInputElement>(null);
+    const inputRefValue = React.useRef<HTMLInputElement>(null);
+    const inputRefCategory = React.useRef<HTMLSelectElement>(null);
 
   async function getExpenses(){
     const postData = {
@@ -143,21 +152,34 @@ export default function Expenses() {
     };
     const res = await fetch(`api/expense`, postData);
     const response = await res.json();
-    console.log(response.expenses);
     setExpenses(response.expenses)
   }
 
   
   const dataList2 = (expenses as ExpenseType[]).map((expense) => ({
-        id: expense.idExpenses,
-        description: expense.descriptionForm,
-        date: expense.dateExpenses,
-        category: expense.categoryExpenses,
-        value: formatNumber(expense.valueExpenses)
+    id: expense.idExpenses,
+    description: expense.descriptionForm,
+    date: expense.dateExpenses,
+    category: expense.categoryExpenses,
+    value: formatNumber(expense.valueExpenses)
   }))
 
-  async function addExpenses(){
-    
+  async function addExpenses() {
+    const postData = {
+      method: "POST",
+      headers :{
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        descriptionForm: inputRefDescription.current?.value,
+        valueExpenses: inputRefValue.current?.value,
+        categoryExpenses: inputRefCategory.current?.value,
+      })
+    };
+    const res = await fetch(`api/expense`, postData);
+    const response = await res.json();
+    setExpenses(response.expenses)
+    setCreated(response.message === "success");
   }
 
   useEffect(() => {
@@ -171,7 +193,8 @@ export default function Expenses() {
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                      <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput}/>
+                      <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} saveExpense={addExpenses}/>
+                      {created && <div className="alert alert-success">Expense added</div> }
                     </div>
                     <div className="main-section">
                       <ListAll dataList={dataList2}/>
