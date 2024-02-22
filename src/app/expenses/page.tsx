@@ -8,7 +8,7 @@ import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormExpense from '@/src/components/expense/FormExpense';
 import ListAll from '@/src/components/expense/ListAll';
-import { formatNumber } from '@/src/data/function';
+import { formatNumber, formatDate } from '@/src/data/function';
 import { useEffect, useState, useRef } from 'react';
 
 export default function Expenses() {
@@ -22,11 +22,6 @@ export default function Expenses() {
       valueExpenses: string;
     }
 
-    interface ExpenseProp{
-      description: string
-      formattedValue: string
-      category: string
-    }
     //Data Nav
     const dataNav = [
     {
@@ -96,11 +91,12 @@ export default function Expenses() {
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
     const inputRefCategory = React.useRef<HTMLSelectElement>(null);
+    const inputRefDate = React.useRef<HTMLInputElement>(null);
  
   const dataList2 = Object.values(expenses).map((expense) => ({
     idExpenses: expense["idExpenses"],
     descriptionForm: expense["descriptionForm"],
-    dateExpenses: expense["dateExpenses"],
+    dateExpenses: formatDate(expense["dateExpenses"]),
     categoryExpenses: expense["categoryExpenses"],
     valueExpenses: formatNumber(expense["valueExpenses"])
   }))
@@ -114,25 +110,32 @@ export default function Expenses() {
       body: JSON.stringify({
         descriptionForm: inputRefDescription.current?.value,
         valueExpenses: inputRefValue.current?.value,
+        dateExpenses: inputRefDate.current?.value,  
         categoryExpenses: inputRefCategory.current?.value,
       })
     };
+    console.log('postData',postData);
     const res = await fetch(`api/expense`, postData);
+    console.log('after call the',res);
     const response = await res.json();
     //Update list expense
     setExpenses(response.expenses);
 
+
     // Reset form by updating refs to initial values
     if (inputRefDescription.current) inputRefDescription.current.value = "";
     if (inputRefValue.current) inputRefValue.current.value = "";
-    if (inputRefCategory.current) inputRefCategory.current.value = "";
+    if (inputRefDate.current) inputRefDate.current.value = "";
+    if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
 
     // Now, fetch the updated expenses
     getExpenses();
     
     setCreated(true);
 
-    console.log("val created"+created)
+    setTimeout(() => {
+      setCreated(false);
+    }, 1400)
   }
 
   async function getExpenses(){
@@ -159,11 +162,10 @@ export default function Expenses() {
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                      <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} saveExpense={addExpenses}/>
+                      <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} saveExpense={addExpenses}/>
                       {created && <div className="alert alert-success">Expense added</div> }
                     </div>
                     <div className="main-section">
-                      {/* <ListAll dataList={dataList2}/> */}
                       <table>
                         {dataList2.map((list, index) => (
                           <tr key={index}>

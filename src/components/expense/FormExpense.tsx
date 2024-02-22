@@ -10,13 +10,15 @@ interface FormExpenseProps {
     placeholderInput : string[]
     inputRefDescription : React.RefObject<HTMLInputElement>
     inputRefValue : React.RefObject<HTMLInputElement>
+    inputRefDateValue : React.RefObject<HTMLInputElement>
     inputRefCategory : React.RefObject<HTMLSelectElement>
-    saveExpense : (description : string, value : string, category : string) => void
+    saveExpense : (description : string, value : string, category : string, date : string) => void
 }
-export default function FormExpense({labelData, dataCategory, placeholderInput, inputRefDescription, inputRefValue, inputRefCategory ,saveExpense} : FormExpenseProps) {
+export default function FormExpense({labelData, dataCategory, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory ,saveExpense} : FormExpenseProps) {
     const [formattedValue, setFormattedValue] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
+    const [date, setDate] = useState('');
 
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
       // Remove non-numeric characters and spaces
@@ -33,15 +35,20 @@ export default function FormExpense({labelData, dataCategory, placeholderInput, 
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setCategory(e.currentTarget.value);
     };
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDate(e.currentTarget.value);
+    };
     
     const handleSaveExpense = () => {
         // Pass the values to the saveExpense function
-        saveExpense(description, formattedValue, category);
+        saveExpense(description, formattedValue, category, date);
 
         // Reset the state after saving
         setDescription('');
         setFormattedValue('');
         setCategory('');
+        setDate('');
     };
 
     
@@ -57,6 +64,10 @@ export default function FormExpense({labelData, dataCategory, placeholderInput, 
                 <div className="form-group">
                     <label htmlFor="valueForm">{labelData[2]}</label>
                     <input type="text" placeholder={placeholderInput[1]} id="valueForm" value={formattedValue} onChange={handleInputChange} ref={inputRefValue}/>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="dateForm">{labelData[3]}</label>
+                    <input type="date" placeholder={placeholderInput[2]} id="dateForm" onChange={handleDateChange} ref={inputRefDateValue}/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="categoryForm">{labelData[4]}</label>
