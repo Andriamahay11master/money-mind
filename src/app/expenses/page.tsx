@@ -90,78 +90,19 @@ export default function Expenses() {
     `${t('placeholder.2')}`,
   ]
 
-  //data ListExpense
-  const dataList = [
-    {
-      id: 1,
-      description: 'Course chez Leader',
-      date: '2023-12-01',
-      category: `${t('category.0')}`,
-      value: formatNumber('10000')
-    },
-    {
-      id: 2,
-      description: 'Gasoil chez Jovenna',
-      date: '2023-12-02',
-      category: `${t('category.1')}`,
-      value: formatNumber('20000')
-    },
-    {
-      id: 3,
-      date: '2023-12-03',
-      description: 'Entretien véhicule chez KOMADA',
-      category: `${t('category.2')}`,
-      value: formatNumber('30000')
-    },
-    {
-      id: 4,
-      description: 'Parking easy park',
-      date: '2023-12-04',
-      category: `${t('category.3')}`,
-      value: formatNumber('40000')
-    },
-    {
-      id: 5,
-      description: 'Déjeuner chez Tana water front',
-      date: '2023-12-05',
-      category: `${t('category.4')}`,
-      value: formatNumber('500000')
-    },
-    {
-      id: 6,
-      description: 'Diné chez Paladios',
-      date: '2023-12-05',
-      category: `${t('category.4')}`,
-      value: formatNumber('500000')
-    }
-  ];
-
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState(Array<ExpenseType>);
   const [created, setCreated] = useState(false);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
     const inputRefCategory = React.useRef<HTMLSelectElement>(null);
-
-  async function getExpenses(){
-    const postData = {
-      method: "GET",
-      headers :{
-        "Content-Type": "application/json",
-      }
-    };
-    const res = await fetch(`api/expense`, postData);
-    const response = await res.json();
-    setExpenses(response.expenses)
-  }
-
-  
-  const dataList2 = (expenses as ExpenseType[]).map((expense) => ({
-    id: expense.idExpenses,
-    description: expense.descriptionForm,
-    date: expense.dateExpenses,
-    category: expense.categoryExpenses,
-    value: formatNumber(expense.valueExpenses)
+ 
+  const dataList2 = Object.values(expenses).map((expense) => ({
+    idExpenses: expense["idExpenses"],
+    descriptionForm: expense["descriptionForm"],
+    dateExpenses: expense["dateExpenses"],
+    categoryExpenses: expense["categoryExpenses"],
+    valueExpenses: formatNumber(expense["valueExpenses"])
   }))
 
   async function addExpenses() {
@@ -178,8 +119,33 @@ export default function Expenses() {
     };
     const res = await fetch(`api/expense`, postData);
     const response = await res.json();
-    setExpenses(response.expenses)
-    setCreated(response.message === "success");
+    //Update list expense
+    setExpenses(response.expenses);
+
+    // Reset form by updating refs to initial values
+    if (inputRefDescription.current) inputRefDescription.current.value = "";
+    if (inputRefValue.current) inputRefValue.current.value = "";
+    if (inputRefCategory.current) inputRefCategory.current.value = "";
+
+    // Now, fetch the updated expenses
+    getExpenses();
+    
+    setCreated(true);
+
+    console.log("val created"+created)
+  }
+
+  async function getExpenses(){
+    const postData = {
+      method: "GET",
+      headers :{
+        "Content-Type": "application/json",
+      }
+    };
+    const res = await fetch(`api/expense`, postData);
+    const response = await res.json();
+    const expensesArray : ExpenseType[] = Object.values(response.expenses);
+    setExpenses(expensesArray);
   }
 
   useEffect(() => {
@@ -197,7 +163,18 @@ export default function Expenses() {
                       {created && <div className="alert alert-success">Expense added</div> }
                     </div>
                     <div className="main-section">
-                      <ListAll dataList={dataList2}/>
+                      {/* <ListAll dataList={dataList2}/> */}
+                      <table>
+                        {dataList2.map((list, index) => (
+                          <tr key={index}>
+                            <td>{list.idExpenses}</td>
+                            <td>{list.descriptionForm}</td>
+                            <td>{list.valueExpenses}</td>
+                            <td>{list.dateExpenses}</td>
+                            <td>{list.categoryExpenses}</td>
+                          </tr>
+                        ))}
+                      </table>
                     </div>
                 </div>
             </main>
