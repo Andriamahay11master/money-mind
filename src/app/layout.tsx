@@ -1,10 +1,14 @@
 
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter,Roboto } from 'next/font/google';
 import './globals.scss'
 import '../assets/scss/main.scss'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: '400'
+})
 
 export const metadata: Metadata = {
   title: 'MindMoney',
@@ -31,7 +35,7 @@ export default function RootLayout({
 } : LayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={roboto.className}>{children}</body>
     </html>
   );
 }

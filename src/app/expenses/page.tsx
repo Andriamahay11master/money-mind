@@ -163,10 +163,21 @@ export default function Expenses() {
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
                       <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} saveExpense={addExpenses}/>
-                      {created && <div className="alert alert-success">Expense added</div> }
+                      {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
                     </div>
                     <div className="main-section">
-                      <table>
+                      <div className="list-block list-expense">
+                      <table className='list-table'>
+                        <thead>
+                          <tr>
+                            <th>{t('table.id')}</th>
+                            <th>{t('table.description')}</th>
+                            <th>{t('table.value')}</th>
+                            <th>{t('table.date')}</th>
+                            <th>{t('table.category')}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
                         {dataList2.map((list, index) => (
                           <tr key={index}>
                             <td>{list.idExpenses}</td>
@@ -176,7 +187,9 @@ export default function Expenses() {
                             <td>{list.categoryExpenses}</td>
                           </tr>
                         ))}
+                        </tbody>
                       </table>
+                      </div>
                     </div>
                 </div>
             </main>

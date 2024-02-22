@@ -107,5 +107,20 @@
       "description": "Description",
       "placeholder": "Add a new category",
       "save": "Add"
+    },
+    "table":{
+      "id": "Reference",
+      "description": "Description",
+      "value": "Amount",
+      "date": "Date",
+      "category": "Category"
+    },
+    "message":{
+      "insertedExpenseSuccess":"Expense inserted successfully",
+      "deletedExpenseSuccess":"Expense deleted successfully",
+      "updatedExpenseSuccess":"Expense updated successfully",
+      "insertedCategorySuccess":"Category inserted successfully",
+      "deletedCategorySuccess":"Category deleted successfully",
+      "updatedCategorySuccess":"Category updated successfully"
     }
   }
