@@ -3,3 +3,17 @@
     // Format the number with spaces as a separator
     return (value ?? '').toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
+
+
+//format date 
+export const formatDate = (value : string ) => {
+
+  // Create a Date object from the database string
+  const dbDate = new Date(value);
+
+  // Format the date to display only the date part
+  const formattedDate = dbDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+  return formattedDate;
+
+}
