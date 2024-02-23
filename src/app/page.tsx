@@ -118,11 +118,11 @@ export default function Home() {
     },
     {
       title: `${t('kpi.1.title')}`,
-      value: formatNumber(sumAmount.toString())
+      value: sumAmount ? formatNumber(sumAmount.toString()) : '0'
     },
     {
       title: `${t('kpi.2.title')}`,
-      value: formatNumber(getRemainingBalance(balance, sumAmount.toString()).toString())
+      value: sumAmount ? formatNumber(getRemainingBalance(balance, sumAmount.toString()).toString()) : formatNumber(balance)
     }
   ];
 
