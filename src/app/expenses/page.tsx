@@ -7,7 +7,6 @@ import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormExpense from '@/src/components/expense/FormExpense';
-import ListAll from '@/src/components/expense/ListAll';
 import { formatNumber, formatDate } from '@/src/data/function';
 import { useEffect, useState, useRef } from 'react';
 
@@ -21,6 +20,11 @@ export default function Expenses() {
       categoryExpenses: string;
       valueExpenses: string;
     }
+
+    //state pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // Choose the number of items to display per page
+
 
     //Data Nav
     const dataNav = [
@@ -138,18 +142,29 @@ export default function Expenses() {
     }, 1400)
   }
 
-  async function getExpenses(){
+  async function getExpenses() {
+    const offset = (currentPage - 1) * itemsPerPage;
     const postData = {
       method: "GET",
-      headers :{
+      headers: {
         "Content-Type": "application/json",
-      }
+      },
     };
-    const res = await fetch(`api/expense`, postData);
+    const res = await fetch(`api/expense?offset=${offset}&limit=${itemsPerPage}`, postData);
     const response = await res.json();
-    const expensesArray : ExpenseType[] = Object.values(response.expenses);
+    const expensesArray: ExpenseType[] = Object.values(response.expenses);
     setExpenses(expensesArray);
   }
+  
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  //pagination control
+  const totalPages = Math.ceil(expenses.length / itemsPerPage);
+
+  const handlePageChange = (newPage : any) => {
+    setCurrentPage(newPage);
+  };
 
   useEffect(() => {
     getExpenses();
@@ -167,29 +182,40 @@ export default function Expenses() {
                     </div>
                     <div className="main-section">
                       <div className="list-block list-expense">
-                      <table className='list-table'>
-                        <thead>
-                          <tr>
-                            <th>{t('table.id')}</th>
-                            <th>{t('table.description')}</th>
-                            <th>{t('table.value')}</th>
-                            <th>{t('table.date')}</th>
-                            <th>{t('table.category')}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        {dataList2.map((list, index) => (
-                          <tr key={index}>
-                            <td>{list.idExpenses}</td>
-                            <td>{list.descriptionForm}</td>
-                            <td>{list.valueExpenses}</td>
-                            <td>{list.dateExpenses}</td>
-                            <td>{list.categoryExpenses}</td>
-                          </tr>
-                        ))}
-                        </tbody>
-                      </table>
+                        <table className='list-table'>
+                          <thead>
+                            <tr>
+                              <th>{t('table.id')}</th>
+                              <th>{t('table.description')}</th>
+                              <th>{t('table.value')}</th>
+                              <th>{t('table.date')}</th>
+                              <th>{t('table.category')}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {dataList2.slice(startIndex, endIndex).map((list, index) => (
+                            <tr key={index}>
+                              <td>{list.idExpenses}</td>
+                              <td>{list.descriptionForm}</td>
+                              <td>{list.valueExpenses}</td>
+                              <td>{list.dateExpenses}</td>
+                              <td>{list.categoryExpenses}</td>
+                            </tr>
+                          ))}
+                          </tbody>
+                        </table>
                       </div>
+                      <div className="pagination-table">
+                          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                            <button
+                              key={page}
+                              onClick={() => handlePageChange(page)}
+                              className={page === currentPage ? "active" : ""}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                        </div>
                     </div>
                 </div>
             </main>

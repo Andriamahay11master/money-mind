@@ -1,6 +1,6 @@
 
 import type { Metadata } from 'next';
-import { Inter,Roboto } from 'next/font/google';
+import { Inter, Roboto } from 'next/font/google';
 import './globals.scss'
 import '../assets/scss/main.scss'
 

@@ -1,0 +1,16 @@
+.pagination-table{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    button{
+        display: inline-flex;
+        padding: 5px 10px;
+        border-radius: 2px;
+        &.active{
+            font-weight: 700;
+            color: #FFF;
+            background: $color-secondary;
+        }
+    }
+}

@@ -1,6 +1,9 @@
 .list-block{
     margin-top: 30px;
     &.list-expense{
+        @include max(768px){
+            overflow-x: auto;
+        }
         table{
             width: 100%;
         }
