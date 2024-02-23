@@ -4,6 +4,13 @@
     return (value ?? '').toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   };
 
+  //remove space in string number
+  export const removeSpaceStringNumber = (value: string | undefined | null) => {
+    if (value) {
+      return value.replace(/\s/g, '');
+    }
+    return '';
+  };
 
 //format date 
 export const formatDate = (value : string ) => {

@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next';
 import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
 import Kpi from '../components/kpi/Kpi';
-import {formatDate, formatNumber} from '../data/function';
+import {formatDate, formatNumber, removeSpaceStringNumber} from '../data/function';
 import Breadcrumb from '../components/breadcrumb/Breadcrumb';
 import ListExpenseFive from '../components/expense/ListExpenseFive';
 import ChartExpense from '../components/expense/ChartExpense';
@@ -15,7 +15,7 @@ import ChartExpense from '../components/expense/ChartExpense';
 export default function Home() {
 
   const { t } = useTranslation('translation');
-
+  const balance = '1600000';
   interface ExpenseType {
     idExpenses: number;
     descriptionForm: string;
@@ -25,6 +25,63 @@ export default function Home() {
   }
 
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
+  const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);
+
+
+  //List 5 last Expense
+  async function getLastFiveExpenses() {
+    const postData = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await fetch(`api/expense?type=LAST_5`, postData);
+    const response = await res.json();
+    const expensesArray: ExpenseType[] = Object.values(response.expenses);
+    setExpenses(expensesArray);
+  }
+
+  //List Expense Month selected
+  async function getMonthExpense(valMonth: number) {
+    const postData = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await fetch(`api/expense?type=MONTH&valMonth=${valMonth}`, postData);
+    const response = await res.json();
+    const expensesArray: ExpenseType[] = Object.values(response.expenses);
+    setExpensesM(expensesArray);
+  }
+
+  //Map the list of Expenses
+  const dataList2 = Object.values(expenses).map((expense) => ({
+    id: expense["idExpenses"],
+    description: expense["descriptionForm"],
+    date: formatDate(expense["dateExpenses"]),
+    category: expense["categoryExpenses"],
+    value: formatNumber(expense["valueExpenses"])
+  }))
+
+  const dataListM = Object.values(expensesM).map((expense) => ({
+    id: expense["idExpenses"],
+    description: expense["descriptionForm"],
+    date: formatDate(expense["dateExpenses"]),
+    category: expense["categoryExpenses"],
+    value: formatNumber(expense["valueExpenses"])
+  }))
+
+  //Get the total ammount of the expenses of the month selected
+  const sumAmount = dataListM.reduce((acc, expense) => {
+    return acc + parseInt(removeSpaceStringNumber(expense["value"]));
+  }, 0);
+
+  //Get the rest of the expenses of the month selected
+  function getRemainingBalance(balance: string, amount: string) : number{
+    return parseInt(removeSpaceStringNumber(balance)) - parseInt(removeSpaceStringNumber(amount));
+  }
 
   //Data Nav
   const dataNav = [
@@ -57,15 +114,15 @@ export default function Home() {
   const kpi = [
     {
       title: `${t('kpi.0.title')}`,
-      value: formatNumber('1600000')
+      value: formatNumber(balance)
     },
     {
       title: `${t('kpi.1.title')}`,
-      value: formatNumber('0')
+      value: formatNumber(sumAmount.toString())
     },
     {
       title: `${t('kpi.2.title')}`,
-      value: formatNumber('0')
+      value: formatNumber(getRemainingBalance(balance, sumAmount.toString()).toString())
     }
   ];
 
@@ -74,40 +131,6 @@ export default function Home() {
     {
       label: `${t('breadcrumb.home')}`,
       path: '/',
-    }
-  ];
-
-  //data ListExpense
-  const dataList = [
-    {
-      id: 1,
-      date: '2023-12-01',
-      category: `${t('category.0')}`,
-      value: formatNumber('10000')
-    },
-    {
-      id: 2,
-      date: '2023-12-02',
-      category: `${t('category.1')}`,
-      value: formatNumber('20000')
-    },
-    {
-      id: 3,
-      date: '2023-12-03',
-      category: `${t('category.2')}`,
-      value: formatNumber('30000')
-    },
-    {
-      id: 4,
-      date: '2023-12-04',
-      category: `${t('category.3')}`,
-      value: formatNumber('40000')
-    },
-    {
-      id: 5,
-      date: '2023-12-05',
-      category: `${t('category.4')}`,
-      value: formatNumber('500000')
     }
   ];
 
@@ -136,30 +159,11 @@ export default function Home() {
     '#5B5B5B'
   ];
 
-  //List 5 last Expense
-  async function getLastFiveExpenses() {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense?type=LAST_5`, postData);
-    const response = await res.json();
-    const expensesArray: ExpenseType[] = Object.values(response.expenses);
-    setExpenses(expensesArray);
-  }
-
-  const dataList2 = Object.values(expenses).map((expense) => ({
-    id: expense["idExpenses"],
-    description: expense["descriptionForm"],
-    date: formatDate(expense["dateExpenses"]),
-    category: expense["categoryExpenses"],
-    value: formatNumber(expense["valueExpenses"])
-  }))
+  
 
   React.useEffect(() => {
     getLastFiveExpenses();
+    getMonthExpense(2);
   }, []);
 
   return (
@@ -180,7 +184,7 @@ export default function Home() {
               </div>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.titleGraphe')}</h2>
-                <ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>
+                  <ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>
               </div>
           </section>
         </div>

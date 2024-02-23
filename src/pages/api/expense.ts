@@ -17,6 +17,23 @@ export default async function handler(req:any, res:any) {
         });
         res.status(200).json({ expenses: Last5Expenses })
       }
+      else if(req.query.type === 'MONTH'){
+        const valMonth = req.query.valMonth;
+        if (!valMonth) {
+          res.status(400).json({
+            response: "error",
+            error: "Invalid month value provided",
+          });
+          return;
+        }
+        
+        const expenseMonth = await query({
+          sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses WHERE MONTH(dateExpenses) = ?",
+          values:[ valMonth ]
+        });
+        res.status(200).json({ expenses: expenseMonth })
+        
+      }
       else{
         const expenses = await query({
           sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses",
