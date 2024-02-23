@@ -15,6 +15,7 @@ export default function ListExpenseFive({dataList} : ListExpenseFiveProps) {
         <div className='list-block'>
             <DataTable className='list-table' stripedRows value={dataList} sortMode="multiple">
                 <Column field="id" header="Réference" sortable></Column>
+                <Column field="description" header="Description" sortable></Column>
                 <Column field="date" header="Date" sortable></Column>
                 <Column field="category" header="Category" sortable></Column>
                 <Column field="value" header="Value" sortable></Column>

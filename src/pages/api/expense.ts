@@ -10,11 +10,21 @@ interface ExpenseTableType {
 export default async function handler(req:any, res:any) {
     let message;
     if( req.method === 'GET') {
+      if(req.query.type === 'LAST_5'){
+        const Last5Expenses = await query({
+          sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses ORDER BY idExpenses DESC LIMIT 5",
+          values:[]
+        });
+        res.status(200).json({ expenses: Last5Expenses })
+      }
+      else{
         const expenses = await query({
-            sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses",
-            values:[]
+          sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses",
+          values:[]
         })
         res.status(200).json({ expenses: expenses })
+      }
+        
     }
 
 

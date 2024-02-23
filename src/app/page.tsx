@@ -5,15 +5,26 @@ import { useTranslation } from 'next-i18next';
 import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
 import Kpi from '../components/kpi/Kpi';
-import {formatNumber} from '../data/function';
+import {formatDate, formatNumber} from '../data/function';
 import Breadcrumb from '../components/breadcrumb/Breadcrumb';
 import ListExpenseFive from '../components/expense/ListExpenseFive';
 import ChartExpense from '../components/expense/ChartExpense';
 
 
+
 export default function Home() {
 
   const { t } = useTranslation('translation');
+
+  interface ExpenseType {
+    idExpenses: number;
+    descriptionForm: string;
+    dateExpenses: string;
+    categoryExpenses: string;
+    valueExpenses: string;
+  }
+
+  const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
 
   //Data Nav
   const dataNav = [
@@ -125,6 +136,32 @@ export default function Home() {
     '#5B5B5B'
   ];
 
+  //List 5 last Expense
+  async function getLastFiveExpenses() {
+    const postData = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await fetch(`api/expense?type=LAST_5`, postData);
+    const response = await res.json();
+    const expensesArray: ExpenseType[] = Object.values(response.expenses);
+    setExpenses(expensesArray);
+  }
+
+  const dataList2 = Object.values(expenses).map((expense) => ({
+    id: expense["idExpenses"],
+    description: expense["descriptionForm"],
+    date: formatDate(expense["dateExpenses"]),
+    category: expense["categoryExpenses"],
+    value: formatNumber(expense["valueExpenses"])
+  }))
+
+  React.useEffect(() => {
+    getLastFiveExpenses();
+  }, []);
+
   return (
     <>
       <Header linkMenu={dataNav}/>
@@ -139,7 +176,7 @@ export default function Home() {
           <section className='main-section detailKpi'>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.title')}</h2>
-                  <ListExpenseFive dataList={dataList}/>
+                  <ListExpenseFive dataList={dataList2}/>
               </div>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.titleGraphe')}</h2>
