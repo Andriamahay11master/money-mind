@@ -12,13 +12,10 @@ interface FormExpenseProps {
     inputRefValue : React.RefObject<HTMLInputElement>
     inputRefDateValue : React.RefObject<HTMLInputElement>
     inputRefCategory : React.RefObject<HTMLSelectElement>
-    saveExpense : (description : string, value : string, category : string, date : string) => void
+    saveExpense : () => void
 }
 export default function FormExpense({labelData, dataCategory, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory ,saveExpense} : FormExpenseProps) {
     const [formattedValue, setFormattedValue] = useState('');
-    const [category, setCategory] = useState('');
-    const [description, setDescription] = useState('');
-    const [date, setDate] = useState('');
 
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
       // Remove non-numeric characters and spaces
@@ -28,27 +25,13 @@ export default function FormExpense({labelData, dataCategory, placeholderInput, 
       setFormattedValue(formatNumber(inputValue));
     };
     
-    const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDescription(e.currentTarget.value);
-    };
 
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCategory(e.currentTarget.value);
-    };
-
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDate(e.currentTarget.value);
-    };
-    
     const handleSaveExpense = () => {
         // Pass the values to the saveExpense function
-        saveExpense(description, formattedValue, category, date);
+        saveExpense();
 
         // Reset the state after saving
-        setDescription('');
         setFormattedValue('');
-        setCategory('');
-        setDate('');
     };
 
     
@@ -59,7 +42,7 @@ export default function FormExpense({labelData, dataCategory, placeholderInput, 
             <form action="" className='form-content'>
                 <div className="form-group">
                     <label htmlFor="descriptionForm">{labelData[1]}</label>
-                    <input type="text" placeholder={placeholderInput[0]} id="descriptionForm" onChange={handleDescriptionChange} ref={inputRefDescription}/>
+                    <input type="text" placeholder={placeholderInput[0]} id="descriptionForm" ref={inputRefDescription}/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="valueForm">{labelData[2]}</label>
@@ -67,11 +50,11 @@ export default function FormExpense({labelData, dataCategory, placeholderInput, 
                 </div>
                 <div className="form-group">
                     <label htmlFor="dateForm">{labelData[3]}</label>
-                    <input type="date" placeholder={placeholderInput[2]} id="dateForm" onChange={handleDateChange} ref={inputRefDateValue}/>
+                    <input type="date" placeholder={placeholderInput[2]} id="dateForm" ref={inputRefDateValue}/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="categoryForm">{labelData[4]}</label>
-                    <select name="categoryForm" id="categoryForm" onChange={handleCategoryChange} ref={inputRefCategory}>
+                    <select name="categoryForm" id="categoryForm" ref={inputRefCategory}>
                         {dataCategory.map((category, index) => (
                             <option key={index} value={category}>{category}</option>
                         ))}

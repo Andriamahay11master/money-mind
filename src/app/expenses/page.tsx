@@ -21,6 +21,11 @@ export default function Expenses() {
       valueExpenses: string;
     }
 
+    interface CategoryType {
+      idCategory: number;
+      description: string;
+    }
+
     //state pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // Choose the number of items to display per page
@@ -75,14 +80,6 @@ export default function Expenses() {
     `${t('form.save')}`
   ]
 
-  const dataCategory = [
-    `${t('category.0')}`,
-    `${t('category.1')}`,
-    `${t('category.2')}`,
-    `${t('category.3')}`,
-    `${t('category.4')}`,
-  ]
-
   const placeholderInput = [
     `${t('placeholder.0')}`,
     `${t('placeholder.1')}`,
@@ -90,6 +87,7 @@ export default function Expenses() {
   ]
 
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
+  const [categories, setCategory] = useState(Array<CategoryType>);
   const [created, setCreated] = useState(false);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
@@ -105,6 +103,10 @@ export default function Expenses() {
     valueExpenses: formatNumber(expense["valueExpenses"])
   }))
 
+  const dataCategory = Object.values(categories).map((category) => (
+    category.description
+  ))
+
   async function addExpenses() {
     const postData = {
       method: "POST",
@@ -118,9 +120,7 @@ export default function Expenses() {
         categoryExpenses: inputRefCategory.current?.value,
       })
     };
-    console.log('postData',postData);
     const res = await fetch(`api/expense`, postData);
-    console.log('after call the',res);
     const response = await res.json();
     //Update list expense
     setExpenses(response.expenses);
@@ -155,6 +155,19 @@ export default function Expenses() {
     const expensesArray: ExpenseType[] = Object.values(response.expenses);
     setExpenses(expensesArray);
   }
+
+  async function getCategories() {
+    const postData = {
+        method: "GET",
+        headers: {
+        "Content-Type": "application/json",
+        },
+    };
+    const res = await fetch(`api/category`, postData);
+    const response = await res.json();
+    const categoriesArray: CategoryType[] = Object.values(response.categories);
+    setCategory(categoriesArray);
+}
   
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -168,6 +181,7 @@ export default function Expenses() {
 
   useEffect(() => {
     getExpenses();
+    getCategories();
   }, []);
   
     return (
@@ -187,7 +201,7 @@ export default function Expenses() {
                             <tr>
                               <th>{t('table.id')}</th>
                               <th>{t('table.description')}</th>
-                              <th>{t('table.value')}</th>
+                              <th>{t('table.value')} (en Ariary)</th>
                               <th>{t('table.date')}</th>
                               <th>{t('table.category')}</th>
                             </tr>
@@ -197,7 +211,7 @@ export default function Expenses() {
                             <tr key={index}>
                               <td>{list.idExpenses}</td>
                               <td>{list.descriptionForm}</td>
-                              <td>{list.valueExpenses}</td>
+                              <td>{list.valueExpenses} Ar</td>
                               <td>{list.dateExpenses}</td>
                               <td>{list.categoryExpenses}</td>
                             </tr>

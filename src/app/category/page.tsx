@@ -91,18 +91,16 @@ export default function Category(){
             description: inputRefDescription.current?.value,
           })
         };
-        console.log('postData',postData);
         const res = await fetch(`api/category`, postData);
-        console.log('after call the',res);
         const response = await res.json();
-        //Update list expense
+        //Update list category
         setCategory(response.categories);
     
     
         // Reset form by updating refs to initial values
         if (inputRefDescription.current) inputRefDescription.current.value = "";
     
-        // Now, fetch the updated expenses
+        // Now, fetch the updated categories
         getCategories();
         
         setCreated(true);
@@ -148,6 +146,7 @@ export default function Category(){
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
                         <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} saveCategory={addCategories}/>
+                        {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
                     </div>
                     <div className="main-section">
                         <div className="list-block list-expense">
