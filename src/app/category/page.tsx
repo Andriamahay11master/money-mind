@@ -9,9 +9,20 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import { formatNumber } from '@/src/data/function';
 import FormCategory from '@/src/components/category/FormCategory';
 import ListCategory from '@/src/components/category/ListCategory';
+import { useEffect, useState, useRef } from 'react';
 
 export default function Category(){
     const { t } = useTranslation('translation');
+
+    //interface CategoryType
+    interface CategoryType {
+        idCategory: number;
+        description: string;
+      }
+
+      //state pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // Choose the number of items to display per page
 
     //Data Nav
     const dataNav = [
@@ -60,29 +71,74 @@ export default function Category(){
         `${t('formCategory.save')}`
     ]
 
-    //data List
-    const dataList = [
-        {
-            id: 1,
-            category: `${t('category.0')}`,
-        },
-        {
-            id: 2,
-            category: `${t('category.1')}`,
-        },
-        {
-            id: 3,
-            category: `${t('category.2')}`,
-        },
-        {
-            id: 4,
-            category: `${t('category.3')}`,
-        },
-        {
-            id: 5,
-            category: `${t('category.4')}`,
-        }
-    ];
+    const [categories, setCategory] = useState(Array<CategoryType>);
+    const [created, setCreated] = useState(false);
+
+    const inputRefDescription = React.useRef<HTMLInputElement>(null);
+
+    const dataList = Object.values(categories).map((category) => ({
+        idCategory: category["idCategory"],
+        description: category["description"]
+    }));
+
+    async function addCategories() {
+        const postData = {
+          method: "POST",
+          headers :{
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            description: inputRefDescription.current?.value,
+          })
+        };
+        console.log('postData',postData);
+        const res = await fetch(`api/category`, postData);
+        console.log('after call the',res);
+        const response = await res.json();
+        //Update list expense
+        setCategory(response.categories);
+    
+    
+        // Reset form by updating refs to initial values
+        if (inputRefDescription.current) inputRefDescription.current.value = "";
+    
+        // Now, fetch the updated expenses
+        getCategories();
+        
+        setCreated(true);
+    
+        setTimeout(() => {
+          setCreated(false);
+        }, 1400)
+      }
+
+    async function getCategories() {
+        const offset = (currentPage - 1) * itemsPerPage;
+        const postData = {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            },
+        };
+        const res = await fetch(`api/category?offset=${offset}&limit=${itemsPerPage}`, postData);
+        const response = await res.json();
+        const categoriesArray: CategoryType[] = Object.values(response.categories);
+        setCategory(categoriesArray);
+    }
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    //pagination control
+    const totalPages = Math.ceil(categories.length / itemsPerPage);
+
+    const handlePageChange = (newPage : any) => {
+        setCurrentPage(newPage);
+    };
+
+    useEffect(() => {
+        getCategories();
+      }, []);
 
     return (
         <div>
@@ -91,10 +147,38 @@ export default function Category(){
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                        <FormCategory labelData={labelData}/>
+                        <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} saveCategory={addCategories}/>
                     </div>
                     <div className="main-section">
-                      <ListCategory dataList={dataList}/>
+                        <div className="list-block list-expense">
+                            <table className='list-table'>
+                            <thead>
+                                <tr>
+                                    <th>{t('table.id')}</th>
+                                    <th>{t('table.description')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {dataList.slice(startIndex, endIndex).map((list, index) => (
+                                <tr key={index}>
+                                    <td>{list.idCategory}</td>
+                                    <td>{list.description}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                            </table>
+                        </div>
+                        <div className="pagination-table">
+                          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                            <button
+                              key={page}
+                              onClick={() => handlePageChange(page)}
+                              className={page === currentPage ? "active" : ""}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                        </div>
                     </div>
                 </div>
             </main>
