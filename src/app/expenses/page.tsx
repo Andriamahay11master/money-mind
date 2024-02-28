@@ -18,7 +18,7 @@ export default function Expenses() {
       descriptionForm: string;
       dateExpenses: string;
       categoryExpenses: string;
-      valueExpenses: string;
+      valueExpenses: number;
     }
 
     interface CategoryType {
@@ -100,7 +100,7 @@ export default function Expenses() {
     descriptionForm: expense["descriptionForm"],
     dateExpenses: formatDate(expense["dateExpenses"]),
     categoryExpenses: expense["categoryExpenses"],
-    valueExpenses: formatNumber(expense["valueExpenses"])
+    valueExpenses: expense["valueExpenses"]
   }))
 
   const dataCategory = Object.values(categories).map((category) => (
@@ -209,11 +209,11 @@ export default function Expenses() {
                           <tbody>
                           {dataList2.slice(startIndex, endIndex).map((list, index) => (
                             <tr key={index}>
-                              <td>{list.idExpenses}</td>
-                              <td>{list.descriptionForm}</td>
-                              <td>{list.valueExpenses} Ar</td>
-                              <td>{list.dateExpenses}</td>
-                              <td>{list.categoryExpenses}</td>
+                                <td>{list.idExpenses}</td>
+                                <td>{list.descriptionForm}</td>
+                                <td>{list.valueExpenses ? formatNumber(list.valueExpenses.toString()) + ' Ar' : 'N/A'}</td>
+                                <td>{list.dateExpenses}</td>
+                                <td>{list.categoryExpenses}</td>
                             </tr>
                           ))}
                           </tbody>

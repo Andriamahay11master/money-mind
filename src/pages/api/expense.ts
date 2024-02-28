@@ -2,7 +2,7 @@ import { query } from "../../lib/db";
 
 interface ExpenseTableType {
     descriptionForm: string,
-    valueExpenses: string,
+    valueExpenses: number,
     dateExpenses: Date
     categoryExpenses: string
 }
@@ -61,14 +61,14 @@ export default async function handler(req:any, res:any) {
           }
           expense = {
             descriptionForm: descriptionForm,
-            valueExpenses: valueExpenses,
+            valueExpenses: parseInt(valueExpenses),
             dateExpenses: new Date(),
             categoryExpenses: categoryExpenses,
           } 
           res.status(200).json({ response: message, expenses: expense });
         } catch (error) {
           res.status(500).json({ response: "error", error: "Internal Server Error" });
-          console.error("Error while processing POST request:", error);
+          console.log("Error while processing POST request:", error);
         }
       }
     }      

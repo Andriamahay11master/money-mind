@@ -15,14 +15,14 @@ interface FormExpenseProps {
     saveExpense : () => void
 }
 export default function FormExpense({labelData, dataCategory, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory ,saveExpense} : FormExpenseProps) {
-    const [formattedValue, setFormattedValue] = useState('');
+    const [formattedValue, setFormattedValue] = useState(0);
 
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
       // Remove non-numeric characters and spaces
       const inputValue = e.currentTarget.value.replace(/[^\d]/g, '');
   
       // Format the number and update the state
-      setFormattedValue(formatNumber(inputValue));
+      setFormattedValue(parseInt(inputValue));
     };
     
 
@@ -31,7 +31,7 @@ export default function FormExpense({labelData, dataCategory, placeholderInput, 
         saveExpense();
 
         // Reset the state after saving
-        setFormattedValue('');
+        setFormattedValue(0);
     };
 
     
