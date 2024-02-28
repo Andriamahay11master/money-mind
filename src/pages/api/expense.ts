@@ -34,6 +34,14 @@ export default async function handler(req:any, res:any) {
         res.status(200).json({ expenses: expenseMonth })
         
       }
+      else if(req.query.type === 'CATEGORY'){
+        
+        const expenseCat = await query({
+          sql: "SELECT categoryExpenses, SUM(valueExpenses) AS totalExpenses FROM expenses GROUP BY categoryExpenses ORDER BY totalExpenses DESC LIMIT 5",
+        });
+        res.status(200).json({ expenses: expenseCat })
+        
+      }
       else{
         const expenses = await query({
           sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses",

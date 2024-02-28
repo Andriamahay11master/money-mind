@@ -21,11 +21,17 @@ export default function Home() {
     descriptionForm: string;
     dateExpenses: string;
     categoryExpenses: string;
-    valueExpenses: string;
+    valueExpenses: number;
+  }
+
+  interface TopExpenseCatType{
+    categoryExpenses: string;
+    totalExpenses: number;
   }
 
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
   const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);
+  const [expensesTC, setExpensesTC] = React.useState(Array<TopExpenseCatType>);
 
 
   //List 5 last Expense
@@ -56,13 +62,27 @@ export default function Home() {
     setExpensesM(expensesArray);
   }
 
+  //List Sum Expense by category 
+  async function getTopExpenseCategories() {
+    const postData = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await fetch(`api/expense?type=CATEGORY`, postData);
+    const response = await res.json();
+    const expensesArray: TopExpenseCatType[] = Object.values(response.expenses);
+    setExpensesTC(expensesArray);
+  }
+
   //Map the list of Expenses
   const dataList2 = Object.values(expenses).map((expense) => ({
     id: expense["idExpenses"],
     description: expense["descriptionForm"],
     date: formatDate(expense["dateExpenses"]),
     category: expense["categoryExpenses"],
-    value: formatNumber(expense["valueExpenses"])
+    value: expense["valueExpenses"]
   }))
 
   const dataListM = Object.values(expensesM).map((expense) => ({
@@ -70,12 +90,18 @@ export default function Home() {
     description: expense["descriptionForm"],
     date: formatDate(expense["dateExpenses"]),
     category: expense["categoryExpenses"],
-    value: formatNumber(expense["valueExpenses"])
+    value: expense["valueExpenses"]
+  }))
+
+  //List TOp Expenses categories
+  const dataListTC = Object.values(expensesTC).map((expense) => ({
+    category: expense["categoryExpenses"],
+    totalExpenses: expense["totalExpenses"]
   }))
 
   //Get the total ammount of the expenses of the month selected
   const sumAmount = dataListM.reduce((acc, expense) => {
-    return acc + parseInt(removeSpaceStringNumber(expense["value"]));
+    return acc + expense["value"];
   }, 0);
 
   //Get the rest of the expenses of the month selected
@@ -135,13 +161,7 @@ export default function Home() {
   ];
 
   //data Chart Expense
-  const listCategory = [
-    `${t('category.0')}`,
-    `${t('category.1')}`,
-    `${t('category.2')}`,
-    `${t('category.3')}`,
-    `${t('category.4')}`
-  ];
+  const listCategory = Object.values(dataListTC).map((item) => (item.category))
 
   const listData = [
     10000,
@@ -164,6 +184,7 @@ export default function Home() {
   React.useEffect(() => {
     getLastFiveExpenses();
     getMonthExpense(2);
+    getTopExpenseCategories();
   }, []);
 
   return (
