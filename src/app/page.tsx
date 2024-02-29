@@ -161,9 +161,9 @@ export default function Home() {
   ];
 
   //data Chart Expense
-  const listCategory = Object.values(dataListTC).map((item) => (item.categoryExpenses))
+  const listCategory = Object.values(dataListTC).map((item) => (item['categoryExpenses']))
 
-  const listData = Object.values(dataListTC).map((item) => (item.totalExpenses))
+  const listData = Object.values(dataListTC).map((item) => (item['totalExpenses']))
 
   const listColor = [
     '#336699',
@@ -199,7 +199,7 @@ export default function Home() {
               </div>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.titleGraphe')}</h2>
-                  <ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>
+                  {(listCategory && listData) && <ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>}
               </div>
           </section>
         </div>
