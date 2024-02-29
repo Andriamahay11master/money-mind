@@ -11,7 +11,8 @@
       "home": "Dashboard",
       "about": "Expenses",
       "contact": "Category",
-      "projects": "Statistics"
+      "projects": "Statistics",
+      "compte": "Account"
     },
     "banner" : {
       "title": "Greetings, my name is Mahay.",
@@ -90,7 +91,9 @@
     "breadcrumb":{
       "home": "Dashboard",
       "expenses": "Expenses",
-      "category": "Category"
+      "category": "Category",
+      "statistics": "Statistics",
+      "compte":"Account"
     },
     "detailKpi" :{
       "title": "The recent expenses",
@@ -109,6 +112,12 @@
       "placeholder": "Add a new category",
       "save": "Add"
     },
+    "formCompte":{
+      "title": "New compte",
+      "description": "Description",
+      "placeholder": "Add a new compte",
+      "save": "Add"
+    },
     "table":{
       "id": "Reference",
       "description": "Description",
@@ -123,6 +132,9 @@
       "updatedExpenseSuccess":"Expense updated successfully",
       "insertedCategorySuccess":"Category inserted successfully",
       "deletedCategorySuccess":"Category deleted successfully",
-      "updatedCategorySuccess":"Category updated successfully"
+      "updatedCategorySuccess":"Category updated successfully",
+      "insertedCompteSuccess":"Compte inserted successfully",
+      "deletedCompteSuccess":"Compte deleted successfully",
+      "updatedCompteSuccess":"Compte updated successfully"
     }
   }
