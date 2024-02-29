@@ -63,6 +63,7 @@
       "value": "Amount",
       "date": "Transaction date",
       "category": "Category",
+      "compte": "Account",
       "save": "Add"
     },
     "placeholder":{

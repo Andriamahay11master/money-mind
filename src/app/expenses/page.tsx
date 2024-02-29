@@ -28,6 +28,11 @@ export default function Expenses() {
       description: string;
     }
 
+    interface CompteType {
+      idCompte: number;
+      description: string;
+    }
+
     //state pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // Choose the number of items to display per page
@@ -83,6 +88,7 @@ export default function Expenses() {
     `${t('form.value')}`,
     `${t('form.date')}`,
     `${t('form.category')}`,
+    `${t('form.compte')}`,
     `${t('form.save')}`
   ]
 
@@ -94,12 +100,14 @@ export default function Expenses() {
 
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
   const [categories, setCategory] = useState(Array<CategoryType>);
+  const [comptes, setCompte] = useState(Array<CompteType>);
   const [created, setCreated] = useState(false);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
     const inputRefCategory = React.useRef<HTMLSelectElement>(null);
     const inputRefDate = React.useRef<HTMLInputElement>(null);
+    const inputRefCompte = React.useRef<HTMLSelectElement>(null);
  
   const dataList2 = Object.values(expenses).map((expense) => ({
     idExpenses: expense["idExpenses"],
@@ -114,6 +122,10 @@ export default function Expenses() {
     category.description
   ))
 
+  const dataCompte = Object.values(expenses).map((expense) => (
+    expense.compteDescription
+  ))
+
   async function addExpenses() {
     const postData = {
       method: "POST",
@@ -125,6 +137,7 @@ export default function Expenses() {
         valueExpenses: inputRefValue.current?.value,
         dateExpenses: inputRefDate.current?.value,  
         categoryExpenses: inputRefCategory.current?.value,
+        idCompte: inputRefCompte.current?.value
       })
     };
     const res = await fetch(`api/expense`, postData);
@@ -198,7 +211,7 @@ export default function Expenses() {
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                      <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} saveExpense={addExpenses}/>
+                      <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} saveExpense={addExpenses}/>
                       {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
                     </div>
                     <div className="main-section">
