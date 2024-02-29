@@ -1,6 +1,6 @@
 .list-block{
     margin-top: 30px;
-    &.list-expense{
+    &.list-view{
         @include max(768px){
             overflow-x: auto;
         }

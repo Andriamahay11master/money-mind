@@ -11,7 +11,8 @@
       "home": "Tableau de bord",
       "about": "Dépenses",
       "contact": "Catégorie",
-      "projects": "Statistiques"
+      "projects": "Statistiques",
+      "compte": "Compte"
     },
     "banner" : {
       "title": "Bonjour, je m'appelle Mahay.",
@@ -89,7 +90,9 @@
     "breadcrumb":{
       "home": "Tableau de bord",
       "expenses": "Mes Dépenses",
-      "category": "Mes Catégories"
+      "category": "Mes Catégories",
+      "statistics": "Statistiques",
+      "compte": "Comptes"
     },
     "detailKpi" :{
       "title": "Les dépenses récentes",
@@ -108,6 +111,12 @@
       "placeholder": "Saisir une nouvelle catégorie",
       "save": "Ajouter"
     },
+    "formCompte":{
+      "title": "Nouveau compte",
+      "description": "Description",
+      "placeholder": "Saisir un nouveau compte",
+      "save": "Ajouter"
+    },
     "table":{
       "id": "Reference",
       "description": "Description",
@@ -121,7 +130,10 @@
       "updatedExpenseSuccess":"Depense mise à jour avec succès",
       "insertedCategorySuccess":"Categorie ajoutée avec succès",
       "deletedCategorySuccess":"Categorie supprimée avec succès",
-      "updatedCategorySuccess":"Categorie mise à jour avec succès"
+      "updatedCategorySuccess":"Categorie mise à jour avec succès",
+      "insertedCompteSuccess":"Compte ajouté avec succès",
+      "deletedCompteSuccess":"Compte supprimé avec succès",
+      "updatedCompteSuccess":"Compte mise à jour avec succès"
     }
 
   }

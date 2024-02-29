@@ -7,16 +7,15 @@ import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import { formatNumber } from '@/src/data/function';
-import FormCategory from '@/src/components/category/FormCategory';
-import ListCategory from '@/src/components/category/ListCategory';
+import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState, useRef } from 'react';
 
-export default function Category(){
+export default function Compte(){
     const { t } = useTranslation('translation');
 
-    //interface CategoryType
-    interface CategoryType {
-        idCategory: number;
+    //interface CompteType
+    interface CompteType {
+        idCompte: number;
         description: string;
       }
 
@@ -37,7 +36,7 @@ export default function Category(){
         {
             name: `${t('menu.projects')}`,
             href: '/statistics'
-        },
+        }, 
         {
             name: `${t('menu.compte')}`,
             href: '/compte'
@@ -62,30 +61,30 @@ export default function Category(){
         path: '/',
         },
         {
-        label: `${t('breadcrumb.category')}`,
-        path: '/category',
+        label: `${t('breadcrumb.compte')}`,
+        path: '/compte',
         }
     ];
 
     //dataFOrm
     const labelData = [
-        `${t('formCategory.title')}`,
-        `${t('formCategory.description')}`,
-        `${t('formCategory.placeholder')}`,
-        `${t('formCategory.save')}`
+        `${t('formCompte.title')}`,
+        `${t('formCompte.description')}`,
+        `${t('formCompte.placeholder')}`,
+        `${t('formCompte.save')}`
     ]
 
-    const [categories, setCategory] = useState(Array<CategoryType>);
+    const [comptes, setCompte] = useState(Array<CompteType>);
     const [created, setCreated] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
-    const dataList = Object.values(categories).map((category) => ({
-        idCategory: category["idCategory"],
-        description: category["description"]
+    const dataList = Object.values(comptes).map((compte) => ({
+        idCompte: compte["idCompte"],
+        description: compte["description"]
     }));
 
-    async function addCategories() {
+    async function addComptes() {
         const postData = {
           method: "POST",
           headers :{
@@ -95,17 +94,17 @@ export default function Category(){
             description: inputRefDescription.current?.value,
           })
         };
-        const res = await fetch(`api/category`, postData);
+        const res = await fetch(`api/compte`, postData);
         const response = await res.json();
-        //Update list category
-        setCategory(response.categories);
+        //Update list compte
+        setCompte(response.comptes);
     
     
         // Reset form by updating refs to initial values
         if (inputRefDescription.current) inputRefDescription.current.value = "";
     
-        // Now, fetch the updated categories
-        getCategories();
+        // Now, fetch the updated comptes
+        getComptes();
         
         setCreated(true);
     
@@ -114,7 +113,7 @@ export default function Category(){
         }, 1400)
       }
 
-    async function getCategories() {
+    async function getComptes() {
         const offset = (currentPage - 1) * itemsPerPage;
         const postData = {
             method: "GET",
@@ -122,24 +121,24 @@ export default function Category(){
             "Content-Type": "application/json",
             },
         };
-        const res = await fetch(`api/category?offset=${offset}&limit=${itemsPerPage}`, postData);
+        const res = await fetch(`api/compte?offset=${offset}&limit=${itemsPerPage}`, postData);
         const response = await res.json();
-        const categoriesArray: CategoryType[] = Object.values(response.categories);
-        setCategory(categoriesArray);
+        const comptesArray: CompteType[] = Object.values(response.comptes);
+        setCompte(comptesArray);
     }
     
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
     //pagination control
-    const totalPages = Math.ceil(categories.length / itemsPerPage);
+    const totalPages = Math.ceil(comptes.length / itemsPerPage);
 
     const handlePageChange = (newPage : any) => {
         setCurrentPage(newPage);
     };
 
     useEffect(() => {
-        getCategories();
+        getComptes();
       }, []);
 
     return (
@@ -149,8 +148,8 @@ export default function Category(){
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                        <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} saveCategory={addCategories}/>
-                        {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
+                        <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} saveCompte={addComptes}/>
+                        {created && <div className="alert alert-success">{t('message.insertedCompteSuccess')}</div> }
                     </div>
                     <div className="main-section">
                         <div className="list-block list-view">
@@ -164,7 +163,7 @@ export default function Category(){
                             <tbody>
                             {dataList.slice(startIndex, endIndex).map((list, index) => (
                                 <tr key={index}>
-                                    <td>{list.idCategory}</td>
+                                    <td>{list.idCompte}</td>
                                     <td>{list.description}</td>
                                 </tr>
                             ))}

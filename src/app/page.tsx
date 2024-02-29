@@ -124,6 +124,10 @@ export default function Home() {
         href: '/statistics'
     },
     {
+        name: `${t('menu.compte')}`,
+        href: '/compte'
+    },
+    {
         name: `${t('menu.contact')}`,
         href: '/category'
     }

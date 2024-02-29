@@ -46,6 +46,10 @@ export default function Expenses() {
         href: '/statistics'
     },
     {
+        name: `${t('menu.compte')}`,
+        href: '/compte'
+    },
+    {
         name: `${t('menu.contact')}`,
         href: '/category'
     }
@@ -195,7 +199,7 @@ export default function Expenses() {
                       {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
                     </div>
                     <div className="main-section">
-                      <div className="list-block list-expense">
+                      <div className="list-block list-view">
                         <table className='list-table'>
                           <thead>
                             <tr>
