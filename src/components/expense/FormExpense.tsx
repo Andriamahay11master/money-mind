@@ -7,14 +7,16 @@ import {formatNumber} from '@/src/data/function';
 interface FormExpenseProps {
     labelData : string[]
     dataCategory : string[]
+    dataCompte : string[]
     placeholderInput : string[]
     inputRefDescription : React.RefObject<HTMLInputElement>
     inputRefValue : React.RefObject<HTMLInputElement>
     inputRefDateValue : React.RefObject<HTMLInputElement>
     inputRefCategory : React.RefObject<HTMLSelectElement>
+    inputRefCompte : React.RefObject<HTMLSelectElement>
     saveExpense : () => void
 }
-export default function FormExpense({labelData, dataCategory, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory ,saveExpense} : FormExpenseProps) {
+export default function FormExpense({labelData, dataCategory, dataCompte, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory, inputRefCompte ,saveExpense} : FormExpenseProps) {
     const [formattedValue, setFormattedValue] = useState(0);
 
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +62,16 @@ export default function FormExpense({labelData, dataCategory, placeholderInput, 
                         ))}
                     </select>
                 </div>
+                <div className="form-group">
+                    <label htmlFor="compteForm">{labelData[5]}</label>
+                    <select name="compteForm" id="compteForm" ref={inputRefCompte}>
+                        {dataCompte.map((compte, index) => (
+                            <option key={index} value={compte}>{compte}</option>
+                        ))}
+                    </select>
+                </div>
                 <div className="form-group form-submit">
-                    <button type="button" className='btn btn-primary' onClick={() => handleSaveExpense()}>{labelData[5]}</button>
+                    <button type="button" className='btn btn-primary' onClick={() => handleSaveExpense()}>{labelData[6]}</button>
                 </div>
             </form>
         </div>

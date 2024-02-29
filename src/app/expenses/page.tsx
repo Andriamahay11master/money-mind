@@ -19,10 +19,17 @@ export default function Expenses() {
       dateExpenses: string;
       categoryExpenses: string;
       valueExpenses: number;
+      idCompte: number;
+      compteDescription: string;
     }
 
     interface CategoryType {
       idCategory: number;
+      description: string;
+    }
+
+    interface CompteType {
+      idCompte: number;
       description: string;
     }
 
@@ -81,6 +88,7 @@ export default function Expenses() {
     `${t('form.value')}`,
     `${t('form.date')}`,
     `${t('form.category')}`,
+    `${t('form.compte')}`,
     `${t('form.save')}`
   ]
 
@@ -92,23 +100,30 @@ export default function Expenses() {
 
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
   const [categories, setCategory] = useState(Array<CategoryType>);
+  const [comptes, setCompte] = useState(Array<CompteType>);
   const [created, setCreated] = useState(false);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
     const inputRefCategory = React.useRef<HTMLSelectElement>(null);
     const inputRefDate = React.useRef<HTMLInputElement>(null);
+    const inputRefCompte = React.useRef<HTMLSelectElement>(null);
  
   const dataList2 = Object.values(expenses).map((expense) => ({
     idExpenses: expense["idExpenses"],
     descriptionForm: expense["descriptionForm"],
     dateExpenses: formatDate(expense["dateExpenses"]),
     categoryExpenses: expense["categoryExpenses"],
-    valueExpenses: expense["valueExpenses"]
+    valueExpenses: expense["valueExpenses"],
+    compteDescrition: expense["compteDescription"]
   }))
 
   const dataCategory = Object.values(categories).map((category) => (
     category.description
+  ))
+
+  const dataCompte = Object.values(expenses).map((expense) => (
+    expense.compteDescription
   ))
 
   async function addExpenses() {
@@ -122,6 +137,7 @@ export default function Expenses() {
         valueExpenses: inputRefValue.current?.value,
         dateExpenses: inputRefDate.current?.value,  
         categoryExpenses: inputRefCategory.current?.value,
+        idCompte: inputRefCompte.current?.value
       })
     };
     const res = await fetch(`api/expense`, postData);
@@ -195,7 +211,7 @@ export default function Expenses() {
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                      <FormExpense labelData={labelData} dataCategory={dataCategory} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} saveExpense={addExpenses}/>
+                      <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} saveExpense={addExpenses}/>
                       {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
                     </div>
                     <div className="main-section">
@@ -208,6 +224,7 @@ export default function Expenses() {
                               <th>{t('table.value')} (en Ariary)</th>
                               <th>{t('table.date')}</th>
                               <th>{t('table.category')}</th>
+                              <th>{t('table.compte')}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -218,6 +235,7 @@ export default function Expenses() {
                                 <td>{list.valueExpenses ? formatNumber(list.valueExpenses.toString()) + ' Ar' : 'N/A'}</td>
                                 <td>{list.dateExpenses}</td>
                                 <td>{list.categoryExpenses}</td>
+                                <td>{list.compteDescrition}</td>
                             </tr>
                           ))}
                           </tbody>

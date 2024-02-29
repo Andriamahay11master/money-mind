@@ -64,6 +64,7 @@
       "value": "Montant",
       "date": "Date transaction",
       "category": "Catégorie",
+      "compte": "Compte",
       "save": "Ajouter"
     },
     "placeholder":{
@@ -122,7 +123,8 @@
       "description": "Description",
       "value": "Montant",
       "date": "Date",
-      "category": "Catégorie"
+      "category": "Catégorie",
+      "compte": "Compte"
     },
     "message":{
       "insertedExpenseSuccess":"Depense ajoutée avec succès",
