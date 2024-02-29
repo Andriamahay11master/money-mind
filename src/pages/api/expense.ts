@@ -4,7 +4,8 @@ interface ExpenseTableType {
     descriptionForm: string,
     valueExpenses: number,
     dateExpenses: Date
-    categoryExpenses: string
+    categoryExpenses: string,
+    idCompte: number
 }
 
 export default async function handler(req:any, res:any) {
@@ -44,7 +45,7 @@ export default async function handler(req:any, res:any) {
       }
       else{
         const expenses = await query({
-          sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses",
+          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense`",
           values:[]
         })
         res.status(200).json({ expenses: expenses })
@@ -56,10 +57,10 @@ export default async function handler(req:any, res:any) {
     //give the code for add expenses
     else if (req.method === "POST") {
         try {
-          const { descriptionForm, valueExpenses, dateExpenses, categoryExpenses } = req.body;
+          const { descriptionForm, valueExpenses, dateExpenses, categoryExpenses, idCompte } = req.body;
           const addExpenses = await query({
-            sql: "INSERT INTO expenses (descriptionForm, valueExpenses, dateExpenses, categoryExpenses) VALUES (?, ?, ?, ?)",
-            values: [descriptionForm, valueExpenses, dateExpenses, categoryExpenses]
+            sql: "INSERT INTO expenses (descriptionForm, valueExpenses, dateExpenses, categoryExpenses, idCompte) VALUES (?, ?, ?, ?, ?)",
+            values: [descriptionForm, valueExpenses, dateExpenses, categoryExpenses, idCompte]
           });
           let expense = {} as ExpenseTableType;
           if (addExpenses) {
@@ -72,6 +73,7 @@ export default async function handler(req:any, res:any) {
             valueExpenses: parseInt(valueExpenses),
             dateExpenses: new Date(),
             categoryExpenses: categoryExpenses,
+            idCompte: parseInt(idCompte)
           } 
           res.status(200).json({ response: message, expenses: expense });
         } catch (error) {

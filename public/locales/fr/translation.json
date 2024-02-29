@@ -113,7 +113,8 @@
       "description": "Description",
       "value": "Montant",
       "date": "Date",
-      "category": "Catégorie"
+      "category": "Catégorie",
+      "compte": "Compte"
     },
     "message":{
       "insertedExpenseSuccess":"Depense ajoutée avec succès",

@@ -19,6 +19,8 @@ export default function Expenses() {
       dateExpenses: string;
       categoryExpenses: string;
       valueExpenses: number;
+      idCompte: number;
+      compteDescription: string;
     }
 
     interface CategoryType {
@@ -44,6 +46,10 @@ export default function Expenses() {
     {
         name: `${t('menu.projects')}`,
         href: '/statistics'
+    },
+    {
+        name: `${t('menu.compte')}`,
+        href: '/compte'
     },
     {
         name: `${t('menu.contact')}`,
@@ -100,7 +106,8 @@ export default function Expenses() {
     descriptionForm: expense["descriptionForm"],
     dateExpenses: formatDate(expense["dateExpenses"]),
     categoryExpenses: expense["categoryExpenses"],
-    valueExpenses: expense["valueExpenses"]
+    valueExpenses: expense["valueExpenses"],
+    compteDescrition: expense["compteDescription"]
   }))
 
   const dataCategory = Object.values(categories).map((category) => (
@@ -204,6 +211,7 @@ export default function Expenses() {
                               <th>{t('table.value')} (en Ariary)</th>
                               <th>{t('table.date')}</th>
                               <th>{t('table.category')}</th>
+                              <th>{t('table.compte')}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -214,6 +222,7 @@ export default function Expenses() {
                                 <td>{list.valueExpenses ? formatNumber(list.valueExpenses.toString()) + ' Ar' : 'N/A'}</td>
                                 <td>{list.dateExpenses}</td>
                                 <td>{list.categoryExpenses}</td>
+                                <td>{list.compteDescrition}</td>
                             </tr>
                           ))}
                           </tbody>
