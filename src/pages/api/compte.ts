@@ -7,6 +7,23 @@ interface CompteTableType {
 export default async function handler(req:any, res:any) {
     let message;
     if( req.method === 'GET') {
+      if(req.query.type === 'UNIQUE'){
+        const valDesc = req.query.desc;
+        if (!valDesc) {
+          res.status(400).json({
+            response: "error",
+            error: "Invalid month value provided",
+          });
+          return;
+        }
+        
+        const expenseUnique = await query({
+          sql: "SELECT idCompte, description FROM compte WHERE description like ?",
+          values:[ valDesc ]
+        });
+        res.status(200).json({ expenses: expenseUnique })
+        
+      }
         const comptes = await query({
             sql: "SELECT idCompte, description FROM compte",
             values:[]
