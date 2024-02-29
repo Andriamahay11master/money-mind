@@ -95,7 +95,7 @@ export default function Home() {
 
   //List TOp Expenses categories
   const dataListTC = Object.values(expensesTC).map((expense) => ({
-    category: expense["categoryExpenses"],
+    categoryExpenses: expense["categoryExpenses"],
     totalExpenses: expense["totalExpenses"]
   }))
 
@@ -161,15 +161,9 @@ export default function Home() {
   ];
 
   //data Chart Expense
-  const listCategory = Object.values(dataListTC).map((item) => (item.category))
+  const listCategory = Object.values(dataListTC).map((item) => (item.categoryExpenses))
 
-  const listData = [
-    10000,
-    20000,
-    30000,
-    40000,
-    500000
-  ];
+  const listData = Object.values(dataListTC).map((item) => (item.totalExpenses))
 
   const listColor = [
     '#336699',
