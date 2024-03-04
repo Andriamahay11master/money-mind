@@ -110,6 +110,7 @@ export default function Expenses() {
     const inputRefCategory = React.useRef<HTMLSelectElement>(null);
     const inputRefDate = React.useRef<HTMLInputElement>(null);
     const inputRefCompte = React.useRef<HTMLSelectElement>(null);
+    const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
  
   const dataList2 = Object.values(expenses).map((expense) => ({
     idExpenses: expense["idExpenses"],
@@ -233,6 +234,22 @@ export default function Expenses() {
     setCompte(comptesArray);
 }
 
+//Compte courant
+async function getExpensesCurrent(valAccount: string) {
+  const offset = (currentPage - 1) * itemsPerPage;
+  const postData = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const res = await fetch(`api/expense?type=ACCOUNT&valAccount=${valAccount}&offset=${offset}&limit=${itemsPerPage}`, postData);
+  const response = await res.json();
+  const expensesArray: ExpenseType[] = Object.values(response.expenses);
+  setExpenses(expensesArray);
+  console.log('liste expenses', expensesArray)
+}
+
   async function getCategories() {
     const postData = {
         method: "GET",
@@ -256,6 +273,17 @@ export default function Expenses() {
     setCurrentPage(newPage);
   };
 
+  const handleFilterCompteChange = () => {
+    const selectedDesc = inputFilterRefCompte.current?.value || '';
+    if(selectedDesc === 'ALL'){
+      getExpenses();
+    }
+    else{
+      getExpensesCurrent(selectedDesc);
+    }
+  };
+
+  console.log(inputFilterRefCompte.current?.value);
   useEffect(() => {
     getExpenses();
     getCategories();
@@ -266,7 +294,8 @@ export default function Expenses() {
         inputRefCompte.current?.removeEventListener('change', handleCompteChange);
       };
     }
-  }, [inputRefCompte.current]);
+    
+  }, [inputRefCompte.current, inputFilterRefCompte.current]);
   
     return (
         <div>
@@ -279,6 +308,14 @@ export default function Expenses() {
                       {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
                     </div>
                     <div className="main-section">
+                      <div className="table-filter">
+                        <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
+                          {comptes.map((compte, index) => (
+                            <option key={index} value={compte.description}>{compte.description}</option>
+                          ))}
+                          <option value="ALL">Tous</option>
+                        </select>   
+                      </div>
                       <div className="list-block list-view">
                         <table className='list-table'>
                           <thead>
