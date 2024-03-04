@@ -9,6 +9,7 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormExpense from '@/src/components/expense/FormExpense';
 import { formatNumber, formatDate } from '@/src/data/function';
 import { useEffect, useState, useRef } from 'react';
+import { log } from 'console';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -131,6 +132,13 @@ export default function Expenses() {
     compte.idCompte
   ))
 
+  const handleCompteChange = () => {
+    const selectedDesc = inputRefCompte.current?.value || '';
+    getIDCOmpteBYDesc(selectedDesc);
+  };
+
+  
+  
   async function addExpenses() {
 
     const postData = {
@@ -143,7 +151,7 @@ export default function Expenses() {
         valueExpenses: inputRefValue.current?.value,
         dateExpenses: inputRefDate.current?.value,  
         categoryExpenses: inputRefCategory.current?.value,
-        idCompte: dataCOmpteI
+        idCompte: dataCOmpteI ? dataCOmpteI[0] : 1
       })
     };
     const res = await fetch(`api/expense`, postData);
@@ -157,6 +165,20 @@ export default function Expenses() {
     if (inputRefValue.current) inputRefValue.current.value = "";
     if (inputRefDate.current) inputRefDate.current.value = "";
     if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
+    if (inputRefCompte.current) {
+      const postData2 = {
+        method: "GET",
+        headers: {
+        "Content-Type": "application/json",
+        },
+      };
+      inputRefCompte.current.value = dataCompte[0];
+      const encodedDesc = encodeURIComponent(inputRefCompte.current.value);
+      const res1 = await fetch(`api/compte?type=UNIQUE&desc=${encodedDesc}`, postData2);
+      const response1 = await res1.json();
+      const compteArray1: CompteType[] = Object.values(response1.comptes);
+      setCompteI(compteArray1);
+    }
 
     // Now, fetch the updated expenses
     getExpenses();
@@ -183,16 +205,18 @@ export default function Expenses() {
   }
 
   async function getIDCOmpteBYDesc(desc: string) {
+    const encodedDesc = encodeURIComponent(desc);
     const postData = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     };
-    const res = await fetch(`api/compte?type=UNIQUE&desc=${desc}`, postData);
+    const res = await fetch(`api/compte?type=UNIQUE&desc=${encodedDesc}`, postData);
     const response = await res.json();
     const compteArray: CompteType[] = Object.values(response.comptes);
     setCompteI(compteArray);
+    console.log(compteArray);
   }
 
   async function getComptes() {
@@ -236,8 +260,13 @@ export default function Expenses() {
     getExpenses();
     getCategories();
     getComptes();
-    getIDCOmpteBYDesc(inputRefCompte.current?.value ?? ' ');
-  }, []);
+    if (inputRefCompte.current) {
+      inputRefCompte.current.addEventListener('change', handleCompteChange);
+      return () => {
+        inputRefCompte.current?.removeEventListener('change', handleCompteChange);
+      };
+    }
+  }, [inputRefCompte.current]);
   
     return (
         <div>

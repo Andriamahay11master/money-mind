@@ -17,11 +17,11 @@ export default async function handler(req:any, res:any) {
           return;
         }
         
-        const expenseUnique = await query({
+        const compteUnique = await query({
           sql: "SELECT idCompte, description FROM compte WHERE description like ?",
           values:[ valDesc ]
         });
-        res.status(200).json({ expenses: expenseUnique })
+        res.status(200).json({ comptes: compteUnique })
         
       }
         const comptes = await query({
