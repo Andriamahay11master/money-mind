@@ -29,20 +29,53 @@ export default function Home() {
     totalExpenses: number;
   }
 
+  interface CompteType {
+    idCompte: number;
+    description: string;
+  }
+
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
   const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);
   const [expensesTC, setExpensesTC] = React.useState(Array<TopExpenseCatType>);
+  const [comptes, setComptes] = React.useState(Array<CompteType>);
+  const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
 
 
   //List 5 last Expense
-  async function getLastFiveExpenses() {
+  async function getLastFiveExpensesCurrent(valAccount: string) {
     const postData = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     };
-    const res = await fetch(`api/expense?type=LAST_5`, postData);
+    const res = await fetch(`api/expense?type=LAST_5&valAccount=${valAccount}`, postData);
+    const response = await res.json();
+    const expensesArray: ExpenseType[] = Object.values(response.expenses);
+    setExpenses(expensesArray);
+  }
+
+  async function getComptes() {
+    const postData = {
+        method: "GET",
+        headers: {
+        "Content-Type": "application/json",
+        },
+    };
+    const res = await fetch(`api/compte`, postData);
+    const response = await res.json();
+    const comptesArray: CompteType[] = Object.values(response.comptes);
+    setComptes(comptesArray);
+}
+
+  async function getLastFiveExpensesAll() {
+    const postData = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await fetch(`api/expense?type=LAST_5_ALL`, postData);
     const response = await res.json();
     const expensesArray: ExpenseType[] = Object.values(response.expenses);
     setExpenses(expensesArray);
@@ -177,13 +210,22 @@ export default function Home() {
     '#5B5B5B'
   ];
 
-  
+  const handleFilterCompteChange = () => {
+    const selectedDesc = inputFilterRefCompte.current?.value || '';
+    if(selectedDesc === 'ALL'){
+      getLastFiveExpensesAll();
+    }
+    else{
+      getLastFiveExpensesCurrent(selectedDesc);
+    }
+  };
 
   React.useEffect(() => {
-    getLastFiveExpenses();
+    getLastFiveExpensesAll();
     getMonthExpense(2);
     getTopExpenseCategories();
-  }, []);
+    getComptes();
+  }, [inputFilterRefCompte.current]);
 
   return (
     <>
@@ -191,6 +233,14 @@ export default function Home() {
       <main className='main-page'>
         <div className="container">
           <Breadcrumb items={itemsBreadcrumb}/>
+          <div className="choice-compte">
+            <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
+              {comptes.map((compte, index) => (
+                <option key={index} value={compte.description}>{compte.description}</option>
+              ))}
+              <option value="ALL">Tous</option>
+            </select>   
+          </div>
           <section className="main-section listKpi">
             {kpi.map((item, index) => (
               <Kpi key={index} title={item.title} value={item.value}/>

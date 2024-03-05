@@ -12,8 +12,23 @@ export default async function handler(req:any, res:any) {
     let message;
     if( req.method === 'GET') {
       if(req.query.type === 'LAST_5'){
+        const valAccount = req.query.valAccount;
+        if (!valAccount) {
+          res.status(400).json({
+            response: "error",
+            error: "Invalid month value provided",
+          });
+          return;
+        }
         const Last5Expenses = await query({
-          sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses ORDER BY idExpenses DESC LIMIT 5",
+          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense` where compteDescription like ? ORDER BY idExpenses DESC LIMIT 5",
+          values:[valAccount]
+        });
+        res.status(200).json({ expenses: Last5Expenses })
+      }
+      else if(req.query.type === 'LAST_5_ALL'){
+        const Last5Expenses = await query({
+          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense` ORDER BY idExpenses DESC LIMIT 5",
           values:[]
         });
         res.status(200).json({ expenses: Last5Expenses })
