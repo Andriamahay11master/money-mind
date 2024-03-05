@@ -1,2 +1,55 @@
 @import "../../assets/scss/common/variable";
 @import "../../assets/scss/common/mixins";
+
+.chart-expense-block{
+    .chart-list{
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        column-gap: 3%;
+        height: 300px;
+        align-items: end;
+        .chart-item{
+            animation: heightT 0.7s ease 0.2s;
+            p{
+                color: #FFF;
+                font-size: 12px;
+                text-align: center; 
+                margin-top: 10px;
+            }
+        }
+    }   
+    .chart-legend{
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        column-gap: 20px;
+        padding:20px 0px;
+        @include max(575px){
+            grid-template-columns: repeat(3, 1fr);
+            row-gap: 20px;
+        }
+        .chart-legend-item{
+            display: flex;
+            align-items: center;
+            .chart-legend-color{
+                width: 15px;
+                height: 15px;
+                border-radius: 100%;
+                margin-right: 5px;
+            }
+            p{
+                font-size: 12px;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+//create animation height 0 to 100%
+@keyframes heightT {
+    0%{
+        height: 0;
+    }
+    100%{
+        max-height: 100%;
+    }
+}

@@ -1,7 +1,7 @@
 "use client"
-import React, { useState, useEffect } from 'react';
-import { Chart } from 'primereact/chart';
+import React from 'react';
 import './chartExpense.scss';
+import {formatNumber} from '../../data/function';
 
 interface ChartExpenseProps {
     listCategory : string[]
@@ -10,39 +10,29 @@ interface ChartExpenseProps {
     listColorHover : string[]
 }
 export default function ChartExpense({listCategory, listData, listColor} : ChartExpenseProps) {
-    const [chartData, setChartData] = useState({});
-    const [chartOptions, setChartOptions] = useState({});
-
-    useEffect(() => {
-        const data = {
-            labels: listCategory,
-            datasets: [
-                {
-                    data: listData,
-                    backgroundColor: listColor,
-                    hoverBackgroundColor: listColor.map(color => color.replace('0.7', '1'))
-                }
-            ]
-        }
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: {
-                        usePointStyle: true
-                    }
-                }
-            }
-        };
-
-        setChartData(data);
-        setChartOptions(options);
-    }, []);
-
+    const maxHeight = 300;
     return (
         <div className="chart-expense-block">
-            <Chart type="pie" data={chartData} options={chartOptions} className="w-full md:w-30rem" />
+            <div className="chart-legend">
+                {listCategory.map((item, index) => (
+                    <div key={index} className="chart-legend-item">
+                        <span className='chart-legend-color' style={{backgroundColor: listColor[index]}}></span>
+                        <p>{item}</p>
+                    </div>
+                ))}
+            </div>
+            <div className="chart-list">
+                {listData.map((item, index) => {
+                    const percentageHeight = (item / Math.max(...listData)) * 100;
+                    const calculatedHeight = (percentageHeight / 100) * maxHeight;
+                    return (
+                        <div key={index} className="chart-item" style={{height: calculatedHeight + 'px', backgroundColor: listColor[index]}}>
+                        <p>{formatNumber(item.toString())} Ariary</p>
+                    </div>
+                    )
+                }
+                )}
+            </div>
         </div>
     )
 }
