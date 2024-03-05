@@ -83,7 +83,7 @@ export default function Home() {
   }
 
   //List Expense Month selected
-  async function getMonthExpense(valMonth: number) {
+  async function getMonthExpense(valMonth: string) {
     const postData = {
       method: "GET",
       headers: {
@@ -91,6 +91,20 @@ export default function Home() {
       },
     };
     const res = await fetch(`api/expense?type=MONTH&valMonth=${valMonth}`, postData);
+    const response = await res.json();
+    const expensesArray: ExpenseType[] = Object.values(response.expenses);
+    setExpensesM(expensesArray);
+  }
+
+  // All expense 
+  async function getMonthExpenseDefault() {
+    const postData = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await fetch(`api/expense`, postData);
     const response = await res.json();
     const expensesArray: ExpenseType[] = Object.values(response.expenses);
     setExpensesM(expensesArray);
@@ -191,16 +205,19 @@ export default function Home() {
   //data KPI 
   const kpi = [
     {
-      title: `${t('kpi.0.title')}`,
-      value: formatNumber(balance)
+      title: inputFilterRefCompte.current?.value === 'ALL' ? `${t('kpi.nbCompte')}` : `${t('kpi.0.title')}`,
+      value: inputFilterRefCompte.current?.value === 'ALL' ? `${comptes.length}` : formatNumber(balance),
+      currency: inputFilterRefCompte.current?.value === 'ALL' ? '' : 'Ariary'
     },
     {
       title: `${t('kpi.1.title')}`,
-      value: sumAmount ? formatNumber(sumAmount.toString()) : '0'
+      value: sumAmount ? formatNumber(sumAmount.toString()) : '0',
+      currency: 'Ariary'
     },
     {
       title: `${t('kpi.2.title')}`,
-      value: sumAmount ? formatNumber(getRemainingBalance(balance, sumAmount.toString()).toString()) : formatNumber(balance)
+      value: sumAmount ? formatNumber(getRemainingBalance(balance, sumAmount.toString()).toString()) : formatNumber(balance),
+      currency: 'Ariary'
     }
   ];
 
@@ -231,17 +248,19 @@ export default function Home() {
     if(selectedDesc === 'ALL'){
       getLastFiveExpensesAll();
       getTopExpenseCategories();
+      getMonthExpenseDefault();
     }
     else{
       getLastFiveExpensesCurrent(selectedDesc);
       getTopExpenseCategoriesCurrent(selectedDesc);
+      getMonthExpense(selectedDesc);
     }
   };
 
   React.useEffect(() => {
     getLastFiveExpensesAll();
     getTopExpenseCategories();
-    getMonthExpense(2);
+    getMonthExpenseDefault();
     getComptes();
   }, [inputFilterRefCompte.current]);
 
@@ -261,7 +280,7 @@ export default function Home() {
           </div>
           <section className="main-section listKpi">
             {kpi.map((item, index) => (
-              <Kpi key={index} title={item.title} value={item.value}/>
+              <Kpi key={index} title={item.title} value={item.value} currency={item.currency}/>
             ))}
           </section>
           <section className='main-section detailKpi'>

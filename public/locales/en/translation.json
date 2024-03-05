@@ -78,6 +78,7 @@
       "copyright": "made by"
     },
     "kpi":{
+      "nbCompte": "Number of accounts",
       "0":{
         "title": "Monthly balance"
       },

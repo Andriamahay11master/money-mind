@@ -78,6 +78,7 @@
       "copyright": "Développé par"
     },
     "kpi":{
+      "nbCompte": "Nombre de comptes",
       "0":{
         "title": "Solde mensuel"
       },

@@ -44,7 +44,7 @@ export default async function handler(req:any, res:any) {
         }
         
         const expenseMonth = await query({
-          sql: "SELECT idExpenses, descriptionForm, valueExpenses, dateExpenses, categoryExpenses FROM expenses WHERE MONTH(dateExpenses) = ?",
+          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense` where compteDescription like ? ",
           values:[ valMonth ]
         });
         res.status(200).json({ expenses: expenseMonth })
