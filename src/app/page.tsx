@@ -180,10 +180,6 @@ export default function Home() {
     {
         name: `${t('menu.about')}`,
         href: '/expenses'
-    } ,
-    {
-        name: `${t('menu.projects')}`,
-        href: '/statistics'
     },
     {
         name: `${t('menu.compte')}`,

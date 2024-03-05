@@ -32,10 +32,6 @@ export default function Compte(){
         {
             name: `${t('menu.about')}`,
             href: '/expenses'
-        } ,
-        {
-            name: `${t('menu.projects')}`,
-            href: '/statistics'
         }, 
         {
             name: `${t('menu.compte')}`,

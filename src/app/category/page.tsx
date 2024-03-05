@@ -33,10 +33,6 @@ export default function Category(){
         {
             name: `${t('menu.about')}`,
             href: '/expenses'
-        } ,
-        {
-            name: `${t('menu.projects')}`,
-            href: '/statistics'
         },
         {
             name: `${t('menu.compte')}`,
