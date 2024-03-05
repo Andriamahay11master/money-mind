@@ -39,6 +39,7 @@ export default function Home() {
   const [expensesTC, setExpensesTC] = React.useState(Array<TopExpenseCatType>);
   const [comptes, setComptes] = React.useState(Array<CompteType>);
   const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
+  const [counter, setCounter] = React.useState(0);
 
 
   //List 5 last Expense
@@ -95,7 +96,7 @@ export default function Home() {
     setExpensesM(expensesArray);
   }
 
-  //List Sum Expense by category 
+  //List Sum Expense by category all compte
   async function getTopExpenseCategories() {
     const postData = {
       method: "GET",
@@ -104,6 +105,20 @@ export default function Home() {
       },
     };
     const res = await fetch(`api/expense?type=CATEGORY`, postData);
+    const response = await res.json();
+    const expensesArray: TopExpenseCatType[] = Object.values(response.expenses);
+    setExpensesTC(expensesArray);
+  }
+
+  //List Sum Expense by category by chosen Compte
+  async function getTopExpenseCategoriesCurrent(valAccount: string) {
+    const postData = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await fetch(`api/expense?type=CATEGORY_CURRENT&valAccount=${valAccount}`, postData);
     const response = await res.json();
     const expensesArray: TopExpenseCatType[] = Object.values(response.expenses);
     setExpensesTC(expensesArray);
@@ -212,18 +227,21 @@ export default function Home() {
 
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value || '';
+    setCounter(counter + 1);
     if(selectedDesc === 'ALL'){
       getLastFiveExpensesAll();
+      getTopExpenseCategories();
     }
     else{
       getLastFiveExpensesCurrent(selectedDesc);
+      getTopExpenseCategoriesCurrent(selectedDesc);
     }
   };
 
   React.useEffect(() => {
     getLastFiveExpensesAll();
-    getMonthExpense(2);
     getTopExpenseCategories();
+    getMonthExpense(2);
     getComptes();
   }, [inputFilterRefCompte.current]);
 

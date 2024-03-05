@@ -58,6 +58,22 @@ export default async function handler(req:any, res:any) {
         res.status(200).json({ expenses: expenseCat })
         
       }
+      else if(req.query.type === 'CATEGORY_CURRENT'){
+        const valAccount = req.query.valAccount;
+        if (!valAccount) {
+          res.status(400).json({
+            response: "error",
+            error: "Invalid month value provided",
+          });
+          return;
+        }
+        const expenseCat = await query({
+          sql: "SELECT categoryExpenses, SUM(valueExpenses) AS totalExpenses FROM compteexpense WHERE compteDescription like ? GROUP BY categoryExpenses ORDER BY totalExpenses DESC LIMIT 5",
+          values:[valAccount]
+        });
+        res.status(200).json({ expenses: expenseCat })
+        
+      }
       else if(req.query.type === 'ACCOUNT'){
         const valAccount = req.query.valAccount;
         if (!valAccount) {

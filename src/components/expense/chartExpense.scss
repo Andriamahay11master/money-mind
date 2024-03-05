@@ -6,14 +6,16 @@
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         column-gap: 3%;
-        height: 300px;
+        max-height: 300px;
         align-items: end;
         .chart-item{
             animation: heightT 0.7s ease 0.2s;
             p{
-                color: #FFF;
+                color: $white-f7;
                 font-size: 12px;
-                text-align: center; 
+                text-align: center;
+            }
+            .chart-item-text{
                 margin-top: 10px;
             }
         }
