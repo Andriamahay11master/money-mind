@@ -34,7 +34,7 @@ export default function Footer({desc, title, copyright} : FooterProps) {
             <div className="footerCopyright">
                 <div className="cntCopyright">
                     <div className="itemCol"> 
-                        <p>2024 © {copyright} <Link href="/" className='copyRightLink'>IRIMANANA Henikaja Andriamahay </Link></p>
+                        <p>2024 © {copyright} <Link href="https://andriamahay-irimanana.vercel.app/" target='_blank' className='copyRightLink'>IRIMANANA Henikaja Andriamahay </Link></p>
                     </div>
                 </div>
             </div>

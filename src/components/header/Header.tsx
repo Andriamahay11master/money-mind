@@ -57,10 +57,6 @@ export default function Header({linkMenu} : HeaderProps) {
                 <div className="container-transverse">
                     <div className="headerTopContent">
                         <div className="headerTopCol">
-                            <div className="header-reseau-sociaux">
-                                <Link className="header-rs-link" href="https://wwww.facebook.fr" target='_blank' title='Profil Facebook'><i className="icon-fb"></i></Link>
-                                <Link className="header-rs-link" href="https://www.linkedin.com/in/andriamahay-henikaja-irimanana/" target='_blank' title='Profil LinkedIn'><i className="icon-linkedin"></i></Link>
-                            </div>
                         </div>
                         <div className="headerTopCol">
                             <div className="dropdown-language" onClick={() => setLang(!lang)}>
@@ -118,10 +114,6 @@ export default function Header({linkMenu} : HeaderProps) {
                         </div>
 
                         <div className="block-bottom-mobile">
-                            <div className="header-reseau-sociaux">
-                                <Link className="header-rs-link" href="https://www.facebook.com" target='_blank' title='Profil Facebook'><i className="icon-fb"></i></Link>
-                                <Link className="header-rs-link" href="https://www.linkedin.com/in/andriamahay-henikaja-irimanana/" target='_blank' title='Profil LinkedIn'><i className="icon-linkedin"></i></Link>
-                            </div>
                             <div className="list-language">
                                 <button className={`list-language-link ${!langMobile ? 'active' : ''}`} onClick={() => changeLanguageMobile('en') }>EN</button>
                                 <button className={`list-language-link ${langMobile ? 'active' : ''}`} onClick={() => changeLanguageMobile('fr')}>FR</button>
