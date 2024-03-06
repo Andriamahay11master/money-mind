@@ -5,12 +5,7 @@ const pool = createPool({
   connectionString: process.env.POSTGRES_URL,
 });
 
-interface CompteTableType {
-  description: string;
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  let message;
 
   if (req.method === "GET") {
     if (req.query.type === "UNIQUE") {

@@ -9,19 +9,18 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormExpense from '@/src/components/expense/FormExpense';
 import { formatNumber, formatDate } from '@/src/data/function';
 import { useEffect, useState, useRef } from 'react';
-import { log } from 'console';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
 
     interface ExpenseType {
-      idExpenses: number;
-      descriptionForm: string;
-      dateExpenses: string;
-      categoryExpenses: string;
-      valueExpenses: number;
-      idCompte: number;
-      compteDescription: string;
+      idexpenses: number;
+      descriptionform: string;
+      dateexpenses: string;
+      categoryexpenses: string;
+      valueexpenses: number;
+      idcompte: number;
+      comptedescription: string;
     }
 
     interface CategoryType {
@@ -30,7 +29,7 @@ export default function Expenses() {
     }
 
     interface CompteType {
-      idCompte: number;
+      idcompte: number;
       description: string;
     }
 
@@ -109,12 +108,12 @@ export default function Expenses() {
     const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
  
   const dataList2 = Object.values(expenses).map((expense) => ({
-    idExpenses: expense["idExpenses"],
-    descriptionForm: expense["descriptionForm"],
-    dateExpenses: formatDate(expense["dateExpenses"]),
-    categoryExpenses: expense["categoryExpenses"],
-    valueExpenses: expense["valueExpenses"],
-    compteDescrition: expense["compteDescription"]
+    idexpenses: expense["idexpenses"],
+    descriptionform: expense["descriptionform"],
+    dateexpenses: formatDate(expense["dateexpenses"]),
+    categoryexpenses: expense["categoryexpenses"],
+    valueexpenses: expense["valueexpenses"],
+    comptedescrition: expense["comptedescription"]
   }))
 
   const dataCategory = Object.values(categories).map((category) => (
@@ -126,12 +125,12 @@ export default function Expenses() {
   ))
 
   const dataCOmpteI = Object.values(comptesI).map((compte) => (
-    compte.idCompte
+    compte.idcompte
   ))
 
   const handleCompteChange = () => {
     const selectedDesc = inputRefCompte.current?.value || '';
-    getIDCOmpteBYDesc(selectedDesc);
+    getidcompteBYDesc(selectedDesc);
   };
 
   
@@ -144,14 +143,14 @@ export default function Expenses() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        descriptionForm: inputRefDescription.current?.value,
-        valueExpenses: inputRefValue.current?.value,
-        dateExpenses: inputRefDate.current?.value,  
-        categoryExpenses: inputRefCategory.current?.value,
-        idCompte: dataCOmpteI ? dataCOmpteI[0] : 1
+        descriptionform: inputRefDescription.current?.value,
+        valueexpenses: inputRefValue.current?.value,
+        dateexpenses: inputRefDate.current?.value,  
+        categoryexpenses: inputRefCategory.current?.value,
+        idcompte: dataCOmpteI ? dataCOmpteI[0] : 1
       })
     };
-    const res = await fetch(`api/expense`, postData);
+    const res = await fetch(`api/addExpense?desc=${inputRefDescription.current?.value}&value=${inputRefValue.current?.value}&date=${inputRefDate.current?.value}&category=${inputRefCategory.current?.value}&accountId=${dataCOmpteI ? dataCOmpteI[0] : 1}`, postData);
     const response = await res.json();
     //Update list expense
     setExpenses(response.expenses);
@@ -188,20 +187,19 @@ export default function Expenses() {
   }
 
   async function getExpenses() {
-    const offset = (currentPage - 1) * itemsPerPage;
     const postData = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     };
-    const res = await fetch(`api/expense?offset=${offset}&limit=${itemsPerPage}`, postData);
+    const res = await fetch(`api/expense`, postData);
     const response = await res.json();
     const expensesArray: ExpenseType[] = Object.values(response.expenses);
     setExpenses(expensesArray);
   }
 
-  async function getIDCOmpteBYDesc(desc: string) {
+  async function getidcompteBYDesc(desc: string) {
     const encodedDesc = encodeURIComponent(desc);
     const postData = {
       method: "GET",
@@ -232,14 +230,13 @@ export default function Expenses() {
 
 //Compte courant
 async function getExpensesCurrent(valAccount: string) {
-  const offset = (currentPage - 1) * itemsPerPage;
   const postData = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   };
-  const res = await fetch(`api/expense?type=ACCOUNT&valAccount=${valAccount}&offset=${offset}&limit=${itemsPerPage}`, postData);
+  const res = await fetch(`api/expense?type=ACCOUNT&valAccount=${valAccount}`, postData);
   const response = await res.json();
   const expensesArray: ExpenseType[] = Object.values(response.expenses);
   setExpenses(expensesArray);
@@ -271,6 +268,7 @@ async function getExpensesCurrent(valAccount: string) {
 
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value || '';
+    setCurrentPage(1);
     if(selectedDesc === 'ALL'){
       getExpenses();
     }
@@ -327,12 +325,12 @@ async function getExpensesCurrent(valAccount: string) {
                           <tbody>
                           {dataList2.slice(startIndex, endIndex).map((list, index) => (
                             <tr key={index}>
-                                <td>{list.idExpenses}</td>
-                                <td>{list.descriptionForm}</td>
-                                <td>{list.valueExpenses ? formatNumber(list.valueExpenses.toString()) + ' Ar' : 'N/A'}</td>
-                                <td>{list.dateExpenses}</td>
-                                <td>{list.categoryExpenses}</td>
-                                <td>{list.compteDescrition}</td>
+                                <td>{list.idexpenses}</td>
+                                <td>{list.descriptionform}</td>
+                                <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
+                                <td>{list.dateexpenses}</td>
+                                <td>{list.categoryexpenses}</td>
+                                <td>{list.comptedescrition}</td>
                             </tr>
                           ))}
                           </tbody>

@@ -1,14 +1,11 @@
-import { query } from "../../lib/db";
+import { createPool } from "@vercel/postgres";
+import { NextApiResponse, NextApiRequest } from 'next';
 
-interface ExpenseTableType {
-    descriptionForm: string,
-    valueExpenses: number,
-    dateExpenses: Date
-    categoryExpenses: string,
-    idCompte: number
-}
+const sql = createPool({
+  connectionString: process.env.POSTGRES_URL,
+});
 
-export default async function handler(req:any, res:any) {
+export default async function handler(req:NextApiRequest, res:NextApiResponse) {
     let message;
     if( req.method === 'GET') {
       if(req.query.type === 'LAST_5'){
@@ -20,18 +17,17 @@ export default async function handler(req:any, res:any) {
           });
           return;
         }
-        const Last5Expenses = await query({
-          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense` where compteDescription like ? ORDER BY idExpenses DESC LIMIT 5",
+        const Last5Expenses = await sql.query({
+          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription ILIKE $1 ORDER BY idexpenses DESC LIMIT 5",
           values:[valAccount]
         });
-        res.status(200).json({ expenses: Last5Expenses })
+        res.status(200).json({ expenses: Last5Expenses.rows })
       }
       else if(req.query.type === 'LAST_5_ALL'){
-        const Last5Expenses = await query({
-          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense` ORDER BY idExpenses DESC LIMIT 5",
-          values:[]
+        const Last5Expenses = await sql.query({
+          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense ORDER BY idexpenses DESC LIMIT 5;",
         });
-        res.status(200).json({ expenses: Last5Expenses })
+        res.status(200).json({ expenses: Last5Expenses.rows })
       }
       else if(req.query.type === 'MONTH'){
         const valMonth = req.query.valMonth;
@@ -43,19 +39,19 @@ export default async function handler(req:any, res:any) {
           return;
         }
         
-        const expenseMonth = await query({
-          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense` where compteDescription like ? ",
+        const expenseMonth = await sql.query({
+          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription ILIKE $1 ",
           values:[ valMonth ]
         });
-        res.status(200).json({ expenses: expenseMonth })
+        res.status(200).json({ expenses: expenseMonth.rows })
         
       }
       else if(req.query.type === 'CATEGORY'){
         
-        const expenseCat = await query({
-          sql: "SELECT categoryExpenses, SUM(valueExpenses) AS totalExpenses FROM expenses GROUP BY categoryExpenses ORDER BY totalExpenses DESC LIMIT 5",
+        const expenseCat = await sql.query({
+          text: "SELECT categoryexpenses, SUM(valueexpenses) AS totalexpenses FROM expenses GROUP BY categoryexpenses ORDER BY totalexpenses DESC LIMIT 5",
         });
-        res.status(200).json({ expenses: expenseCat })
+        res.status(200).json({ expenses: expenseCat.rows })
         
       }
       else if(req.query.type === 'CATEGORY_CURRENT'){
@@ -67,11 +63,11 @@ export default async function handler(req:any, res:any) {
           });
           return;
         }
-        const expenseCat = await query({
-          sql: "SELECT categoryExpenses, SUM(valueExpenses) AS totalExpenses FROM compteexpense WHERE compteDescription like ? GROUP BY categoryExpenses ORDER BY totalExpenses DESC LIMIT 5",
+        const expenseCat = await sql.query({
+          text: "SELECT categoryexpenses, SUM(valueexpenses) AS totalexpenses FROM compteexpense WHERE comptedescription ILIKE $1 GROUP BY categoryexpenses ORDER BY totalexpenses DESC LIMIT 5",
           values:[valAccount]
         });
-        res.status(200).json({ expenses: expenseCat })
+        res.status(200).json({ expenses: expenseCat.rows })
         
       }
       else if(req.query.type === 'ACCOUNT'){
@@ -83,49 +79,19 @@ export default async function handler(req:any, res:any) {
           });
           return;
         }
-        const expenses = await query({
-          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense` where `compteDescription` like ?",
+        const expenses = await sql.query({
+          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription like $1 ORDER BY idexpenses ASC",
           values:[valAccount]
         })
-        res.status(200).json({ expenses: expenses })
+        res.status(200).json({ expenses: expenses.rows })
       }
       else{
-        const expenses = await query({
-          sql: "SELECT `idExpenses`, `descriptionForm`, `valueExpenses`, `dateExpenses`, `categoryExpenses`, `idCompte`, `compteDescription` FROM `compteexpense`",
-          values:[]
+        const expenses = await sql.query({
+          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense ORDER BY idexpenses ASC",
         })
-        res.status(200).json({ expenses: expenses })
+        res.status(200).json({ expenses: expenses.rows })
       }
         
     }
-
-
-    //give the code for add expenses
-    else if (req.method === "POST") {
-        try {
-          const { descriptionForm, valueExpenses, dateExpenses, categoryExpenses, idCompte } = req.body;
-          const addExpenses = await query({
-            sql: "INSERT INTO expenses (descriptionForm, valueExpenses, dateExpenses, categoryExpenses, idCompte) VALUES (?, ?, ?, ?, ?)",
-            values: [descriptionForm, valueExpenses, dateExpenses, categoryExpenses, idCompte]
-          });
-          let expense = {} as ExpenseTableType;
-          if (addExpenses) {
-            message = "success";
-          } else {
-            message = "error";
-          }
-          expense = {
-            descriptionForm: descriptionForm,
-            valueExpenses: parseInt(valueExpenses),
-            dateExpenses: new Date(),
-            categoryExpenses: categoryExpenses,
-            idCompte: parseInt(idCompte)
-          } 
-          res.status(200).json({ response: message, expenses: expense });
-        } catch (error) {
-          res.status(500).json({ response: "error", error: "Internal Server Error" });
-          console.log("Error while processing POST request:", error);
-        }
-      }
-    }      
+}      
   
