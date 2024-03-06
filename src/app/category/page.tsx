@@ -16,7 +16,7 @@ export default function Category(){
 
     //interface CategoryType
     interface CategoryType {
-        idCategory: number;
+        idcategory: number;
         description: string;
       }
 
@@ -77,7 +77,7 @@ export default function Category(){
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
     const dataList = Object.values(categories).map((category) => ({
-        idCategory: category["idCategory"],
+        idcategory: category["idcategory"],
         description: category["description"]
     }));
 
@@ -91,7 +91,7 @@ export default function Category(){
             description: inputRefDescription.current?.value,
           })
         };
-        const res = await fetch(`api/category`, postData);
+        const res = await fetch(`/api/addCategory?description=${inputRefDescription.current?.value}`, postData);
         const response = await res.json();
         //Update list category
         setCategory(response.categories);
@@ -111,14 +111,13 @@ export default function Category(){
       }
 
     async function getCategories() {
-        const offset = (currentPage - 1) * itemsPerPage;
         const postData = {
             method: "GET",
             headers: {
             "Content-Type": "application/json",
             },
         };
-        const res = await fetch(`api/category?offset=${offset}&limit=${itemsPerPage}`, postData);
+        const res = await fetch(`api/category`, postData);
         const response = await res.json();
         const categoriesArray: CategoryType[] = Object.values(response.categories);
         setCategory(categoriesArray);
@@ -158,9 +157,9 @@ export default function Category(){
                                 </tr>
                             </thead>
                             <tbody>
-                            {dataList.slice(startIndex, endIndex).map((list, index) => (
+                            {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
                                 <tr key={index}>
-                                    <td>{list.idCategory}</td>
+                                    <td>{list.idcategory}</td>
                                     <td>{list.description}</td>
                                 </tr>
                             ))}

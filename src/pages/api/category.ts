@@ -1,42 +1,15 @@
-import { query } from "../../lib/db";
+import { createPool } from "@vercel/postgres";
+import { NextApiResponse, NextApiRequest } from 'next';
 
-interface CategoryTableType {
-    description: string,
-}
-
-export default async function handler(req:any, res:any) {
-    let message;
+const sql = createPool({
+  connectionString: process.env.POSTGRES_URL,
+})
+export default async function handler(req:NextApiRequest, res:NextApiResponse) {
     if( req.method === 'GET') {
-        const categories = await query({
-            sql: "SELECT idCategory, description FROM category",
-            values:[]
+        const categories = await sql.query({
+            text: "SELECT idcategory, description FROM category ORDER BY idcategory ASC ",
         })
-        res.status(200).json({ categories: categories })
+        res.status(200).json({ categories: categories.rows })
     }
-
-
-    //give the code for add category
-    else if (req.method === "POST") {
-        try {
-          const { description } = req.body;
-          const addCategory = await query({
-            sql: "INSERT INTO category (description) VALUES (?)",
-            values: [description]
-          });
-          let category = {} as CategoryTableType;
-          if (addCategory) {
-            message = "success";
-          } else {
-            message = "error";
-          }
-          category = {
-            description: description,
-          } 
-          res.status(200).json({ response: message, categories: category });
-        } catch (error) {
-          res.status(500).json({ response: "error", error: "Internal Server Error" });
-          console.error("Error while processing POST request:", error);
-        }
-      }
-    }      
+  }      
   
