@@ -9,13 +9,14 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import { formatNumber } from '@/src/data/function';
 import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState, useRef } from 'react';
+import { sql } from "@vercel/postgres";
 
 export default function Compte(){
     const { t } = useTranslation('translation');
 
     //interface CompteType
     interface CompteType {
-        idCompte: number;
+        idcompte: number;
         description: string;
       }
 
@@ -76,7 +77,7 @@ export default function Compte(){
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
     const dataList = Object.values(comptes).map((compte) => ({
-        idCompte: compte["idCompte"],
+        idcompte: compte["idcompte"],
         description: compte["description"]
     }));
 
@@ -90,9 +91,8 @@ export default function Compte(){
             description: inputRefDescription.current?.value,
           })
         };
-        const res = await fetch(`api/compte`, postData);
+        const res = await fetch(`api/addCompte?desc=${inputRefDescription.current?.value}`, postData);
         const response = await res.json();
-        //Update list compte
         setCompte(response.comptes);
     
     
@@ -157,9 +157,9 @@ export default function Compte(){
                                 </tr>
                             </thead>
                             <tbody>
-                            {dataList.slice(startIndex, endIndex).map((list, index) => (
+                            {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
                                 <tr key={index}>
-                                    <td>{list.idCompte}</td>
+                                    <td>{list.idcompte}</td>
                                     <td>{list.description}</td>
                                 </tr>
                             ))}
