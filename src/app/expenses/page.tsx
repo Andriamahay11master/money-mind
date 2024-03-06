@@ -113,7 +113,7 @@ export default function Expenses() {
     dateexpenses: formatDate(expense["dateexpenses"]),
     categoryexpenses: expense["categoryexpenses"],
     valueexpenses: expense["valueexpenses"],
-    comptedescrition: expense["comptedescription"]
+    comptedescription: expense["comptedescription"]
   }))
 
   const dataCategory = Object.values(categories).map((category) => (
@@ -323,14 +323,14 @@ async function getExpensesCurrent(valAccount: string) {
                             </tr>
                           </thead>
                           <tbody>
-                          {dataList2.slice(startIndex, endIndex).map((list, index) => (
+                          {dataList2 && dataList2.slice(startIndex, endIndex).map((list, index) => (
                             <tr key={index}>
                                 <td>{list.idexpenses}</td>
                                 <td>{list.descriptionform}</td>
                                 <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
                                 <td>{list.dateexpenses}</td>
                                 <td>{list.categoryexpenses}</td>
-                                <td>{list.comptedescrition}</td>
+                                <td>{list.comptedescription}</td>
                             </tr>
                           ))}
                           </tbody>

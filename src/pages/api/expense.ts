@@ -6,7 +6,6 @@ const sql = createPool({
 });
 
 export default async function handler(req:NextApiRequest, res:NextApiResponse) {
-    let message;
     if( req.method === 'GET') {
       if(req.query.type === 'LAST_5'){
         const valAccount = req.query.valAccount;
@@ -40,7 +39,7 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
         }
         
         const expenseMonth = await sql.query({
-          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription ILIKE $1 ",
+          text: "SELECT idexpenses, descriptionform, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription ILIKE $1 ",
           values:[ valMonth ]
         });
         res.status(200).json({ expenses: expenseMonth.rows })
@@ -80,14 +79,14 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
           return;
         }
         const expenses = await sql.query({
-          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription like $1 ORDER BY idexpenses ASC",
+          text: "SELECT idexpenses, descriptionform, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription like $1 ORDER BY idexpenses ASC",
           values:[valAccount]
         })
         res.status(200).json({ expenses: expenses.rows })
       }
       else{
         const expenses = await sql.query({
-          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense ORDER BY idexpenses ASC",
+          text: "SELECT idexpenses, descriptionform, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense ORDER BY idexpenses ASC",
         })
         res.status(200).json({ expenses: expenses.rows })
       }

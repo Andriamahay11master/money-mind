@@ -12,11 +12,11 @@ export default async function handler(
     const category = request.query.category as string;
     const accountId = request.query.accountId as string;
     if (!desc) throw new Error('Description required');
-    await sql`INSERT INTO expenses (descriptionForm, valueExpenses, dateExpenses, categoryExpenses, idCompte) VALUES (${desc}, ${value}, ${date}, ${category}, ${accountId});`;
+    await sql`INSERT INTO expenses (descriptionform, valueexpenses, dateexpenses, categoryexpenses, idcompte) VALUES (${desc}, ${value}, ${date}, ${category}, ${accountId});`;
   } catch (error) {
     return response.status(500).json({ error });
   }
  
-  const comptes = await sql`SELECT * FROM expense;`;
-  return response.status(200).json({ comptes });
+  const expenses = await sql`SELECT * FROM expense;`;
+  return response.status(200).json({ expenses });
 }
