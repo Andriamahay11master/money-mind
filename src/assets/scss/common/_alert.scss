@@ -4,4 +4,7 @@
     &.alert-success{
         color: $finish-color;    
     }
+    &.alert-danger{
+        color: $red;
+    }
 }

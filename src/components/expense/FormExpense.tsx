@@ -65,7 +65,7 @@ export default function FormExpense({labelData, dataCategory, dataCompte, placeh
                     <label htmlFor="compteForm">{labelData[5]}</label>
                     <select name="compteForm" id="compteForm" ref={inputRefCompte}>
                         {dataCompte.map((compte, index) => (
-                            <option key={index} value={compte}>{compte}</option>
+                            <option key={index} value={index+1}>{compte}</option>
                         ))}
                     </select>
                 </div>
