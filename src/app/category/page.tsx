@@ -75,6 +75,7 @@ export default function Category(){
 
     const [categories, setCategory] = useState(Array<CategoryType>);
     const [stateForm, setStateForm] = useState(true);
+    const [idUpdateCategory, setIdUpdateCategory] = useState(0);
     const [created, setCreated] = useState(false);
     const [updated, setUpdated] = useState(false);
 
@@ -121,10 +122,11 @@ export default function Category(){
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            idcategory: idUpdateCategory,
             description: inputRefDescription.current?.value,
           })
         };
-        const res = await fetch(`/api/updateCategory/${inputRefDescription.current?.value}`, postData);
+        const res = await fetch(`/api/updateCategory?idcategory=${idUpdateCategory}&description=${inputRefDescription.current?.value}`, postData);
         const response = await res.json();
         //Update list category
         setCategory(response.categories);
@@ -169,6 +171,7 @@ export default function Category(){
         if (category) {
             inputRefDescription.current!.value = category.description;
         }
+        setIdUpdateCategory(idcategory);
         setStateForm(false);
     }
 
