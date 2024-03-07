@@ -112,6 +112,7 @@ export default function Category(){
     
         setTimeout(() => {
           setCreated(false);
+          setStateForm(true);
         }, 1400)
       }
 

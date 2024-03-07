@@ -14,26 +14,25 @@ interface FormExpenseProps {
     inputRefDateValue : React.RefObject<HTMLInputElement>
     inputRefCategory : React.RefObject<HTMLSelectElement>
     inputRefCompte : React.RefObject<HTMLSelectElement>
-    saveExpense : () => void
+    stateForm : boolean
+    actionBDD : () => void
 }
-export default function FormExpense({labelData, dataCategory, dataCompte, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory, inputRefCompte ,saveExpense} : FormExpenseProps) {
-    const [formattedValue, setFormattedValue] = useState(0);
-
+export default function FormExpense({labelData, dataCategory, dataCompte, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory, inputRefCompte , stateForm, actionBDD} : FormExpenseProps) {
+    
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
       // Remove non-numeric characters and spaces
-      const inputValue = e.currentTarget.value.replace(/[^\d]/g, '');
-  
-      // Format the number and update the state
-      setFormattedValue(parseInt(inputValue));
+      const numericValue = e.currentTarget.value.replace(/[^\d]/g, '');
+
+    // Set the numeric value to the input field
+    inputRefValue.current!.value = numericValue;
+
+    return numericValue;
     };
     
 
-    const handleSaveExpense = () => {
-        // Pass the values to the saveExpense function
-        saveExpense();
-
-        // Reset the state after saving
-        setFormattedValue(0);
+    const handleactionBDD = () => {
+        // Pass the values to the actionBDD function
+        actionBDD();
     };
 
     
@@ -48,7 +47,7 @@ export default function FormExpense({labelData, dataCategory, dataCompte, placeh
                 </div>
                 <div className="form-group">
                     <label htmlFor="valueForm">{labelData[2]}</label>
-                    <input type="text" placeholder={placeholderInput[1]} id="valueForm" value={formattedValue} onChange={handleInputChange} ref={inputRefValue}/>
+                    <input type="text" placeholder={placeholderInput[1]} id="valueForm" onChange={handleInputChange} ref={inputRefValue}/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="dateForm">{labelData[3]}</label>
@@ -71,7 +70,7 @@ export default function FormExpense({labelData, dataCategory, dataCompte, placeh
                     </select>
                 </div>
                 <div className="form-group form-submit">
-                    <button type="button" className='btn btn-primary' onClick={() => handleSaveExpense()}>{labelData[6]}</button>
+                    <button type="button" className='btn btn-primary' onClick={() => handleactionBDD()}>{stateForm ? labelData[6] : labelData[7]}</button>
                 </div>
             </form>
         </div>

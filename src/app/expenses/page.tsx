@@ -85,7 +85,8 @@ export default function Expenses() {
     `${t('form.date')}`,
     `${t('form.category')}`,
     `${t('form.compte')}`,
-    `${t('form.save')}`
+    `${t('form.save')}`,
+    `${t('form.update')}`
   ]
 
   const placeholderInput = [
@@ -98,7 +99,10 @@ export default function Expenses() {
   const [categories, setCategory] = useState(Array<CategoryType>);
   const [comptes, setCompte] = useState(Array<CompteType>);
   const [comptesI, setCompteI] = useState(Array<CompteType>);
+  const [stateForm, setStateForm] = useState(true);
+  const [idUpdateExpenses, setIdUpdateExpenses] = useState(0);
   const [created, setCreated] = useState(false);
+  const [updated, setUpdated] = useState(false);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
@@ -186,6 +190,56 @@ export default function Expenses() {
     }, 1400)
   }
 
+  async function updateExpenses() {
+    const postData = {
+      method: "PUT",
+      headers :{
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idexpenses: idUpdateExpenses,
+        descriptionform: inputRefDescription.current?.value,
+        valueexpenses: inputRefValue.current?.value,
+        dateexpenses: inputRefDate.current?.value,
+        categoryexpenses: inputRefCategory.current?.value,
+        idcompte: dataCOmpteI ? dataCOmpteI[0] : 1
+      })
+    };
+    const res = await fetch(`/api/updateExpense?ide=${idUpdateExpenses}&desce=${inputRefDescription.current?.value}&valuee=${inputRefValue.current?.value}&datee=${inputRefDate.current?.value}&categorye=${inputRefCategory.current?.value}&accountide=${dataCOmpteI ? dataCOmpteI[0] : 1}`, postData);
+    const response = await res.json();
+    //Update list expense
+    setExpenses(response.expenses); 
+    // Reset form by updating refs to initial values
+    if (inputRefDescription.current) inputRefDescription.current.value = "";
+    if (inputRefValue.current) inputRefValue.current.value = "";
+    if (inputRefDate.current) inputRefDate.current.value = "";
+    if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
+    if (inputRefCompte.current) {
+      const postData2 = {
+        method: "GET",
+        headers: {
+        "Content-Type": "application/json",
+        },
+      };
+      inputRefCompte.current.value = dataCompte[0];
+      const encodedDesc = encodeURIComponent(inputRefCompte.current.value);
+      const res1 = await fetch(`api/compte?type=UNIQUE&desc=${encodedDesc}`, postData2);
+      const response1 = await res1.json();
+      const compteArray1: CompteType[] = Object.values(response1.comptes);
+      setCompteI(compteArray1);
+    }
+
+    // Now, fetch the updated expenses
+    getExpenses();
+    
+    setUpdated(true);
+
+    setTimeout(() => {
+      setUpdated(false);
+      setStateForm(true);
+    }, 1400)
+
+  }
   async function getExpenses() {
     const postData = {
       method: "GET",
@@ -275,6 +329,24 @@ async function getExpensesCurrent(valAccount: string) {
     }
   };
 
+  const callUpdateForm = (idexpense: number) => {
+    const expense = expenses.find((expense) => expense.idexpenses === idexpense);
+    if (expense) {
+      const originalDate = new Date(expense.dateexpenses);
+      const newDate = new Date(originalDate);
+      newDate.setDate(originalDate.getDate() + 1);
+      const numString = expense.valueexpenses.toString();
+
+      inputRefDescription.current!.value = expense.descriptionform;
+      inputRefValue.current!.value = numString;
+      inputRefDate.current!.value = newDate.toISOString().slice(0, 10);
+      inputRefCategory.current!.value = expense.categoryexpenses;
+      inputRefCompte.current!.value = expense.comptedescription;
+    }
+    setIdUpdateExpenses(idexpense);
+    setStateForm(false);
+  }
+
   useEffect(() => {
     getExpenses();
     getCategories();
@@ -295,8 +367,9 @@ async function getExpensesCurrent(valAccount: string) {
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                      <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} saveExpense={addExpenses}/>
+                      <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
                       {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
+                      {updated && <div className="alert alert-success">{t('message.updatedExpenseSuccess')}</div> }
                     </div>
                     <div className="main-section">
                       <div className="table-filter">
@@ -317,6 +390,7 @@ async function getExpensesCurrent(valAccount: string) {
                               <th>{t('table.date')}</th>
                               <th>{t('table.category')}</th>
                               <th>{t('table.compte')}</th>
+                              <th>{t('table.action')}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -328,6 +402,7 @@ async function getExpensesCurrent(valAccount: string) {
                                 <td>{list.dateexpenses}</td>
                                 <td>{list.categoryexpenses}</td>
                                 <td>{list.comptedescription}</td>
+                                <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idexpenses)}><i className="icon-pencil"></i></button> <button className="btn btn-icon"><i className="icon-bin2"></i></button></div></td>
                             </tr>
                           ))}
                           </tbody>

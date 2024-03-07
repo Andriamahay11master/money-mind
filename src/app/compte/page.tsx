@@ -138,6 +138,7 @@ export default function Compte(){
     
         setTimeout(() => {
             setUpdated(false);
+            setStateForm(true);
         }, 1400)
     }
 

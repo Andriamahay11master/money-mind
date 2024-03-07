@@ -19,13 +19,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const compteUnique = await pool.query({
-        text: "SELECT idcompte, description FROM compte WHERE description ILIKE $1",
+        text: "SELECT idcompte, description FROM compte WHERE description ILIKE $1 ORDER BY idcompte",
         values: [`%${valDesc}%`],
       });
       res.status(200).json({ comptes: compteUnique.rows });
     } else {
       const comptes = await pool.query({
-        text: "SELECT idcompte, description FROM compte",
+        text: "SELECT idcompte, description FROM compte ORDER BY idcompte",
       });
       res.status(200).json({ comptes: comptes.rows });
     }

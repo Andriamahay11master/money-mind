@@ -65,7 +65,8 @@
       "date": "Transaction date",
       "category": "Category",
       "compte": "Account",
-      "save": "Add"
+      "save": "Add",
+      "update": "Update"
     },
     "placeholder":{
       "0": "Enter the description",

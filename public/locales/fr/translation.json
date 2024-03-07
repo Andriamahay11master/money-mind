@@ -65,7 +65,8 @@
       "date": "Date transaction",
       "category": "Catégorie",
       "compte": "Compte",
-      "save": "Ajouter"
+      "save": "Ajouter",  
+      "update": "Modifier"
     },
     "placeholder":{
       "0": "Saisir une description",
