@@ -150,10 +150,11 @@ export default function Expenses() {
         idcompte: dataCOmpteI ? dataCOmpteI[0] : 1
       })
     };
-    const res = await fetch(`api/addExpense?desc=${inputRefDescription.current?.value}&value=${inputRefValue.current?.value}&date=${inputRefDate.current?.value}&category=${inputRefCategory.current?.value}&accountId=${dataCOmpteI ? dataCOmpteI[0] : 1}`, postData);
+    console.log("before innsertion", postData);
+    const res = await fetch(`api/addExpense?desce=${inputRefDescription.current?.value}&valuee=${inputRefValue.current?.value}&datee=${inputRefDate.current?.value}&categorye=${inputRefCategory.current?.value}&accountide=${dataCOmpteI ? dataCOmpteI[0] : 1}`, postData);
     const response = await res.json();
     //Update list expense
-    setExpenses(response.expenses);
+    setExpenses(response.expenses); 
 
 
     // Reset form by updating refs to initial values
@@ -277,7 +278,6 @@ async function getExpensesCurrent(valAccount: string) {
     }
   };
 
-  console.log(inputFilterRefCompte.current?.value);
   useEffect(() => {
     getExpenses();
     getCategories();

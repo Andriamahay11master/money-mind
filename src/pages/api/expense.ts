@@ -17,7 +17,7 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
           return;
         }
         const Last5Expenses = await sql.query({
-          text: "SELECT idexpenses, descriptionForm, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription ILIKE $1 ORDER BY idexpenses DESC LIMIT 5",
+          text: "SELECT idexpenses, descriptionform, valueexpenses, dateexpenses, categoryexpenses, idcompte, comptedescription FROM compteexpense where comptedescription ILIKE $1 ORDER BY idexpenses DESC LIMIT 5",
           values:[valAccount]
         });
         res.status(200).json({ expenses: Last5Expenses.rows })
