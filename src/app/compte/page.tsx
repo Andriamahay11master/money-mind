@@ -68,11 +68,16 @@ export default function Compte(){
         `${t('formCompte.title')}`,
         `${t('formCompte.description')}`,
         `${t('formCompte.placeholder')}`,
-        `${t('formCompte.save')}`
+        `${t('formCompte.placeholderUpdate')}`,
+        `${t('formCompte.save')}`,
+        `${t('formCompte.update')}`
     ]
 
     const [comptes, setCompte] = useState(Array<CompteType>);
+    const [stateForm, setStateForm] = useState(true);
+    const [idUpdateCompte, setIdUpdateCompte] = useState(0);
     const [created, setCreated] = useState(false);
+    const [updated, setUpdated] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
@@ -109,6 +114,33 @@ export default function Compte(){
         }, 1400)
       }
 
+    async function updateCompte() {
+        const postData = {
+          method: "PUT",
+          headers :{
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            idcompte: idUpdateCompte,
+            description: inputRefDescription.current?.value,
+          })
+        };
+        const res = await fetch(`/api/updateCompte?idcompte=${idUpdateCompte}&description=${inputRefDescription.current?.value}`, postData);
+        const response = await res.json();
+        setCompte(response.comptes);
+        // Reset form by updating refs to initial values
+        if (inputRefDescription.current) inputRefDescription.current.value = "";
+    
+        // Now, fetch the updated comptes
+        getComptes();
+        
+        setUpdated(true);
+    
+        setTimeout(() => {
+            setUpdated(false);
+        }, 1400)
+    }
+
     async function getComptes() {
         const offset = (currentPage - 1) * itemsPerPage;
         const postData = {
@@ -133,6 +165,15 @@ export default function Compte(){
         setCurrentPage(newPage);
     };
 
+    const callUpdateForm = (idcompte: number) => {
+        const compte = comptes.find((compte) => compte.idcompte === idcompte);
+        if (compte) {
+            inputRefDescription.current!.value = compte.description;
+        }
+        setIdUpdateCompte(idcompte);
+        setStateForm(false);
+    }
+
     useEffect(() => {
         getComptes();
       }, []);
@@ -144,8 +185,9 @@ export default function Compte(){
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                        <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} saveCompte={addComptes}/>
+                        <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
                         {created && <div className="alert alert-success">{t('message.insertedCompteSuccess')}</div> }
+                        {updated && <div className="alert alert-success">{t('message.updatedCompteSuccess')}</div> }
                     </div>
                     <div className="main-section">
                         <div className="list-block list-view">
@@ -154,6 +196,7 @@ export default function Compte(){
                                 <tr>
                                     <th>{t('table.id')}</th>
                                     <th>{t('table.description')}</th>
+                                    <th>{t('table.action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -161,6 +204,7 @@ export default function Compte(){
                                 <tr key={index}>
                                     <td>{list.idcompte}</td>
                                     <td>{list.description}</td>
+                                    <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}><i className="icon-pencil"></i></button> <button className="btn btn-icon"><i className="icon-bin2"></i></button></div></td>
                                 </tr>
                             ))}
                             </tbody>

@@ -119,7 +119,9 @@
       "title": "New compte",
       "description": "Description",
       "placeholder": "Add a new compte",
-      "save": "Add"
+      "placeholderUpdate": "Update the compte",
+      "save": "Add",
+      "update": "Update"
     },
     "table":{
       "id": "Reference",

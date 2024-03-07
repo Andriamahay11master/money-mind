@@ -119,7 +119,9 @@
       "title": "Nouveau compte",
       "description": "Description",
       "placeholder": "Saisir un nouveau compte",
-      "save": "Ajouter"
+      "placeholderUpdate": "Modifier le compte",
+      "save": "Ajouter",
+      "update": "Mettre à jour"
     },
     "table":{
       "id": "Reference",
