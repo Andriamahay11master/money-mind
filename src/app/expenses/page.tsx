@@ -150,7 +150,6 @@ export default function Expenses() {
         idcompte: dataCOmpteI ? dataCOmpteI[0] : 1
       })
     };
-    console.log("before innsertion", postData);
     const res = await fetch(`api/addExpense?desce=${inputRefDescription.current?.value}&valuee=${inputRefValue.current?.value}&datee=${inputRefDate.current?.value}&categorye=${inputRefCategory.current?.value}&accountide=${dataCOmpteI ? dataCOmpteI[0] : 1}`, postData);
     const response = await res.json();
     //Update list expense
@@ -212,7 +211,6 @@ export default function Expenses() {
     const response = await res.json();
     const compteArray: CompteType[] = Object.values(response.comptes);
     setCompteI(compteArray);
-    console.log(compteArray);
   }
 
   async function getComptes() {
@@ -241,7 +239,6 @@ async function getExpensesCurrent(valAccount: string) {
   const response = await res.json();
   const expensesArray: ExpenseType[] = Object.values(response.expenses);
   setExpenses(expensesArray);
-  console.log('liste expenses', expensesArray)
 }
 
   async function getCategories() {

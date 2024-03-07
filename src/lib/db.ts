@@ -17,7 +17,6 @@ export async function query({sql, values} : QueryProps) {
 
     try{
         const [rows] = await dbconnection.execute(sql, values);
-        console.log(dbconnection)
         dbconnection.end();
         return rows;
     }

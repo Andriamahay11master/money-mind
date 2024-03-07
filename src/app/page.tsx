@@ -17,20 +17,20 @@ export default function Home() {
   const { t } = useTranslation('translation');
   const balance = '1600000';
   interface ExpenseType {
-    idExpenses: number;
-    descriptionForm: string;
-    dateExpenses: string;
-    categoryExpenses: string;
-    valueExpenses: number;
+    idexpenses: number;
+    descriptionform: string;
+    dateexpenses: string;
+    categoryexpenses: string;
+    valueexpenses: number;
   }
 
   interface TopExpenseCatType{
-    categoryExpenses: string;
-    totalExpenses: number;
+    categoryexpenses: string;
+    totalexpenses: number;
   }
 
   interface CompteType {
-    idCompte: number;
+    idcompte: number;
     description: string;
   }
 
@@ -140,30 +140,30 @@ export default function Home() {
 
   //Map the list of Expenses
   const dataList2 = Object.values(expenses).map((expense) => ({
-    id: expense["idExpenses"],
-    description: expense["descriptionForm"],
-    date: formatDate(expense["dateExpenses"]),
-    category: expense["categoryExpenses"],
-    value: expense["valueExpenses"]
+    id: expense["idexpenses"],
+    description: expense["descriptionform"],
+    date: formatDate(expense["dateexpenses"]),
+    category: expense["categoryexpenses"],
+    value: expense["valueexpenses"]
   }))
 
   const dataListM = Object.values(expensesM).map((expense) => ({
-    id: expense["idExpenses"],
-    description: expense["descriptionForm"],
-    date: formatDate(expense["dateExpenses"]),
-    category: expense["categoryExpenses"],
-    value: expense["valueExpenses"]
+    id: expense["idexpenses"],
+    description: expense["descriptionform"],
+    date: formatDate(expense["dateexpenses"]),
+    category: expense["categoryexpenses"],
+    valueexpenses: expense["valueexpenses"]
   }))
 
   //List TOp Expenses categories
   const dataListTC = Object.values(expensesTC).map((expense) => ({
-    categoryExpenses: expense["categoryExpenses"],
-    totalExpenses: expense["totalExpenses"]
+    categoryexpenses: expense["categoryexpenses"],
+    totalexpenses: expense["totalexpenses"]
   }))
 
   //Get the total ammount of the expenses of the month selected
   const sumAmount = dataListM.reduce((acc, expense) => {
-    return acc + expense["value"];
+    return acc + parseInt(expense["valueexpenses"].toString());
   }, 0);
 
   //Get the rest of the expenses of the month selected
@@ -226,9 +226,9 @@ export default function Home() {
   ];
 
   //data Chart Expense
-  const listCategory = Object.values(dataListTC).map((item) => (item['categoryExpenses']))
+  const listCategory = Object.values(dataListTC).map((item) => (item['categoryexpenses']))
 
-  const listData = Object.values(dataListTC).map((item) => (item['totalExpenses']))
+  const listData = Object.values(dataListTC).map((item) => (item['totalexpenses']))
 
   const listColor = [
     '#336699',
