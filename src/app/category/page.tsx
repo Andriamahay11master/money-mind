@@ -68,11 +68,15 @@ export default function Category(){
         `${t('formCategory.title')}`,
         `${t('formCategory.description')}`,
         `${t('formCategory.placeholder')}`,
-        `${t('formCategory.save')}`
+        `${t('formCategory.placeholderUpdate')}`,
+        `${t('formCategory.save')}`,
+        `${t('formCategory.update')}`
     ]
 
     const [categories, setCategory] = useState(Array<CategoryType>);
+    const [stateForm, setStateForm] = useState(true);
     const [created, setCreated] = useState(false);
+    const [updated, setUpdated] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
@@ -110,6 +114,32 @@ export default function Category(){
         }, 1400)
       }
 
+      async function updateCategory(){
+        const postData = {
+          method: "PUT",
+          headers :{
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            description: inputRefDescription.current?.value,
+          })
+        };
+        const res = await fetch(`/api/updateCategory/${inputRefDescription.current?.value}`, postData);
+        const response = await res.json();
+        //Update list category
+        setCategory(response.categories);
+        // Reset form by updating refs to initial values
+        if (inputRefDescription.current) inputRefDescription.current.value = "";
+        // Now, fetch the updated categories
+        getCategories();
+                
+        setUpdated(true);
+
+        setTimeout(() => {
+            setUpdated(false);
+        }, 1400)
+      }
+
     async function getCategories() {
         const postData = {
             method: "GET",
@@ -133,6 +163,16 @@ export default function Category(){
         setCurrentPage(newPage);
     };
 
+    //send the id category to formCategory for update
+    const callUpdateForm = (idcategory: number) => {
+        const category = categories.find((category) => category.idcategory === idcategory);
+        if (category) {
+            inputRefDescription.current!.value = category.description;
+        }
+        setStateForm(false);
+    }
+
+
     useEffect(() => {
         getCategories();
       }, []);
@@ -144,8 +184,9 @@ export default function Category(){
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section section-form">
-                        <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} saveCategory={addCategories}/>
+                        <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
                         {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
+                        {updated && <div className="alert alert-success">{t('message.updatedCategorySuccess')}</div> }
                     </div>
                     <div className="main-section">
                         <div className="list-block list-view">
@@ -154,6 +195,7 @@ export default function Category(){
                                 <tr>
                                     <th>{t('table.id')}</th>
                                     <th>{t('table.description')}</th>
+                                    <th>{t('table.action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -161,6 +203,7 @@ export default function Category(){
                                 <tr key={index}>
                                     <td>{list.idcategory}</td>
                                     <td>{list.description}</td>
+                                    <td><div className="action-box"><button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}><i className="icon-pencil"></i></button> <button className="btn btn-icon"><i className="icon-bin2"></i></button></div></td>
                                 </tr>
                             ))}
                             </tbody>

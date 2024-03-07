@@ -111,7 +111,9 @@
       "title": "New category",
       "description": "Description",
       "placeholder": "Add a new category",
-      "save": "Add"
+      "placeholderUpdate": "Update the category",
+      "save": "Add",
+      "update": "Update"
     },
     "formCompte":{
       "title": "New compte",
@@ -125,7 +127,8 @@
       "value": "Amount",
       "date": "Date",
       "category": "Category",
-      "compte": "Account"
+      "compte": "Account",
+      "action": "Action"
     },
     "message":{
       "insertedExpenseSuccess":"Expense inserted successfully",

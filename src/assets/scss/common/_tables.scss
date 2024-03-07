@@ -46,6 +46,13 @@
                 padding: 10px;
             }
         }
+        .action-box{
+            button{
+                &:first-child{
+                    margin-right: 5px;
+                }
+            }
+        }
     }
     .p-paginator{
         padding: 10px 0;

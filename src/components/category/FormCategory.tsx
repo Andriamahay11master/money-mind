@@ -4,11 +4,12 @@ import './formCategory.scss';
 
 interface FormCategoryProps {
     labelData : string[],
-    inputRefDescription : React.RefObject<HTMLInputElement>
-    saveCategory: () => void
+    inputRefDescription : React.RefObject<HTMLInputElement>,
+    stateInsert: boolean,
+    actionBDD: () => void
 }
 
-export default function FormCategory({labelData, inputRefDescription, saveCategory} : FormCategoryProps) {
+export default function FormCategory({labelData, inputRefDescription, stateInsert, actionBDD } : FormCategoryProps) {
     
     return (
         <div className="form-block">
@@ -16,10 +17,10 @@ export default function FormCategory({labelData, inputRefDescription, saveCatego
             <form action="" className='form-content'>
                 <div className="form-group">
                     <label htmlFor="nameCategoryForm">{labelData[1]}</label>
-                    <input type="text" placeholder={labelData[2]} id="nameCategoryForm" ref={inputRefDescription}/>
+                    <input type="text" placeholder={stateInsert ? labelData[2] : labelData[3]} id="nameCategoryForm" ref={inputRefDescription}/>
                 </div>
                 <div className="form-group form-submit">
-                    <button type="button" className='btn btn-primary' onClick={saveCategory}>{labelData[3]}</button>
+                    <button type="button" className='btn btn-primary' onClick={actionBDD}>{stateInsert ? labelData[4] : labelData[5]}</button>
                 </div>
             </form>
         </div>
