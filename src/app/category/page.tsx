@@ -78,6 +78,7 @@ export default function Category(){
     const [idUpdateCategory, setIdUpdateCategory] = useState(0);
     const [created, setCreated] = useState(false);
     const [updated, setUpdated] = useState(false);
+    const [deleted, setDeleted] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
@@ -176,6 +177,31 @@ export default function Category(){
         setStateForm(false);
     }
 
+    //delete category in BDD
+    const deleteCategory = async (idcategory: number) => {
+        const postData = {
+          method: "DELETE",
+          headers :{
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            idcategory: idcategory,
+          })
+        };
+        const res = await fetch(`/api/deleteCategory?idcategory=${idcategory}`, postData);
+        const response = await res.json();
+        //Update list category
+        setCategory(response.categories);
+
+        getCategories();
+                
+        setDeleted(true);
+
+        setTimeout(() => {
+          setDeleted(false);
+        }, 1400)
+    }
+
 
     useEffect(() => {
         getCategories();
@@ -191,6 +217,7 @@ export default function Category(){
                         <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
                         {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
                         {updated && <div className="alert alert-success">{t('message.updatedCategorySuccess')}</div> }
+                        {deleted && <div className="alert alert-warning">{t('message.deletedCategorySuccess')}</div> }
                     </div>
                     <div className="main-section">
                         <div className="list-block list-view">
@@ -207,7 +234,7 @@ export default function Category(){
                                 <tr key={index}>
                                     <td>{list.idcategory}</td>
                                     <td>{list.description}</td>
-                                    <td><div className="action-box"><button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}><i className="icon-pencil"></i></button> <button className="btn btn-icon"><i className="icon-bin2"></i></button></div></td>
+                                    <td><div className="action-box"><button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCategory(list.idcategory)}><i className="icon-bin2"></i></button></div></td>
                                 </tr>
                             ))}
                             </tbody>
