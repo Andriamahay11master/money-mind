@@ -78,6 +78,7 @@ export default function Compte(){
     const [idUpdateCompte, setIdUpdateCompte] = useState(0);
     const [created, setCreated] = useState(false);
     const [updated, setUpdated] = useState(false);
+    const [deleted, setDeleted] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
@@ -166,6 +167,26 @@ export default function Compte(){
         setCurrentPage(newPage);
     };
 
+    const deleteCompte = async (idcompte: number) => {
+        const postData = {
+            method: "DELETE",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                idcompte: idcompte
+            })
+        };
+        const res = await fetch(`/api/deleteCompte?idcompte=${idcompte}`, postData);
+        const response = await res.json();
+        setCompte(response.comptes);
+        getComptes();
+        setDeleted(true);
+        setTimeout(() => {
+            setDeleted(false);
+        }, 1400)
+    }
+
     const callUpdateForm = (idcompte: number) => {
         const compte = comptes.find((compte) => compte.idcompte === idcompte);
         if (compte) {
@@ -189,6 +210,7 @@ export default function Compte(){
                         <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
                         {created && <div className="alert alert-success">{t('message.insertedCompteSuccess')}</div> }
                         {updated && <div className="alert alert-success">{t('message.updatedCompteSuccess')}</div> }
+                        {deleted && <div className="alert alert-danger">{t('message.deletedCompteSuccess')}</div> }
                     </div>
                     <div className="main-section">
                         <div className="list-block list-view">
@@ -205,7 +227,7 @@ export default function Compte(){
                                 <tr key={index}>
                                     <td>{list.idcompte}</td>
                                     <td>{list.description}</td>
-                                    <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}><i className="icon-pencil"></i></button> <button className="btn btn-icon"><i className="icon-bin2"></i></button></div></td>
+                                    <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}> <i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCompte(list.idcompte)}><i className="icon-bin2"></i></button></div></td>
                                 </tr>
                             ))}
                             </tbody>

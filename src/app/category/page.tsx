@@ -217,7 +217,7 @@ export default function Category(){
                         <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
                         {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
                         {updated && <div className="alert alert-success">{t('message.updatedCategorySuccess')}</div> }
-                        {deleted && <div className="alert alert-warning">{t('message.deletedCategorySuccess')}</div> }
+                        {deleted && <div className="alert alert-danger">{t('message.deletedCategorySuccess')}</div> }
                     </div>
                     <div className="main-section">
                         <div className="list-block list-view">
