@@ -265,15 +265,18 @@ export default function Home() {
       <Header linkMenu={dataNav}/>
       <main className='main-page'>
         <div className="container">
-          <Breadcrumb items={itemsBreadcrumb}/>
-          <div className="choice-compte">
-            <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
-              {comptes.map((compte, index) => (
-                <option key={index} value={compte.description}>{compte.description}</option>
-              ))}
-              <option value="ALL">Tous</option>
-            </select>   
+          <div className="main-page-top">
+            <Breadcrumb items={itemsBreadcrumb}/>
+            <div className="choice-compte">
+              <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
+                {comptes.map((compte, index) => (
+                  <option key={index} value={compte.description}>{compte.description}</option>
+                ))}
+                <option value="ALL">Tous</option>
+              </select>   
+            </div>
           </div>
+          
           <section className="main-section listKpi">
             {kpi.map((item, index) => (
               <Kpi key={index} title={item.title} value={item.value} currency={item.currency}/>

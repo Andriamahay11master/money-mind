@@ -3,4 +3,11 @@
 }
 .main-page{
     padding-top: 75px;
+    background: $default-bg;
+    .main-page-top{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 }
