@@ -1,12 +1,13 @@
-$font-path: '/assets/fonts/';
+$font-path: '/assets/fonts/Inter/';
 $font-path-icon: '/assets/fonts/font-icon/';
 
 //Color
 $color-primary: #004080;
-$color-secondary: #0099cc;
+$color-secondary: #6FA4E6;
+$default-bg:#f0f1f5;
 $black: #000;
 $white: white;
-$grey: #9A9A9A;
+$grey: #E8E8E8;
 $grey-4A: #4A4A4A;
 $dark-grey: #404040;
 $grey-c4: #C4C4C4;
@@ -37,4 +38,4 @@ $finish-color: #53b281;
 $color-gradient: linear-gradient(90deg, #53B281 0%, #53B281 42.2%, #ED8606 55.39%, #EE411A 84.92%, #EE1C25 100.75%);
 
 //Font-family
-$font-family: 'Inter, Roboto, sans-serif';
+$font-family: Inter, Arial, sans-serif;

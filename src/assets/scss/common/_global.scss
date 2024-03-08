@@ -18,12 +18,6 @@ body {
   }
 }
 
-.main-page{
-  padding-top: 116px;
-  @include max(1200px){
-    padding-top: 75px;
-  }
-}
 h1, .title-h1{
   font-size: 60px;
   line-height: 1.2;

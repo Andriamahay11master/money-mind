@@ -5,7 +5,7 @@
     width: 100%;
     z-index: 101;
     background: #fff;
-    box-shadow: 0 3px 16px -8px rgba(#000, 0.6);
+    box-shadow: 0 3px 10px -7px rgba(0, 0, 0, 0.6);
     &--fixed {
         position: fixed;
         top: 0;
@@ -16,7 +16,7 @@
         display: none;
         width: 100vw;
         height: 100vh;
-        top: 77px;
+        top: 72px;
         left: 0;
         position: fixed;
         background: rgba(#000, 0.6);
@@ -87,9 +87,9 @@
                     margin-bottom: 2px;
                 }
                 .dropdown-link{
-                    transition: all 0.3s ease;
+                    transition: all 0.6s ease;
                     &:hover{
-                        color: rgba($grey, 0.8);
+                        color: $color-primary;
                     }
                 }
             }
@@ -99,7 +99,7 @@
 
 .headerIntern {
     
-    border-bottom: 1px solid rgba(0, 0, 0, 0.20);
+    border-bottom: 1px solid rgba($color-primary, 0.6);
     position: relative;
     z-index: 2;
     @include max(1200px){
@@ -116,7 +116,8 @@
         
         &.show-menu{
             transform: translate(0);
-            width: 333px;
+            transition: transform cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
+            width: 60%;
         }
         @include max(1200px){
             position: fixed;
@@ -132,11 +133,11 @@
             padding: 121px 49px 0;
             overflow: hidden;
             transform: translateX(+100vw);
-            transition: transform ease-in-out 0.2s;
+            transition: transform cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
         }
         @include max(768px){
             top: 61px;
-            padding: 40px 49px 0;
+            padding: 30px;
             height: calc(100vh - 61px);
         }
     }
@@ -218,7 +219,7 @@
             position: relative;
             height: 100%;
             display: inline-block;
-            transition: all 0.4s ease;
+            transition: all 0.6s cubic-bezier(0.215, 0.610, 0.355, 1);
             padding: 20px;
             &:hover{
                 background: $color-primary;

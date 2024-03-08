@@ -1,3 +1,8 @@
 .block-page{
-    display: flex;
+    .main-page{
+        padding-top: 116px;
+        @include max(1200px){
+          padding-top: 75px;
+        }
+    }
 }
