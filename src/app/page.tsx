@@ -232,8 +232,8 @@ export default function Home() {
 
   const listColor = [
     '#336699',
-    '#0099cc',
-    '#D30E3F',
+    '#4169E1',
+    '#800080',
     '#FFD301',
     '#5B5B5B'
   ];
@@ -284,12 +284,12 @@ export default function Home() {
           </section>
           <section className='main-section detailKpi'>
               <div className="detailKpi-item">
-                  <h2 className="title-h2 detailKpi-title">{t('detailKpi.title')}</h2>
-                  <ListExpenseFive dataList={dataList2}/>
-              </div>
-              <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.titleGraphe')}</h2>
                   {(listCategory && listData) && <ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>}
+              </div>
+              <div className="detailKpi-item">
+                  <h2 className="title-h2 detailKpi-title">{t('detailKpi.title')}</h2>
+                  <ListExpenseFive dataList={dataList2}/>
               </div>
           </section>
         </div>

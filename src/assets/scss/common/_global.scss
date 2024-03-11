@@ -33,16 +33,10 @@ h1, .title-h1{
 
 
 h2, .title-h2{
-  font-size: 44px;
+  font-size: 28px;
   line-height: 1.2;
   font-weight: 700;
   color: #000;
-  @include max(1440px){
-    font-size: 34px;
-  }
-  @include max(768px){
-    font-size: 28px;
-  }
 
   &.white {
     color: #fff;
@@ -162,6 +156,9 @@ h4, .title-h4{
       grid-template-columns: 100%;
     }
     .detailKpi-item{
+      background: #fff;
+      padding: 25px;
+      border-radius: 4px;
       &:last-child{
         @include max(768px){
           padding-top: 40px;

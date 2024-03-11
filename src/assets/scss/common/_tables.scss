@@ -28,22 +28,32 @@
     .list-table{
         thead{
             th{
-                background: rgba($color-secondary, 0.7);
+                border-top: 1px solid $grey;
+                border-bottom: 1px solid $grey;
                 padding: 10px;
-                color: #FFF;
+                color: #000;
                 font-weight: 600;
+                font-size: 13px;
                 .p-column-title{
-                    margin-right: 5px;
+                    margin-right: 15px;
+                }
+                span{
+                    svg{
+                        width: 10px;
+                        height: 10px;
+                        stroke: $grey;
+                    }
                 }
             }
         }
         tbody{
             tr{
                 border-bottom: 1px solid $grey;
-                background: $white-f7;
             }
             td{
                 padding: 10px;
+                font-size: 13px;
+                color: $grey-4A;
             }
         }
         .action-box{
