@@ -13,67 +13,6 @@
             color: #FFF;
         }
     }
-    .cntFooter { 
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        column-gap: 100px;
-        padding: 30px 135px;
-        @include max(1440px){
-            padding: 30px 50px;
-            column-gap: 75px;
-        }
-        @include max(1200px){
-            column-gap: 50px;
-        }
-        @include max(768px){
-            display: flex;
-            flex-direction: column;
-            padding: 24px 15px 45px;
-        }
-        .titleFooter {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 18px;
-            color: #FFF;
-            @include max(1440px){
-                font-size: 18px;
-            }
-        }
-        .listLink {
-            display: flex;
-            align-items: center;
-            grid-gap: 12px;
-            @include max(768px){
-                justify-content: center;
-            }
-        }
-        p{
-            color:$grey-c4;
-            font-size: 12px;
-        }
-        .colFooter{
-            .txtFooter {
-                text-align: left;
-                max-width: 50%;
-                @include max(768px){
-                    max-width: 100%;
-                }
-            }
-
-            &:last-child{
-                justify-self: flex-end;
-                @include max(768px){
-                    padding: 24px 0 0;
-                }
-            }
-            @include max(768px){
-                text-align: center;
-            }
-        }
-        .icon-footer{
-            font-size: 20px;
-        }
-    }
     .footerCopyright {
         padding: 18px 135px;
         border-top: 1px solid rgba($grey-c4, 0.25);
@@ -83,12 +22,11 @@
             padding: 18px 50px;
         }
         @include max(768px){
-            padding: 0px 15px 10px;
+            padding: 15px 10px;
             border-top: none;
         }
         .cntCopyright {
             display: flex;
-            justify-content: center;
             align-items: center;
             @include max(635px) {
                 flex-direction: column;
@@ -102,11 +40,6 @@
         }
         .copyRightLink{
             text-decoration: underline;
-        }
-        .itemCol{
-            @include max(768px){
-                margin-bottom: 24px;
-            }
         }
     }
 }
