@@ -22,7 +22,7 @@ export default function Category(){
 
       //state pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; // Choose the number of items to display per page
+    const itemsPerPage = 5; // Choose the number of items to display per page
 
     //Data Nav
     const dataNav = [
@@ -213,43 +213,45 @@ export default function Category(){
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
-                    <div className="main-section section-form">
-                        <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
+                    <div className="main-section page-form">
+                      <div className="section-form">
+                      <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
                         {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
                         {updated && <div className="alert alert-success">{t('message.updatedCategorySuccess')}</div> }
                         {deleted && <div className="alert alert-danger">{t('message.deletedCategorySuccess')}</div> }
-                    </div>
-                    <div className="main-section">
-                        <div className="list-block list-view">
-                            <table className='list-table'>
-                            <thead>
-                                <tr>
-                                    <th>{t('table.id')}</th>
-                                    <th>{t('table.description')}</th>
-                                    <th>{t('table.action')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
-                                <tr key={index}>
-                                    <td>{list.idcategory}</td>
-                                    <td>{list.description}</td>
-                                    <td><div className="action-box"><button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCategory(list.idcategory)}><i className="icon-bin2"></i></button></div></td>
-                                </tr>
+                      </div>
+                        <div className="section-list">
+                          <div className="list-block list-view">
+                              <table className='list-table'>
+                              <thead>
+                                  <tr>
+                                      <th>{t('table.id')}</th>
+                                      <th>{t('table.description')}</th>
+                                      <th>{t('table.action')}</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                              {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
+                                  <tr key={index}>
+                                      <td>{list.idcategory}</td>
+                                      <td>{list.description}</td>
+                                      <td><div className="action-box"><button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCategory(list.idcategory)}><i className="icon-bin2"></i></button></div></td>
+                                  </tr>
+                              ))}
+                              </tbody>
+                              </table>
+                          </div>
+                          <div className="pagination-table">
+                            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                              <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={page === currentPage ? "active" : ""}
+                              >
+                                {page}
+                              </button>
                             ))}
-                            </tbody>
-                            </table>
-                        </div>
-                        <div className="pagination-table">
-                          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                            <button
-                              key={page}
-                              onClick={() => handlePageChange(page)}
-                              className={page === currentPage ? "active" : ""}
-                            >
-                              {page}
-                            </button>
-                          ))}
+                          </div>
                         </div>
                     </div>
                 </div>

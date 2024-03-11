@@ -22,7 +22,7 @@ export default function Compte(){
 
       //state pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; // Choose the number of items to display per page
+    const itemsPerPage = 5; // Choose the number of items to display per page
 
     //Data Nav
     const dataNav = [
@@ -206,43 +206,45 @@ export default function Compte(){
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
-                    <div className="main-section section-form">
-                        <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
-                        {created && <div className="alert alert-success">{t('message.insertedCompteSuccess')}</div> }
-                        {updated && <div className="alert alert-success">{t('message.updatedCompteSuccess')}</div> }
-                        {deleted && <div className="alert alert-danger">{t('message.deletedCompteSuccess')}</div> }
-                    </div>
-                    <div className="main-section">
-                        <div className="list-block list-view">
-                            <table className='list-table'>
-                            <thead>
-                                <tr>
-                                    <th>{t('table.id')}</th>
-                                    <th>{t('table.description')}</th>
-                                    <th>{t('table.action')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
-                                <tr key={index}>
-                                    <td>{list.idcompte}</td>
-                                    <td>{list.description}</td>
-                                    <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}> <i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCompte(list.idcompte)}><i className="icon-bin2"></i></button></div></td>
-                                </tr>
-                            ))}
-                            </tbody>
-                            </table>
+                    <div className="main-section page-form">
+                        <div className="section-form">
+                            <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
+                            {created && <div className="alert alert-success">{t('message.insertedCompteSuccess')}</div> }
+                            {updated && <div className="alert alert-success">{t('message.updatedCompteSuccess')}</div> }
+                            {deleted && <div className="alert alert-danger">{t('message.deletedCompteSuccess')}</div> }
                         </div>
-                        <div className="pagination-table">
-                          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                            <button
-                              key={page}
-                              onClick={() => handlePageChange(page)}
-                              className={page === currentPage ? "active" : ""}
-                            >
-                              {page}
-                            </button>
-                          ))}
+                        <div className="section-list">
+                            <div className="list-block list-view">
+                                <table className='list-table'>
+                                <thead>
+                                    <tr>
+                                        <th>{t('table.id')}</th>
+                                        <th>{t('table.description')}</th>
+                                        <th>{t('table.action')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
+                                    <tr key={index}>
+                                        <td>{list.idcompte}</td>
+                                        <td>{list.description}</td>
+                                        <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}> <i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCompte(list.idcompte)}><i className="icon-bin2"></i></button></div></td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                                </table>
+                            </div>
+                            <div className="pagination-table">
+                            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                                <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={page === currentPage ? "active" : ""}
+                                >
+                                {page}
+                                </button>
+                            ))}
+                            </div>
                         </div>
                     </div>
                 </div>

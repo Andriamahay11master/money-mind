@@ -169,5 +169,21 @@ h4, .title-h4{
       margin-bottom: 15px;
     }
   }
+  &.page-form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 40px;
+    @include max(768px){
+      grid-template-columns: 100%;
+    }
+  }
+  &.page-form-2{
+    display: grid;
+    grid-template-columns: 35% calc(65% - 40px);
+    grid-gap: 40px;
+    @include max(768px){
+      grid-template-columns: 100%;
+    }
+  }
 }
 

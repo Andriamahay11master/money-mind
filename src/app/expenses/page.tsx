@@ -35,7 +35,7 @@ export default function Expenses() {
 
     //state pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; // Choose the number of items to display per page
+    const itemsPerPage = 7; // Choose the number of items to display per page
 
 
     //Data Nav
@@ -336,60 +336,62 @@ async function getExpensesCurrent(valAccount: string) {
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
-                    <div className="main-section section-form">
-                      <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
-                      {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
-                      {updated && <div className="alert alert-success">{t('message.updatedExpenseSuccess')}</div> }
-                      {deleted && <div className="alert alert-danger">{t('message.deletedExpenseSuccess')}</div> }
-                    </div>
-                    <div className="main-section">
-                      <div className="table-filter">
-                        <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
-                          {comptes.map((compte, index) => (
-                            <option key={index} value={compte.description}>{compte.description}</option>
-                          ))}
-                          <option value="ALL">Tous</option>
-                        </select>   
+                    <div className="main-section page-form-2">
+                      <div className="section-form">
+                        <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
+                        {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
+                        {updated && <div className="alert alert-success">{t('message.updatedExpenseSuccess')}</div> }
+                        {deleted && <div className="alert alert-danger">{t('message.deletedExpenseSuccess')}</div> }
                       </div>
-                      <div className="list-block list-view">
-                        <table className='list-table'>
-                          <thead>
-                            <tr>
-                              <th>{t('table.id')}</th>
-                              <th>{t('table.description')}</th>
-                              <th>{t('table.value')} (en Ariary)</th>
-                              <th>{t('table.date')}</th>
-                              <th>{t('table.category')}</th>
-                              <th>{t('table.compte')}</th>
-                              <th>{t('table.action')}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                          {dataList2 && dataList2.slice(startIndex, endIndex).map((list, index) => (
-                            <tr key={index}>
-                                <td>{list.idexpenses}</td>
-                                <td>{list.descriptionform}</td>
-                                <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
-                                <td>{list.dateexpenses}</td>
-                                <td>{list.categoryexpenses}</td>
-                                <td>{list.comptedescription}</td>
-                                <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idexpenses)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteExpense(list.idexpenses)}><i className="icon-bin2"></i></button></div></td>
-                            </tr>
-                          ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="pagination-table">
-                          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                            <button
-                              key={page}
-                              onClick={() => handlePageChange(page)}
-                              className={page === currentPage ? "active" : ""}
-                            >
-                              {page}
-                            </button>
-                          ))}
+                      <div className="section-list">
+                        <div className="table-filter">
+                          <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
+                            {comptes.map((compte, index) => (
+                              <option key={index} value={compte.description}>{compte.description}</option>
+                            ))}
+                            <option value="ALL">Tous</option>
+                          </select>   
                         </div>
+                        <div className="list-block list-view">
+                          <table className='list-table'>
+                            <thead>
+                              <tr>
+                                <th>{t('table.id')}</th>
+                                <th>{t('table.description')}</th>
+                                <th>{t('table.value')} (en Ariary)</th>
+                                <th>{t('table.date')}</th>
+                                <th>{t('table.category')}</th>
+                                <th>{t('table.compte')}</th>
+                                <th>{t('table.action')}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {dataList2 && dataList2.slice(startIndex, endIndex).map((list, index) => (
+                              <tr key={index}>
+                                  <td>{list.idexpenses}</td>
+                                  <td>{list.descriptionform}</td>
+                                  <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
+                                  <td>{list.dateexpenses}</td>
+                                  <td>{list.categoryexpenses}</td>
+                                  <td>{list.comptedescription}</td>
+                                  <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idexpenses)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteExpense(list.idexpenses)}><i className="icon-bin2"></i></button></div></td>
+                              </tr>
+                            ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className="pagination-table">
+                            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                              <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={page === currentPage ? "active" : ""}
+                              >
+                                {page}
+                              </button>
+                            ))}
+                        </div>
+                      </div>
                     </div>
                 </div>
             </main>
