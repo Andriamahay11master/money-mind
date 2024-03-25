@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   title: 'MindMoney',
   description: "MoneyMind, your online financial companion. Easily track and manage your daily and monthly expenses. Explore detailed statistics and customize categories for complete control over your finances. Simplify your money management with MoneyMind.",
   keywords: 'Expense Tracker, Financial Management, Budgeting App, Money Manager, Personal Finance',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   robots: {
     index: true,
     follow: true,
