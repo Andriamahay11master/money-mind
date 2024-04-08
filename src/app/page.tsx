@@ -9,6 +9,7 @@ import {formatDate, formatNumber, removeSpaceStringNumber} from '../data/functio
 import Breadcrumb from '../components/breadcrumb/Breadcrumb';
 import ListExpenseFive from '../components/expense/ListExpenseFive';
 import ChartExpense from '../components/expense/ChartExpense';
+import Loader from '../components/loader/Loader';
 
 
 
@@ -34,6 +35,7 @@ export default function Home() {
     description: string;
   }
 
+  const [isLoading, setIsLoading] = React.useState(true);
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
   const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);
   const [expensesTC, setExpensesTC] = React.useState(Array<TopExpenseCatType>);
@@ -254,11 +256,24 @@ export default function Home() {
   };
 
   React.useEffect(() => {
-    getLastFiveExpensesAll();
-    getTopExpenseCategories();
-    getMonthExpenseDefault();
-    getComptes();
+    const fetchData = async () => {
+      setIsLoading(true);
+      getLastFiveExpensesAll();
+      getTopExpenseCategories();
+      getMonthExpenseDefault();
+      getComptes();
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+    };
+
+    fetchData();
+    
   }, [inputFilterRefCompte.current]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
