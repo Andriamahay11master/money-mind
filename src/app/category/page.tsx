@@ -209,11 +209,9 @@ export default function Category(){
       const fetchData = async () => {
         setIsLoading(true);
         getCategories();
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1500);
+        setIsLoading(false);
       };
-      
+
       fetchData();
       }, []);
 

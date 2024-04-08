@@ -9,6 +9,7 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormExpense from '@/src/components/expense/FormExpense';
 import { formatNumber, formatDate } from '@/src/data/function';
 import { useEffect, useState, useRef } from 'react';
+import Loader from '@/src/components/loader/Loader';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -95,6 +96,7 @@ export default function Expenses() {
     `${t('placeholder.2')}`,
   ]
 
+  const [isLoading, setIsLoading] = React.useState(true);
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
   const [categories, setCategory] = useState(Array<CategoryType>);
   const [comptes, setCompte] = useState(Array<CompteType>);
@@ -324,12 +326,22 @@ async function getExpensesCurrent(valAccount: string) {
   }
 
   useEffect(() => {
-    getExpenses();
-    getCategories();
-    getComptes();
+    const fetchData = async () => {
+      setIsLoading(true);
+      getExpenses();
+      getCategories();
+      getComptes();
+      setIsLoading(false);
+    };
+
+    fetchData();
     
   }, [inputRefCompte.current, inputFilterRefCompte.current]);
   
+    if(isLoading){
+      return <Loader/>
+    }
+
     return (
         <div>
             <Header linkMenu={dataNav}/>

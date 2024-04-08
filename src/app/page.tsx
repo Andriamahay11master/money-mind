@@ -262,9 +262,7 @@ export default function Home() {
       getTopExpenseCategories();
       getMonthExpenseDefault();
       getComptes();
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1500);
+      setIsLoading(false);
     };
 
     fetchData();
