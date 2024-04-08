@@ -35,7 +35,6 @@ export default function Home() {
     description: string;
   }
 
-  const [isLoading, setIsLoading] = React.useState(true);
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
   const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);
   const [expensesTC, setExpensesTC] = React.useState(Array<TopExpenseCatType>);
@@ -256,25 +255,17 @@ export default function Home() {
   };
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      await getLastFiveExpensesAll();
-      await getTopExpenseCategories();
-      await getMonthExpenseDefault();
-      await getComptes();
-      setIsLoading(false);
-    };
-
-    fetchData();
+    getLastFiveExpensesAll();
+    getTopExpenseCategories();
+    getMonthExpenseDefault();
+    getComptes();
     
   }, [inputFilterRefCompte.current]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <>
+    {((listData && listData.length) && (dataList2 && dataList2.length)) ? (
+      <>
       <Header linkMenu={dataNav}/>
       <main className='main-page'>
         <div className="container">
@@ -298,7 +289,7 @@ export default function Home() {
           <section className='main-section detailKpi'>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.titleGraphe')}</h2>
-                  {(listCategory && listData) && <ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>}
+                  {<ChartExpense listCategory={listCategory} listData={listData} listColor={listColor} listColorHover={listColor}/>}
               </div>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.title')}</h2>
@@ -308,7 +299,10 @@ export default function Home() {
         </div>
       </main>
       <Footer {...dataFooter}/>
+      </>
+    ) : (
+      <Loader/>
+    )}
     </>
-    
   );
 }
