@@ -326,25 +326,16 @@ async function getExpensesCurrent(valAccount: string) {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      await getExpenses();
-      await getCategories();
-      await getComptes();
-      setIsLoading(false);
-    };
-
-    fetchData();
-    
+    getExpenses();
+    getCategories();
+    getComptes();
   }, [inputRefCompte.current, inputFilterRefCompte.current]);
   
-    if(isLoading){
-      return <Loader/>
-    }
-
     return (
         <div>
-            <Header linkMenu={dataNav}/>
+          {(dataList2 && dataList2.length > 0) ? (
+            <>
+              <Header linkMenu={dataNav}/>
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
@@ -378,7 +369,7 @@ async function getExpensesCurrent(valAccount: string) {
                               </tr>
                             </thead>
                             <tbody>
-                            {dataList2 && dataList2.slice(startIndex, endIndex).map((list, index) => (
+                            {dataList2.slice(startIndex, endIndex).map((list, index) => (
                               <tr key={index}>
                                   <td>{list.idexpenses}</td>
                                   <td>{list.descriptionform}</td>
@@ -408,6 +399,11 @@ async function getExpensesCurrent(valAccount: string) {
                 </div>
             </main>
             <Footer {...dataFooter}/>
+            </>
+          ) : (
+            <Loader/>
+          )}
+            
         </div>
     )
 }
