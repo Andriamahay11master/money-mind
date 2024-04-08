@@ -95,8 +95,7 @@ export default function Expenses() {
     `${t('placeholder.1')}`,
     `${t('placeholder.2')}`,
   ]
-
-  const [isLoading, setIsLoading] = React.useState(true);
+  
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
   const [categories, setCategory] = useState(Array<CategoryType>);
   const [comptes, setCompte] = useState(Array<CompteType>);
