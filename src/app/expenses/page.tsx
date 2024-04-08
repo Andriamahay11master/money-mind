@@ -328,9 +328,9 @@ async function getExpensesCurrent(valAccount: string) {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      getExpenses();
-      getCategories();
-      getComptes();
+      await getExpenses();
+      await getCategories();
+      await getComptes();
       setIsLoading(false);
     };
 

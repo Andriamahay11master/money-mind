@@ -22,7 +22,6 @@ export default function Category(){
       }
 
       //state pagination
-    const [isLoading, setIsLoading] = React.useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // Choose the number of items to display per page
 
@@ -206,21 +205,13 @@ export default function Category(){
 
 
     useEffect(() => {
-      const fetchData = async () => {
-        setIsLoading(true);
-        getCategories();
-        setIsLoading(false);
-      };
-
-      fetchData();
+      getCategories();
       }, []);
-
-    if(isLoading){
-        return <Loader/> 
-    }
 
     return (
         <div>
+          {(dataList && dataList.length) ? (
+            <>
             <Header linkMenu={dataNav}/>
             <main className='main-page'>
                 <div className="container">
@@ -243,13 +234,22 @@ export default function Category(){
                                   </tr>
                               </thead>
                               <tbody>
-                              {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
-                                  <tr key={index}>
-                                      <td>{list.idcategory}</td>
-                                      <td>{list.description}</td>
-                                      <td><div className="action-box"><button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCategory(list.idcategory)}><i className="icon-bin2"></i></button></div></td>
-                                  </tr>
-                              ))}
+                              {dataList.slice(startIndex, endIndex).map((list, index) => (
+                                      <tr key={index}>
+                                          <td>{list.idcategory}</td>
+                                          <td>{list.description}</td>
+                                          <td>
+                                              <div className="action-box">
+                                                  <button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}>
+                                                      <i className="icon-pencil"></i>
+                                                  </button>
+                                                  <button className="btn btn-icon" onClick={() => deleteCategory(list.idcategory)}>
+                                                      <i className="icon-bin2"></i>
+                                                  </button>
+                                              </div>
+                                          </td>
+                                      </tr>
+                                  ))}
                               </tbody>
                               </table>
                           </div>
@@ -269,6 +269,10 @@ export default function Category(){
                 </div>
             </main>
             <Footer {...dataFooter}/>
+            </>
+            ) : (
+            <Loader/>
+          )}
         </div>    
     )
 }

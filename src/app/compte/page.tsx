@@ -10,6 +10,7 @@ import { formatNumber } from '@/src/data/function';
 import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState, useRef } from 'react';
 import { sql } from "@vercel/postgres";
+import Loader from '@/src/components/loader/Loader';
 
 export default function Compte(){
     const { t } = useTranslation('translation');
@@ -73,6 +74,7 @@ export default function Compte(){
         `${t('formCompte.update')}`
     ]
 
+    const [isLoading, setIsLoading] = React.useState(true);
     const [comptes, setCompte] = useState(Array<CompteType>);
     const [stateForm, setStateForm] = useState(true);
     const [idUpdateCompte, setIdUpdateCompte] = useState(0);
@@ -197,8 +199,18 @@ export default function Compte(){
     }
 
     useEffect(() => {
-        getComptes();
+        const fetchData = async () => {
+            setIsLoading(true);
+            await getComptes();
+            setIsLoading(false);
+        };
+
+        fetchData();
       }, []);
+
+      if(isLoading){
+        return <Loader/>
+      }
 
     return (
         <div>

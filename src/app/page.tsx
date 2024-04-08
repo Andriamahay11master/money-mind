@@ -258,10 +258,10 @@ export default function Home() {
   React.useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      getLastFiveExpensesAll();
-      getTopExpenseCategories();
-      getMonthExpenseDefault();
-      getComptes();
+      await getLastFiveExpensesAll();
+      await getTopExpenseCategories();
+      await getMonthExpenseDefault();
+      await getComptes();
       setIsLoading(false);
     };
 
