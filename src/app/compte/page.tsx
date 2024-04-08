@@ -74,7 +74,6 @@ export default function Compte(){
         `${t('formCompte.update')}`
     ]
 
-    const [isLoading, setIsLoading] = React.useState(true);
     const [comptes, setCompte] = useState(Array<CompteType>);
     const [stateForm, setStateForm] = useState(true);
     const [idUpdateCompte, setIdUpdateCompte] = useState(0);
@@ -199,22 +198,14 @@ export default function Compte(){
     }
 
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            await getComptes();
-            setIsLoading(false);
-        };
-
-        fetchData();
+        getComptes();
       }, []);
-
-      if(isLoading){
-        return <Loader/>
-      }
 
     return (
         <div>
-            <Header linkMenu={dataNav}/>
+            {(dataList && dataList.length) ? (
+                <>
+                <Header linkMenu={dataNav}/>
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
@@ -236,7 +227,7 @@ export default function Compte(){
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {dataList && dataList.slice(startIndex, endIndex).map((list, index) => (
+                                {dataList.slice(startIndex, endIndex).map((list, index) => (
                                     <tr key={index}>
                                         <td>{list.idcompte}</td>
                                         <td>{list.description}</td>
@@ -262,6 +253,11 @@ export default function Compte(){
                 </div>
             </main>
             <Footer {...dataFooter}/>
+                </>
+            ) : (
+                <Loader/>
+            )}
+            
         </div>    
     )
 }
