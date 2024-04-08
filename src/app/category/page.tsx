@@ -10,6 +10,7 @@ import { formatNumber } from '@/src/data/function';
 import FormCategory from '@/src/components/category/FormCategory';
 import ListCategory from '@/src/components/category/ListCategory';
 import { useEffect, useState, useRef } from 'react';
+import Loader from '@/src/components/loader/Loader';
 
 export default function Category(){
     const { t } = useTranslation('translation');
@@ -21,6 +22,7 @@ export default function Category(){
       }
 
       //state pagination
+    const [isLoading, setIsLoading] = React.useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // Choose the number of items to display per page
 
@@ -204,8 +206,20 @@ export default function Category(){
 
 
     useEffect(() => {
+      const fetchData = async () => {
+        setIsLoading(true);
         getCategories();
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1500);
+      };
+      
+      fetchData();
       }, []);
+
+    if(isLoading){
+        return <Loader/> 
+    }
 
     return (
         <div>
