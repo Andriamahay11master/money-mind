@@ -8,11 +8,6 @@ export const metadata: Metadata = {
   title: 'MindMoney',
   description: "MoneyMind, your online financial companion. Easily track and manage your daily and monthly expenses. Explore detailed statistics and customize categories for complete control over your finances. Simplify your money management with MoneyMind.",
   keywords: 'Expense Tracker, Financial Management, Budgeting App, Money Manager, Personal Finance',
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-
-  },
   robots: {
     index: true,
     follow: true,
@@ -34,6 +29,21 @@ export default function RootLayout({
 } : LayoutProps) {
   return (
     <html lang="en">
+      <head>
+      <link rel="icon" href="/favicon.ico" sizes="any" />
+      <link
+          rel="icon"
+          href="/icon?<generated>"
+          type="image/<generated>"
+          sizes="<generated>"
+        />
+        <link
+          rel="apple-touch-icon"
+          href="/apple-icon?<generated>"
+          type="image/<generated>"
+          sizes="<generated>"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
