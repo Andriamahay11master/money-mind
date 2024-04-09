@@ -33,15 +33,15 @@ export default function RootLayout({
       <link rel="icon" href="/favicon.ico" sizes="any" />
       <link
           rel="icon"
-          href="/icon?<generated>"
-          type="image/<generated>"
-          sizes="<generated>"
+          href="/icon.png"
+          type="image/png"
+          sizes="16*16"
         />
         <link
           rel="apple-touch-icon"
-          href="/apple-icon?<generated>"
-          type="image/<generated>"
-          sizes="<generated>"
+          href="/apple-touch-icon.png"
+          type="image/png"
+          sizes="180*180"
         />
       </head>
       <body>{children}</body>
