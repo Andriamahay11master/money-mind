@@ -10,6 +10,7 @@ import Breadcrumb from '../components/breadcrumb/Breadcrumb';
 import ListExpenseFive from '../components/expense/ListExpenseFive';
 import ChartExpense from '../components/expense/ChartExpense';
 import Loader from '../components/loader/Loader';
+import { monthNames } from '../data/function';
 
 
 
@@ -41,7 +42,10 @@ export default function Home() {
   const [comptes, setComptes] = React.useState(Array<CompteType>);
   const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
   const [counter, setCounter] = React.useState(0);
-
+  const dateTOday = new Date();
+  const date = dateTOday.getMonth();
+  const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
+  const [inputFilter, setInputFilter] = React.useState(defaultCompte);
 
   //List 5 last Expense
   async function getLastFiveExpensesCurrent(valAccount: string) {
@@ -240,27 +244,36 @@ export default function Home() {
   ];
 
   const handleFilterCompteChange = () => {
-    const selectedDesc = inputFilterRefCompte.current?.value || '';
+    const selectedDesc = inputFilterRefCompte.current?.value;
+    console.log("selectedDesc default filter", selectedDesc)
+    setInputFilter(selectedDesc?.toString() || 'ALL');
     setCounter(counter + 1);
-    if(selectedDesc === 'ALL'){
+    
+    if(inputFilter === 'ALL'){
       getLastFiveExpensesAll();
       getTopExpenseCategories();
       getMonthExpenseDefault();
     }
     else{
-      getLastFiveExpensesCurrent(selectedDesc);
-      getTopExpenseCategoriesCurrent(selectedDesc);
-      getMonthExpense(selectedDesc);
+      getLastFiveExpensesCurrent(inputFilter);
+      getTopExpenseCategoriesCurrent(inputFilter);
+      getMonthExpense(inputFilter);
     }
   };
 
   React.useEffect(() => {
-    getLastFiveExpensesAll();
-    getTopExpenseCategories();
-    getMonthExpenseDefault();
     getComptes();
-    
-  }, [inputFilterRefCompte.current]);
+    if(inputFilter === 'ALL'){
+      getLastFiveExpensesAll();
+      getTopExpenseCategories();
+      getMonthExpenseDefault();
+    }
+    else{
+      getLastFiveExpensesCurrent(inputFilter);
+      getTopExpenseCategoriesCurrent(inputFilter);
+      getMonthExpense(inputFilter);
+    }
+  }, [inputFilterRefCompte.current, inputFilter]);
 
   return (
     <>
@@ -272,7 +285,7 @@ export default function Home() {
           <div className="main-page-top">
             <Breadcrumb items={itemsBreadcrumb}/>
             <div className="choice-compte">
-              <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
+              <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
                 {comptes.map((compte, index) => (
                   <option key={index} value={compte.description}>{compte.description}</option>
                 ))}
