@@ -245,7 +245,6 @@ export default function Home() {
 
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value;
-    console.log("selectedDesc default filter", selectedDesc)
     setInputFilter(selectedDesc?.toString() || 'ALL');
     setCounter(counter + 1);
     

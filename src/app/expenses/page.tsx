@@ -10,6 +10,7 @@ import FormExpense from '@/src/components/expense/FormExpense';
 import { formatNumber, formatDate } from '@/src/data/function';
 import { useEffect, useState, useRef } from 'react';
 import Loader from '@/src/components/loader/Loader';
+import {monthNames} from '@/src/data/function';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -112,6 +113,12 @@ export default function Expenses() {
     const inputRefDate = React.useRef<HTMLInputElement>(null);
     const inputRefCompte = React.useRef<HTMLSelectElement>(null);
     const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
+
+    
+  const dateTOday = new Date();
+  const date = dateTOday.getMonth();
+  const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
+  const [inputFilter, setInputFilter] = React.useState(defaultCompte);
  
   const dataList2 = Object.values(expenses).map((expense) => ({
     idexpenses: expense["idexpenses"],
@@ -297,6 +304,7 @@ async function getExpensesCurrent(valAccount: string) {
 
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value || '';
+    setInputFilter(selectedDesc);
     setCurrentPage(1);
     if(selectedDesc === 'ALL'){
       getExpenses();
@@ -325,10 +333,16 @@ async function getExpensesCurrent(valAccount: string) {
   }
 
   useEffect(() => {
-    getExpenses();
     getCategories();
     getComptes();
-  }, [inputRefCompte.current, inputFilterRefCompte.current]);
+    if(inputFilter === 'ALL'){
+      getExpenses();  
+    }
+    else{
+      getExpensesCurrent(inputFilter);
+    }
+    
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter]);
   
     return (
         <div>
@@ -347,7 +361,7 @@ async function getExpensesCurrent(valAccount: string) {
                       </div>
                       <div className="section-list">
                         <div className="table-filter">
-                          <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange}>
+                          <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
                             {comptes.map((compte, index) => (
                               <option key={index} value={compte.description}>{compte.description}</option>
                             ))}
