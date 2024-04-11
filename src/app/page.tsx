@@ -301,7 +301,7 @@ export default function Home() {
               </select>   
             </div>
           </div>
-          
+          {session?.data?.user?.email}
           <section className="main-section listKpi">
             {kpi.map((item, index) => (
               <Kpi key={index} title={item.title} value={item.value} currency={item.currency}/>

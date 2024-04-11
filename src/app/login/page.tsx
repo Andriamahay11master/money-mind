@@ -2,7 +2,6 @@
 import Loader from "@/src/components/loader/Loader";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React from "react";
-import { auth } from "../firebase";
 import { useRouter } from "next/navigation";
 import './page.scss'
 import { signIn } from "next-auth/react";
@@ -22,7 +21,7 @@ export default function Login() {
     const connectAccount = async () => {
         try{
             if(!emailu && !passwordu) return;
-            await signIn('credentials', { emailu, passwordu, redirect: false });
+            await signIn('Credentials', { emailu, passwordu });
             setSuccess(true);
             router.push('/');
         }  catch(error : any) {
@@ -67,29 +66,31 @@ export default function Login() {
     }
 
     return (
-        <div className="form-block">
-            <h1 className="title-h1">Welcome Back</h1>
-            <div className="form-content">
-                <h2 className="title-h2">Login</h2>
-                    <div className="form-group">
-                        <label htmlFor="email"><i className="icon-mail"></i>Your email</label>
-                        <input type="email" id="email" placeholder="Write your email" onChange={onChangeEmail}/>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password"><i className="icon-lock"></i>Password</label>
-                        <div className="form-group-password">
-                            <input type={showPassword ? "text" : "password"} id="password" placeholder="Write your password" onChange={onChangePassword}/>
-                            <i className={showPassword ? "icon-eye-off" : "icon-eye"} onClick={toggleShowPassword}></i>
+        <div className="form-block-login">
+            <div className="form-block-content">
+                <h1 className="title-h1">Welcome Back</h1>
+                <div className="form-content">
+                    <h2 className="title-h2">Login</h2>
+                        <div className="form-group">
+                            <label htmlFor="email"><i className="icon-mail"></i>Your email</label>
+                            <input type="email" id="email" placeholder="Write your email" onChange={onChangeEmail}/>
                         </div>
-                        {(errorExist && errorForm) && <p className="error-form">{errorForm}</p>}
-                    </div>
-                    <div className="form-group form-forgot">
-                        <a className="btn btn-link" href="/forgot">Forgot your password?</a>
-                    </div>
-                    <div className="form-group form-submit">
-                        <button className="btn btn-primary" onClick={connectAccount}>Login</button>
-                    </div>
-                <p>Don&apos;t have an account? <a className="btn btn-link" href="/signup">Sign up</a></p>
+                        <div className="form-group">
+                            <label htmlFor="password"><i className="icon-lock"></i>Password</label>
+                            <div className="form-group-password">
+                                <input type={showPassword ? "text" : "password"} id="password" placeholder="Write your password" onChange={onChangePassword}/>
+                                <i className={showPassword ? "icon-eye-off" : "icon-eye"} onClick={toggleShowPassword}></i>
+                            </div>
+                            {(errorExist && errorForm) && <p className="error-form">{errorForm}</p>}
+                        </div>
+                        <div className="form-group form-forgot">
+                            <a className="btn btn-link" href="/forgot">Forgot your password?</a>
+                        </div>
+                        <div className="form-group form-submit">
+                            <button className="btn btn-primary" onClick={connectAccount}>Login</button>
+                        </div>
+                    <p>Don&apos;t have an account? <a className="btn btn-link" href="/signup">Sign up</a></p>
+                </div>
             </div>
             {success && <Loader />}
         </div>

@@ -1,9 +1,12 @@
 @import '../../assets/scss/common/variable';
 @import '../../assets/scss/common/mixins';
 
-.form-block{
-    margin-top: 30px;
+.form-block-login{
+    height: 100vh;
     padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     .title-h1{
         text-align: center;
         margin-bottom: 46px;
@@ -14,7 +17,7 @@
         margin: auto;
         width: 30vw;
         @include max(768px){
-            width: 100%;
+            width: 90vw;
         }
         .title-h2{
             margin-bottom: 26px;
@@ -67,6 +70,7 @@
             }
         }
         input, select, textarea{
+            width: 100%;
             &:focus{
                 outline: none;
                 box-shadow: 0 0 0 0.1rem rgba($color-primary, 0.25);
@@ -78,6 +82,9 @@
         p{
             font-size: 12px;
             text-align: right;
+        }
+        a{
+            font-size: 12px;
         }
     }
 }
