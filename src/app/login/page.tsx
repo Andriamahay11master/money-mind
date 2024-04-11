@@ -5,13 +5,9 @@ import React from "react";
 import { auth } from "../firebase";
 import { useRouter } from "next/navigation";
 import './page.scss'
+import { signIn } from "next-auth/react";
 
-
-
-interface LoginProps {
-    user: any
-}
-export default function Login({user} : LoginProps) {
+export default function Login() {
     
     const [showPassword, setShowPassword] = React.useState(false);
     const [emailu, setEmailu] = React.useState('');
@@ -23,27 +19,20 @@ export default function Login({user} : LoginProps) {
 
     const router = useRouter();
 
-    const connectAccount = (e : any) => {
-        e.preventDefault();
-        if(!emailu && !passwordu) return;
-        signInWithEmailAndPassword(auth, emailu, passwordu)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            // Set user data in localStorage
-            localStorage.setItem('user', JSON.stringify(user));
-            // Optionally, you can set a flag to indicate the user is logged in
-            localStorage.setItem('isLoggedIn', 'true');
+    const connectAccount = async () => {
+        try{
+            if(!emailu && !passwordu) return;
+            await signIn('credentials', { emailu, passwordu, redirect: false });
             setSuccess(true);
-            console.log(user)
-        })
-        .catch((error) => {
+            router.push('/');
+        }  catch(error : any) {
             const errorCode = error.code;
             // const errorMessage = error.message;
-            console.log(errorCode, error.message)
+            console.log(errorCode, error)
             setErrorExist(true)
             setCodeError(errorCode)
             manageMessageError();
-        });
+        };
     }
 
     const manageMessageError = () => {
@@ -77,17 +66,11 @@ export default function Login({user} : LoginProps) {
         setShowPassword(!showPassword);
     }
 
-    if(user && localStorage.getItem('isLoggedIn') === 'true') {
-        console.log("********signi in",localStorage.getItem('isLoggedIn'));
-        router.push('/');
-    }
-
     return (
         <div className="form-block">
             <h1 className="title-h1">Welcome Back</h1>
             <div className="form-content">
                 <h2 className="title-h2">Login</h2>
-                <form>
                     <div className="form-group">
                         <label htmlFor="email"><i className="icon-mail"></i>Your email</label>
                         <input type="email" id="email" placeholder="Write your email" onChange={onChangeEmail}/>
@@ -106,7 +89,6 @@ export default function Login({user} : LoginProps) {
                     <div className="form-group form-submit">
                         <button className="btn btn-primary" onClick={connectAccount}>Login</button>
                     </div>
-                </form>
                 <p>Don&apos;t have an account? <a className="btn btn-link" href="/signup">Sign up</a></p>
             </div>
             {success && <Loader />}
