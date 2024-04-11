@@ -1,27 +1,34 @@
 "use client";
 import Loader from "@/src/components/loader/Loader";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import React from "react";
 import { useRouter } from "next/navigation";
-import './page.scss'
 import { signIn } from "next-auth/react";
 
 export default function Login() {
     
+    interface UserType {
+        iduser: number;
+        username: string;
+        password: string;
+        nom: string;
+        prenom: string;
+        mail: string;
+      }
+
     const [showPassword, setShowPassword] = React.useState(false);
-    const [emailu, setEmailu] = React.useState('');
-    const [passwordu, setPasswordu] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
     const [success, setSuccess] = React.useState(false);
     const [errorExist, setErrorExist] = React.useState(false);
     const [errorForm, setErrorForm] = React.useState('');
     const [codeError, setCodeError] = React.useState('');
+    const [users, setUsers] = React.useState(Array<UserType>);
 
     const router = useRouter();
 
     const connectAccount = async () => {
         try{
-            if(!emailu && !passwordu) return;
-            await signIn('Credentials', { emailu, passwordu });
+            await signIn('credentials', { email, password, redirect: false });
             setSuccess(true);
             router.push('/');
         }  catch(error : any) {
@@ -52,17 +59,30 @@ export default function Login() {
     }
 
     const onChangeEmail = (e : any) => {
-        setEmailu(e.target.value);
+        setEmail(e.target.value);
         if(errorExist) setErrorExist(false);
     }
 
     const onChangePassword = (e : any) => {
-        setPasswordu(e.target.value);
+        setPassword(e.target.value);
         if(errorExist) setErrorExist(false);
     }
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
+    }
+
+    async function getUser() {
+        const postData = {
+            method: "GET",
+            headers: {
+            "Content-Type": "application/json",
+            },
+        };
+        const res = await fetch(`api/users`, postData);
+        const response = await res.json();
+        const usersArray: UserType[] = Object.values(response.users);
+        setUsers(usersArray);
     }
 
     return (

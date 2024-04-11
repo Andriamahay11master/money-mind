@@ -11,19 +11,11 @@ import ListExpenseFive from '../components/expense/ListExpenseFive';
 import ChartExpense from '../components/expense/ChartExpense';
 import Loader from '../components/loader/Loader';
 import { monthNames } from '../data/function';
-import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 
 
 
 export default function Home() {
-
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect('/login');
-    },
-  });
 
   const { t } = useTranslation('translation');
   const balance = '1600000';
@@ -301,7 +293,6 @@ export default function Home() {
               </select>   
             </div>
           </div>
-          {session?.data?.user?.email}
           <section className="main-section listKpi">
             {kpi.map((item, index) => (
               <Kpi key={index} title={item.title} value={item.value} currency={item.currency}/>

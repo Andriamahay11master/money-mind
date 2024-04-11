@@ -2,7 +2,6 @@
 import type { Metadata } from 'next';
 import './globals.scss'
 import '../assets/scss/main.scss'
-import SessionProvider from './SessionProvider';
 
 
 export const metadata: Metadata = {
@@ -45,7 +44,7 @@ export default function RootLayout({
           sizes="180*180"
         />
       </head>
-      <body><SessionProvider>{children}</SessionProvider></body>
+      <body>{children}</body>
     </html>
   );
 }
