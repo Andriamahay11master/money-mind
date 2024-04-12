@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import './header.scss';
 import Image from 'next/image';
 import i18next from 'i18next';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
     linkMenu: {name: string, href: string}[]
@@ -16,7 +17,8 @@ export default function Header({linkMenu} : HeaderProps) {
     const [lang, setLang] = useState(false);
     const [langMobile, setLangMobile] = useState(false);
     const pathname = usePathname();
-    
+    const router = useRouter();
+
     const closeMenu = () => {
         setTimeout(() => {
             setNavbarOpen(false);
@@ -49,6 +51,10 @@ export default function Header({linkMenu} : HeaderProps) {
             setLangMobile(false);
         }
         setNavbarOpen(false);
+    }
+
+    const logout = () => {
+        router.push('/login');
     }
 
     return (
@@ -116,6 +122,11 @@ export default function Header({linkMenu} : HeaderProps) {
                                 <li><button className='dropdown-link' onClick={() => changeLanguageMobile('en')}>EN</button></li>
                                 <li><button className='dropdown-link' onClick={() => changeLanguageMobile('fr')}>FR</button></li>
                             </ul>
+                        </div>
+                        <div className="profil">
+                            <Link href="/login" title='Bouton to login' onClick={logout}>
+                                <i className="icon-log-out"></i>
+                            </Link>
                         </div>
                     </div>
                 </div>

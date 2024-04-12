@@ -290,5 +290,9 @@
     .headerIntern-left{
         line-height: 1;
     }
+    .headerIntern-right{
+        display: flex;
+        align-items: center;
+    }
 
 }

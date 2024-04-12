@@ -11,13 +11,14 @@ export default async function handler(
     const password = request.query.password as string;
     if (!password) throw new Error('Password required');
     await sql`SELECT * FROM users 
-    WHERE username like ${username}
-    AND password like MD5(${password});
-    `;
+    WHERE username = ${username}
+    AND password = MD5('salt' || ${password});`;
+
+    console.log('user exist************************************', sql);
   } catch (error) {
     return response.status(500).json({ error });
   }
  
   const users = await sql`SELECT * FROM users;`;
-  return response.status(200).json({ users });
+  return response.status(200).json({ users: users.rows[0] });
 }
