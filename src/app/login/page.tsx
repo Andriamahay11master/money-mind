@@ -23,22 +23,22 @@ export default function Login() {
     const [errorForm, setErrorForm] = React.useState('');
     const [codeError, setCodeError] = React.useState('');
     const [users, setUsers] = React.useState(Array<UserType>);
+    const inputRefUsername = React.useRef<HTMLInputElement>(null);
+    const inputRefPassword = React.useRef<HTMLInputElement>(null);
 
     const router = useRouter();
 
-    const connectAccount = async () => {
-        try{
-            await signIn('credentials', { email, password, redirect: false });
+    async function connectAccount (){
+        getUser();
+        if(users.length > 0) {
             setSuccess(true);
             router.push('/');
-        }  catch(error : any) {
-            const errorCode = error.code;
-            // const errorMessage = error.message;
-            console.log(errorCode, error)
-            setErrorExist(true)
-            setCodeError(errorCode)
+            console.log('users exist', users)
+        } else {
+            setErrorExist(true);
+            setSuccess(false);
             manageMessageError();
-        };
+        }
     }
 
     const manageMessageError = () => {
@@ -74,12 +74,16 @@ export default function Login() {
 
     async function getUser() {
         const postData = {
-            method: "GET",
+            method: "POST",
             headers: {
             "Content-Type": "application/json",
             },
+            body: JSON.stringify({
+                username: inputRefUsername.current?.value,
+                password: inputRefPassword.current?.value
+            })
         };
-        const res = await fetch(`api/users`, postData);
+        const res = await fetch(`api/user?username=${inputRefUsername.current?.value}&password=${inputRefPassword.current?.value}`, postData);
         const response = await res.json();
         const usersArray: UserType[] = Object.values(response.users);
         setUsers(usersArray);
@@ -93,12 +97,12 @@ export default function Login() {
                     <h2 className="title-h2">Login</h2>
                         <div className="form-group">
                             <label htmlFor="email"><i className="icon-mail"></i>Your email</label>
-                            <input type="email" id="email" placeholder="Write your email" onChange={onChangeEmail}/>
+                            <input type="email" id="email" placeholder="Write your email" onChange={onChangeEmail} ref={inputRefUsername} value={email}/>
                         </div>
                         <div className="form-group">
                             <label htmlFor="password"><i className="icon-lock"></i>Password</label>
                             <div className="form-group-password">
-                                <input type={showPassword ? "text" : "password"} id="password" placeholder="Write your password" onChange={onChangePassword}/>
+                                <input type={showPassword ? "text" : "password"} id="password" placeholder="Write your password" onChange={onChangePassword} ref={inputRefPassword} value={password}/>
                                 <i className={showPassword ? "icon-eye-off" : "icon-eye"} onClick={toggleShowPassword}></i>
                             </div>
                             {(errorExist && errorForm) && <p className="error-form">{errorForm}</p>}
