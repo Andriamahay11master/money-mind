@@ -8,17 +8,22 @@ export default async function handler(
   try {
     const username = request.query.username as string;
     if (!username) throw new Error('Username required');
+    
     const password = request.query.password as string;
     if (!password) throw new Error('Password required');
-    await sql`SELECT * FROM users 
-    WHERE username = ${username}
-    AND password = MD5('salt' || ${password});`;
-
-    console.log('user exist************************************', sql);
+    
+    // Perform a SQL query to check if the user exists with the given username and password
+    const result = await sql`SELECT * FROM users WHERE username = ${username} AND password = ${password}`;
+    const user = result.rows[0];
+    
+    // If no user found, return an error
+    if (!user) throw new Error('User not found');
+    
+    console.log('User exists:', user);
+    
+    // Respond with the user data
+    return response.status(200).json({ user });
   } catch (error) {
     return response.status(500).json({ error });
   }
- 
-  const users = await sql`SELECT * FROM users;`;
-  return response.status(200).json({ users: users.rows[0] });
 }

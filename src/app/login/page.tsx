@@ -2,6 +2,7 @@
 import Loader from "@/src/components/loader/Loader";
 import React from "react";
 import { useRouter } from "next/navigation";
+import bcrypt from 'bcrypt';
 
 export default function Login() {
     
@@ -70,21 +71,23 @@ export default function Login() {
     }
 
     async function getUser() {
+        const saltRounds = 10; // Number of salt rounds for bcrypt
+        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password using bcrypt
         const postData = {
             method: "POST",
             headers: {
-            "Content-Type": "application/json",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username: email,
-                password: password
+                username: email, // Assuming email holds the username
+                password: hashedPassword // Sending the hashed password
             })
         };
-        console.log("postData",postData);
-        console.log("email",email, password);
+        console.log("postData", postData);
+        console.log("email", email, password);
         const res = await fetch(`api/user?username=${email}&password=${password}`, postData);
         const response = await res.json();
-        console.log("respnose",response);
+        console.log("response", response);
         const usersArray: UserType[] = Object.values(response.users);
         setUsers(usersArray);
     }
