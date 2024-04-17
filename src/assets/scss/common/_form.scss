@@ -73,12 +73,31 @@ select{
     display: flex;
     align-items: center;
     justify-content: center;
+    &.form-signup{
+        .logo-block{
+            margin-bottom: 40px;
+        }
+    }
     .title-h1{
         text-align: center;
         margin-bottom: 46px;
         font-size: 28px;
+        @include max(575px){
+            margin-bottom: 30px;
+        }
     }
-
+    
+    .form-desc{
+        text-align: center;
+        font-size: 17px;
+        color:$grey-6A;
+        font-weight: 600;
+        margin-bottom: 40px;
+        @include max(575px){
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+    }
     .form-content{
         margin: auto;
         width: 30vw;
@@ -92,8 +111,14 @@ select{
         }
         .form-group{
             margin-bottom: 5vh;
+            @include max(575px){
+                margin-bottom: 3vh;
+            }
             &:nth-child(3){
                 margin-bottom: 10vh;
+                @include max(575px){
+                    margin-bottom: 7vh;
+                }
             }
             &.form-submit{
                 margin-bottom: 5px;
@@ -140,6 +165,17 @@ select{
             &:focus{
                 outline: none;
                 box-shadow: 0 0 0 0.1rem rgba($color-primary, 0.25);
+            }
+        }
+        .input-pass{
+            position: relative;
+            .icon{
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: $grey-6A;
             }
         }
         .btn-primary{
