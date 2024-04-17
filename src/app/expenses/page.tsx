@@ -15,25 +15,12 @@ import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { Timestamp, collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { ExpenseType } from '@/src/models/ExpenseType';
+import { CategoryType } from '@/src/models/CategoryType';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
     const router = useRouter();
-
-    interface ExpenseType {
-      idexpenses: number;
-      description: string;
-      dateexpenses: string;
-      categoryexpense: string;
-      valueexpenses: number;
-      compte: string;
-      uidUser: string;
-    }
-
-    interface CategoryType {
-      idCategory: number;
-      description: string;
-    }
 
     interface CompteType {
       idcompte: number;
@@ -103,7 +90,7 @@ export default function Expenses() {
   ]
   
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
-  const [categories, setCategory] = useState(Array<CategoryType>);
+  const [categories, setCagories] = useState(Array<CategoryType>);
   const [comptes, setCompte] = useState(Array<CompteType>);
   const [comptesI, setCompteI] = useState(Array<CompteType>);
   const [stateForm, setStateForm] = useState(true);
@@ -216,6 +203,7 @@ export default function Expenses() {
 
   }
   
+  //Get all expenses
   const getExpenses = async () => {
     try {
         const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
@@ -262,6 +250,7 @@ export default function Expenses() {
     }, 1400)
   }
 
+  //get all comptes
   async function getComptes() {
     const offset = (currentPage - 1) * itemsPerPage;
     const postData = {
@@ -274,7 +263,26 @@ export default function Expenses() {
     const response = await res.json();
     const comptesArray: CompteType[] = Object.values(response.comptes);
     setCompte(comptesArray);
-}
+  }
+
+  //get all categories
+  const getCategories = async () => {
+      try {
+        const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+
+            return {
+                id: doc.data().id,
+                description: doc.data().description,
+                uidUser: doc.data().uidUser
+            }
+        });
+        setCagories(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
+  }
 
 //Compte courant
 async function getExpensesCurrent(valAccount: string) {
@@ -290,18 +298,7 @@ async function getExpensesCurrent(valAccount: string) {
   setExpenses(expensesArray);
 }
 
-  async function getCategories() {
-    const postData = {
-        method: "GET",
-        headers: {
-        "Content-Type": "application/json",
-        },
-    };
-    const res = await fetch(`api/category`, postData);
-    const response = await res.json();
-    const categoriesArray: CategoryType[] = Object.values(response.categories);
-    setCategory(categoriesArray);
-}
+  
   
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
