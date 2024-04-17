@@ -13,7 +13,8 @@ import Loader from '@/src/components/loader/Loader';
 import {monthNames} from '@/src/data/function';
 import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { Timestamp, collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -21,12 +22,12 @@ export default function Expenses() {
 
     interface ExpenseType {
       idexpenses: number;
-      descriptionform: string;
+      description: string;
       dateexpenses: string;
-      categoryexpenses: string;
+      categoryexpense: string;
       valueexpenses: number;
-      idcompte: number;
-      comptedescription: string;
+      compte: string;
+      uidUser: string;
     }
 
     interface CategoryType {
@@ -111,6 +112,7 @@ export default function Expenses() {
   const [updated, setUpdated] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [userMail, setUserMail] = useState('');
+  const [userUID, setUserUID] = useState('');
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
@@ -125,15 +127,6 @@ export default function Expenses() {
   const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
   const [inputFilter, setInputFilter] = React.useState(defaultCompte);
  
-  const dataList2 = Object.values(expenses).map((expense) => ({
-    idexpenses: expense["idexpenses"],
-    descriptionform: expense["descriptionform"],
-    dateexpenses: formatDate(expense["dateexpenses"]),
-    categoryexpenses: expense["categoryexpenses"],
-    valueexpenses: expense["valueexpenses"],
-    comptedescription: expense["comptedescription"]
-  }))
-
   const dataCategory = Object.values(categories).map((category) => (
     category.description
   ))
@@ -222,18 +215,31 @@ export default function Expenses() {
     }, 1400)
 
   }
-  async function getExpenses() {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense`, postData);
-    const response = await res.json();
-    const expensesArray: ExpenseType[] = Object.values(response.expenses);
-    setExpenses(expensesArray);
-  }
+  
+  const getExpenses = async () => {
+    try {
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+            const dayL = dateTask.toDateString();
+
+            return {
+                idexpenses: doc.data().idexpenses,
+                compte: doc.data().compte,
+                dateexpenses: dayL.toString(),
+                categoryexpense: doc.data().categoryexpense,
+                uidUser: doc.data().uidUser,
+                valueexpenses: doc.data().valueexpenses,
+                description: doc.data().description
+            }
+        });
+        setExpenses(newData);
+        console.log(expenses)
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
+}
 
   //delete expense
   async function deleteExpense(id: number) {
@@ -327,11 +333,11 @@ async function getExpensesCurrent(valAccount: string) {
       newDate.setDate(originalDate.getDate() + 1);
       const numString = expense.valueexpenses.toString();
 
-      inputRefDescription.current!.value = expense.descriptionform;
+      inputRefDescription.current!.value = expense.description;
       inputRefValue.current!.value = numString;
       inputRefDate.current!.value = newDate.toISOString().slice(0, 10);
-      inputRefCategory.current!.value = expense.categoryexpenses;
-      inputRefCompte.current!.value = expense.idcompte.toString();
+      inputRefCategory.current!.value = expense.categoryexpense;
+      inputRefCompte.current!.value = expense.compte.toString();
     }
     setIdUpdateExpenses(idexpense);
     setStateForm(false);
@@ -340,8 +346,9 @@ async function getExpensesCurrent(valAccount: string) {
   useEffect(() => {
     getCategories();
     getComptes();
+    getExpenses();  
     if(inputFilter === 'ALL'){
-      getExpenses();  
+      
     }
     else{
       getExpensesCurrent(inputFilter);
@@ -351,8 +358,11 @@ async function getExpensesCurrent(valAccount: string) {
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.email;
-        setUserMail(uid ?? '');
+        const email = user.email;
+        const uid = user.uid
+        setUserMail(email ?? '');
+        setUserUID(uid ?? '');
+        console.log('uid*************',userUID)
       } else {
         router.push("/login");
       }
@@ -379,7 +389,7 @@ async function getExpensesCurrent(valAccount: string) {
                         <div className="section-list">
                           <div className="table-filter">
                             <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
-                              {comptes.map((compte, index) => (
+                              {comptes.slice(startIndex, endIndex).map((compte, index) => (
                                 <option key={index} value={compte.description}>{compte.description}</option>
                               ))}
                               <option value="ALL">Tous</option>
@@ -399,14 +409,14 @@ async function getExpensesCurrent(valAccount: string) {
                                 </tr>
                               </thead>
                               <tbody>
-                              {dataList2.slice(startIndex, endIndex).map((list, index) => (
+                              {expenses.map((list, index) => (
                                 <tr key={index}>
                                     <td>{list.idexpenses}</td>
-                                    <td>{list.descriptionform}</td>
+                                    <td>{list.description}</td>
                                     <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
                                     <td>{list.dateexpenses}</td>
-                                    <td>{list.categoryexpenses}</td>
-                                    <td>{list.comptedescription}</td>
+                                    <td>{list.categoryexpense}</td>
+                                    <td>{list.compte}</td>
                                     <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idexpenses)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteExpense(list.idexpenses)}><i className="icon-bin2"></i></button></div></td>
                                 </tr>
                               ))}
