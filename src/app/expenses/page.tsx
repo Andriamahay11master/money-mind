@@ -15,17 +15,13 @@ import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { Timestamp, collection, getDocs, orderBy, query, where } from 'firebase/firestore';
-import { ExpenseType } from '@/src/models/ExpenseType';
+import { ExpenseType } from '@/src/models/ExpenseType'; 
 import { CategoryType } from '@/src/models/CategoryType';
+import { CompteType } from '@/src/models/CompteType';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
     const router = useRouter();
-
-    interface CompteType {
-      idcompte: number;
-      description: string;
-    }
 
     //state pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -91,8 +87,8 @@ export default function Expenses() {
   
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
   const [categories, setCagories] = useState(Array<CategoryType>);
-  const [comptes, setCompte] = useState(Array<CompteType>);
-  const [comptesI, setCompteI] = useState(Array<CompteType>);
+  const [comptes, setComptes] = useState(Array<CompteType>);
+  const [comptesI, setComptesI] = useState(Array<CompteType>);
   const [stateForm, setStateForm] = useState(true);
   const [idUpdateExpenses, setIdUpdateExpenses] = useState(0);
   const [created, setCreated] = useState(false);
@@ -114,10 +110,12 @@ export default function Expenses() {
   const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
   const [inputFilter, setInputFilter] = React.useState(defaultCompte);
  
+  //list category for select in add form
   const dataCategory = Object.values(categories).map((category) => (
     category.description
   ))
 
+  //list compte for select in add form
   const dataCompte = Object.values(comptes).map((compte) => (
     compte.description
   ))
@@ -253,16 +251,21 @@ export default function Expenses() {
   //get all comptes
   async function getComptes() {
     const offset = (currentPage - 1) * itemsPerPage;
-    const postData = {
-        method: "GET",
-        headers: {
-        "Content-Type": "application/json",
-        },
-    };
-    const res = await fetch(`api/compte?offset=${offset}&limit=${itemsPerPage}`, postData);
-    const response = await res.json();
-    const comptesArray: CompteType[] = Object.values(response.comptes);
-    setCompte(comptesArray);
+    try {
+      const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
+      const querySnapshot = await getDocs(q);
+      const newData = querySnapshot.docs.map(doc => {
+
+          return {
+              idcompte: doc.data().idcompte,
+              description: doc.data().description,
+              uidUser: doc.data().uidUser
+          }
+      });
+      setComptes(newData);
+      } catch (error) {
+          console.error("Error fetching documents: ", error);
+      }
   }
 
   //get all categories
