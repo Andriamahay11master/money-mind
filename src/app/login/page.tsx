@@ -3,18 +3,11 @@ import Loader from "@/src/components/loader/Loader";
 import React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 
 export default function Login() {
-    
-    interface UserType {
-        iduser: number;
-        username: string;
-        password: string;
-        nom: string;
-        prenom: string;
-        mail: string;
-      }
 
     const [showPassword, setShowPassword] = React.useState(false);
     const [email, setEmail] = React.useState('');
@@ -23,22 +16,33 @@ export default function Login() {
     const [errorExist, setErrorExist] = React.useState(false);
     const [errorForm, setErrorForm] = React.useState('');
     const [codeError, setCodeError] = React.useState('');
-    const [users, setUsers] = React.useState(Array<UserType>);
 
     const router = useRouter();
 
-    async function connectAccount (){
-        getUser();
-        if(users.length > 0) {
+    function connectAccount (e : any) {
+        e.preventDefault();
+        if(!email && !password) return;
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            // Set user data in localStorage
+            // localStorage.setItem('user', JSON.stringify(user));
+            // Optionally, you can set a flag to indicate the user is logged in
+            localStorage.setItem('isLoggedIn', 'true');
             setSuccess(true);
-            router.push('/');
-            console.log('users exist', users)
-        } else {
-            setErrorExist(true);
-            setSuccess(false);
+            router.push("/expenses");
+            console.log(user)
+        })
+        .catch((error : any) => {
+            const errorCode = error.code;
+            // const errorMessage = error.message;
+            console.log(errorCode, error.message)
+            setErrorExist(true)
+            setCodeError(errorCode)
             manageMessageError();
-        }
-    }
+        });
+      };
+      
 
     const manageMessageError = () => {
         switch(codeError) {
@@ -71,33 +75,13 @@ export default function Login() {
         setShowPassword(!showPassword);
     }
 
-    async function getUser() {
-        const saltRounds = 10; // Number of salt rounds for bcrypt
-        const postData = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: email, // Assuming email holds the username
-                password: password // Sending the hashed password
-            })
-        };
-        console.log("postData", postData);
-        console.log("email", email, password);
-        const res = await fetch(`api/user?username=${email}&password=${password}`, postData);
-        const response = await res.json();
-        console.log("response", response);
-        const usersArray: UserType[] = Object.values(response.users);
-        setUsers(usersArray);
-    }
-
     return (
         <div className="form-block-gabarit">
             <div className="form-block-content">
                 <h1 className="title-h1">Welcome Back</h1>
                 <div className="form-content">
                     <h2 className="title-h2">Login</h2>
+                    <form>
                         <div className="form-group">
                             <label htmlFor="email"><i className="icon-mail"></i>Your email</label>
                             <input type="email" id="email" placeholder="Write your email" onChange={onChangeEmail} value={email}/>
@@ -114,9 +98,10 @@ export default function Login() {
                             <Link className="btn btn-link" href="/forgot">Forgot your password?</Link>
                         </div>
                         <div className="form-group form-submit">
-                            <button className="btn btn-primary" onClick={connectAccount}>Login</button>
+                            <button className={(email && password ) ? "btn btn-primary" : "btn btn-primary disabled"} onClick={connectAccount}>Login</button>
                         </div>
                     <p>Don&apos;t have an account? <Link className="btn btn-link" href="/signup">Sign up</Link></p>
+                    </form>
                 </div>
             </div>
             {success && <Loader />}

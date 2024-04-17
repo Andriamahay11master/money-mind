@@ -7,6 +7,8 @@ import './header.scss';
 import Image from 'next/image';
 import i18next from 'i18next';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/src/app/firebase';
 
 interface HeaderProps {
     linkMenu: {name: string, href: string}[]
@@ -53,9 +55,12 @@ export default function Header({linkMenu} : HeaderProps) {
         setNavbarOpen(false);
     }
 
-    const logout = () => {
-        router.push('/login');
-    }
+    const handleSignOut = () => {
+        signOut(auth).then(() => {
+            localStorage.setItem("isLoggedIn", 'false');
+            router.push('/login');
+        })
+    };
 
     return (
         <header className={`sectHeader sectHeader--fixed${navbarOpen ? ' show-menu' : ''}`}>
@@ -124,9 +129,9 @@ export default function Header({linkMenu} : HeaderProps) {
                             </ul>
                         </div>
                         <div className="profil">
-                            <Link href="/login" title='Bouton to login' onClick={logout}>
+                            <button className="btn btn-link" title='Bouton to login' onClick={handleSignOut}>
                                 <i className="icon-log-out"></i>
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>

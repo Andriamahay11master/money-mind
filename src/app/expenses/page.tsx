@@ -11,9 +11,13 @@ import { formatNumber, formatDate } from '@/src/data/function';
 import { useEffect, useState, useRef } from 'react';
 import Loader from '@/src/components/loader/Loader';
 import {monthNames} from '@/src/data/function';
+import { redirect, useRouter } from 'next/navigation';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
+    const router = useRouter();
 
     interface ExpenseType {
       idexpenses: number;
@@ -106,6 +110,7 @@ export default function Expenses() {
   const [created, setCreated] = useState(false);
   const [updated, setUpdated] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [userMail, setUserMail] = useState('');
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
@@ -341,82 +346,95 @@ async function getExpensesCurrent(valAccount: string) {
     else{
       getExpensesCurrent(inputFilter);
     }
+    // Mettez à jour l'état de l'email de l'utilisateur
+    
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.email;
+        setUserMail(uid ?? '');
+      } else {
+        router.push("/login");
+      }
+    });
     
   }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter]);
   
     return (
         <div>
-          {(dataList2 && dataList2.length > 0) ? (
+          {(userMail !== '') ? 
             <>
               <Header linkMenu={dataNav}/>
-            <main className='main-page'>
-                <div className="container">
-                    <Breadcrumb items={itemsBreadcrumb}/>
-                    <div className="main-section page-form-2">
-                      <div className="section-form">
-                        <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
-                        {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
-                        {updated && <div className="alert alert-success">{t('message.updatedExpenseSuccess')}</div> }
-                        {deleted && <div className="alert alert-danger">{t('message.deletedExpenseSuccess')}</div> }
+              <main className='main-page'>
+                  <div className="container">
+                      <Breadcrumb items={itemsBreadcrumb}/>
+                      {(userMail !== '') &&  <p> User Email : {userMail}</p>}
+                      <div className="main-section page-form-2">
+                        <div className="section-form">
+                          <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
+                          {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
+                          {updated && <div className="alert alert-success">{t('message.updatedExpenseSuccess')}</div> }
+                          {deleted && <div className="alert alert-danger">{t('message.deletedExpenseSuccess')}</div> }
+                        </div>
+                        <div className="section-list">
+                          <div className="table-filter">
+                            <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
+                              {comptes.map((compte, index) => (
+                                <option key={index} value={compte.description}>{compte.description}</option>
+                              ))}
+                              <option value="ALL">Tous</option>
+                            </select>   
+                          </div>
+                          <div className="list-block list-view">
+                            <table className='list-table'>
+                              <thead>
+                                <tr>
+                                  <th>{t('table.id')}</th>
+                                  <th>{t('table.description')}</th>
+                                  <th>{t('table.value')} (en Ariary)</th>
+                                  <th>{t('table.date')}</th>
+                                  <th>{t('table.category')}</th>
+                                  <th>{t('table.compte')}</th>
+                                  <th>{t('table.action')}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {dataList2.slice(startIndex, endIndex).map((list, index) => (
+                                <tr key={index}>
+                                    <td>{list.idexpenses}</td>
+                                    <td>{list.descriptionform}</td>
+                                    <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
+                                    <td>{list.dateexpenses}</td>
+                                    <td>{list.categoryexpenses}</td>
+                                    <td>{list.comptedescription}</td>
+                                    <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idexpenses)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteExpense(list.idexpenses)}><i className="icon-bin2"></i></button></div></td>
+                                </tr>
+                              ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className="pagination-table">
+                              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                                <button
+                                  key={page}
+                                  onClick={() => handlePageChange(page)}
+                                  className={page === currentPage ? "active" : ""}
+                                >
+                                  {page}
+                                </button>
+                              ))}
+                          </div>
+                        </div>
                       </div>
-                      <div className="section-list">
-                        <div className="table-filter">
-                          <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
-                            {comptes.map((compte, index) => (
-                              <option key={index} value={compte.description}>{compte.description}</option>
-                            ))}
-                            <option value="ALL">Tous</option>
-                          </select>   
-                        </div>
-                        <div className="list-block list-view">
-                          <table className='list-table'>
-                            <thead>
-                              <tr>
-                                <th>{t('table.id')}</th>
-                                <th>{t('table.description')}</th>
-                                <th>{t('table.value')} (en Ariary)</th>
-                                <th>{t('table.date')}</th>
-                                <th>{t('table.category')}</th>
-                                <th>{t('table.compte')}</th>
-                                <th>{t('table.action')}</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            {dataList2.slice(startIndex, endIndex).map((list, index) => (
-                              <tr key={index}>
-                                  <td>{list.idexpenses}</td>
-                                  <td>{list.descriptionform}</td>
-                                  <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
-                                  <td>{list.dateexpenses}</td>
-                                  <td>{list.categoryexpenses}</td>
-                                  <td>{list.comptedescription}</td>
-                                  <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idexpenses)}><i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteExpense(list.idexpenses)}><i className="icon-bin2"></i></button></div></td>
-                              </tr>
-                            ))}
-                            </tbody>
-                          </table>
-                        </div>
-                        <div className="pagination-table">
-                            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                              <button
-                                key={page}
-                                onClick={() => handlePageChange(page)}
-                                className={page === currentPage ? "active" : ""}
-                              >
-                                {page}
-                              </button>
-                            ))}
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </main>
-            <Footer {...dataFooter}/>
-            </>
-          ) : (
-            <Loader/>
-          )}
-            
+                  </div>
+              </main>
+              <Footer {...dataFooter}/>  
+            </> :
+            (
+              <Loader/>
+            )
+          }
         </div>
+                          
     )
 }

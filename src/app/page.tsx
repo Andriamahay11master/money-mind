@@ -13,8 +13,6 @@ import Loader from '../components/loader/Loader';
 import { monthNames } from '../data/function';
 import { redirect } from 'next/navigation';
 
-
-
 export default function Home() {
 
   const { t } = useTranslation('translation');
