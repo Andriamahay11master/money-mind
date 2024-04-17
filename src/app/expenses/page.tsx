@@ -14,7 +14,7 @@ import {monthNames} from '@/src/data/function';
 import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { Timestamp, collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { ExpenseType } from '@/src/models/ExpenseType'; 
 import { CategoryType } from '@/src/models/CategoryType';
 import { CompteType } from '@/src/models/CompteType';
@@ -96,6 +96,7 @@ export default function Expenses() {
   const [deleted, setDeleted] = useState(false);
   const [userMail, setUserMail] = useState('');
   const [userUID, setUserUID] = useState('');
+  const [idExpenses, setIdExpenses] = useState<number | null>(null);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
@@ -110,6 +111,22 @@ export default function Expenses() {
   const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
   const [inputFilter, setInputFilter] = React.useState(defaultCompte);
  
+  //get last ID inserted in document expenses
+  const fetchLastId = async () => {
+    try {
+        const q = query(collection(db, "expenses"), orderBy("idexpenses", "desc"), limit(1)); // Limit to 1 document
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            const lastId = querySnapshot.docs[0].data().id;
+            setIdExpenses(lastId + 1); // Set the new ID as the last ID + 1
+        } else {
+            setIdExpenses(1); // If no documents found, set ID to 1
+        }
+    } catch (error) {
+        console.error("Error fetching last ID: ", error);
+    }
+  }
+
   //list category for select in add form
   const dataCategory = Object.values(categories).map((category) => (
     category.description
@@ -125,42 +142,35 @@ export default function Expenses() {
   ))
 
   async function addExpenses() {
+    try{
+        if(date) {
+            await addDoc(collection(db, "expenses"), {
+                idexpenses: idExpenses,
+                description: inputRefDescription.current?.value,
+                dateexpenses: Timestamp.fromDate(new Date(date.toString())),
+                categoryexpense: inputRefCategory.current?.value,
+                valueexpenses: inputRefValue.current?.value,
+                compte: inputRefCompte.current?.value,
+                uidUser: userUID
+            });
+            setCreated(true);
+             // Reset form by updating refs to initial values
+            if (inputRefDescription.current) inputRefDescription.current.value = "";
+            if (inputRefValue.current) inputRefValue.current.value = "";
+            if (inputRefDate.current) inputRefDate.current.value = "";
+            if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
+            if (inputRefCompte.current) inputRefCompte.current.value = dataCompteID[0].toString();
 
-    const postData = {
-      method: "POST",
-      headers :{
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        descriptionform: inputRefDescription.current?.value,
-        valueexpenses: inputRefValue.current?.value,
-        dateexpenses: inputRefDate.current?.value,  
-        categoryexpenses: inputRefCategory.current?.value,
-        idcompte: inputRefCompte.current?.value
-      })
-    };
-    console.log(inputRefCompte.current?.value)
-    console.log(postData)
-    const res = await fetch(`api/addExpense?desce=${inputRefDescription.current?.value}&valuee=${inputRefValue.current?.value}&datee=${inputRefDate.current?.value}&categorye=${inputRefCategory.current?.value}&accountide=${inputRefCompte.current?.value}`, postData);
-    const response = await res.json();
-    //Update list expense
-    setExpenses(response.expenses); 
+            getExpenses();
 
-
-    // Reset form by updating refs to initial values
-    if (inputRefDescription.current) inputRefDescription.current.value = "";
-    if (inputRefValue.current) inputRefValue.current.value = "";
-    if (inputRefDate.current) inputRefDate.current.value = "";
-    if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
-    if (inputRefCompte.current) inputRefCompte.current.value = dataCompteID[0].toString();
-    // Now, fetch the updated expenses
-    getExpenses();
-    
-    setCreated(true);
-
-    setTimeout(() => {
-      setCreated(false);
-    }, 1400)
+            setTimeout(() => {
+              setCreated(false);
+            }, 1400)
+        }  
+    }
+    catch (error) {
+        console.error("Error adding document: ", error);
+    }
   }
 
   async function updateExpenses() {
@@ -346,6 +356,7 @@ async function getExpensesCurrent(valAccount: string) {
   useEffect(() => {
     getCategories();
     getComptes();
+    fetchLastId();
     getExpenses();  
     if(inputFilter === 'ALL'){
       
@@ -353,8 +364,6 @@ async function getExpensesCurrent(valAccount: string) {
     else{
       getExpensesCurrent(inputFilter);
     }
-    // Mettez à jour l'état de l'email de l'utilisateur
-    
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -362,7 +371,6 @@ async function getExpensesCurrent(valAccount: string) {
         const uid = user.uid
         setUserMail(email ?? '');
         setUserUID(uid ?? '');
-        console.log('uid*************',userUID)
       } else {
         router.push("/login");
       }
