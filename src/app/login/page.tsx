@@ -2,6 +2,8 @@
 import Loader from "@/src/components/loader/Loader";
 import React from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
 
 export default function Login() {
     
@@ -91,7 +93,7 @@ export default function Login() {
     }
 
     return (
-        <div className="form-block-login">
+        <div className="form-block-gabarit">
             <div className="form-block-content">
                 <h1 className="title-h1">Welcome Back</h1>
                 <div className="form-content">
@@ -109,12 +111,12 @@ export default function Login() {
                             {(errorExist && errorForm) && <p className="error-form">{errorForm}</p>}
                         </div>
                         <div className="form-group form-forgot">
-                            <a className="btn btn-link" href="/forgot">Forgot your password?</a>
+                            <Link className="btn btn-link" href="/forgot">Forgot your password?</Link>
                         </div>
                         <div className="form-group form-submit">
                             <button className="btn btn-primary" onClick={connectAccount}>Login</button>
                         </div>
-                    <p>Don&apos;t have an account? <a className="btn btn-link" href="/signup">Sign up</a></p>
+                    <p>Don&apos;t have an account? <Link className="btn btn-link" href="/signup">Sign up</Link></p>
                 </div>
             </div>
             {success && <Loader />}
