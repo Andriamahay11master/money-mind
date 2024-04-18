@@ -14,7 +14,7 @@ import {monthNames} from '@/src/data/function';
 import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { Timestamp, addDoc, collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { ExpenseType } from '@/src/models/ExpenseType'; 
 import { CategoryType } from '@/src/models/CategoryType';
 import { CompteType } from '@/src/models/CompteType';
@@ -98,6 +98,7 @@ export default function Expenses() {
   const [userMail, setUserMail] = useState('');
   const [userUID, setUserUID] = useState('');
   const [idExpenses, setIdExpenses] = useState<number | null>(null);
+  const [currentDocument, setCurrentDocument] = useState('');
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const inputRefValue = React.useRef<HTMLInputElement>(null);
@@ -178,41 +179,37 @@ export default function Expenses() {
   }
 
   async function updateExpenses() {
-    const postData = {
-      method: "PUT",
-      headers :{
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        idexpenses: idUpdateExpenses,
-        descriptionform: inputRefDescription.current?.value,
-        valueexpenses: inputRefValue.current?.value,
-        dateexpenses: inputRefDate.current?.value,
-        categoryexpenses: inputRefCategory.current?.value,
-        idcompte: inputRefCompte.current?.value
-      })
-    };
-    const res = await fetch(`/api/updateExpense?ide=${idUpdateExpenses}&desce=${inputRefDescription.current?.value}&valuee=${inputRefValue.current?.value}&datee=${inputRefDate.current?.value}&categorye=${inputRefCategory.current?.value}&accountide=${inputRefCompte.current?.value}`, postData);
-    const response = await res.json();
-    //Update list expense
-    setExpenses(response.expenses); 
-    // Reset form by updating refs to initial values
-    if (inputRefDescription.current) inputRefDescription.current.value = "";
-    if (inputRefValue.current) inputRefValue.current.value = "";
-    if (inputRefDate.current) inputRefDate.current.value = "";
-    if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
-    if (inputRefCompte.current) inputRefCompte.current.value = dataCompte[0];
+    try{
+      const dateValue = inputRefDate.current?.value;
+        if(dateValue) {
+            const expenseRef = doc(db, "expenses", currentDocument);
+            updateDoc(expenseRef, {
+              idexpenses: idUpdateExpenses,
+              description: inputRefDescription.current?.value,
+              dateexpenses: Timestamp.fromDate(new Date(dateValue.toString())),
+              categoryexpense: inputRefCategory.current?.value,
+              valueexpenses: inputRefValue.current?.value,
+              compte: inputRefCompte.current?.value,
+              uidUser: userUID
+            });  
+            setUpdated(true);
+            // Reset form by updating refs to initial values
+            if (inputRefDescription.current) inputRefDescription.current.value = "";
+            if (inputRefValue.current) inputRefValue.current.value = "";
+            if (inputRefDate.current) inputRefDate.current.value = "";
+            if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
+            if (inputRefCompte.current) inputRefCompte.current.value = dataCompte[0];
 
-    // Now, fetch the updated expenses
-    getExpenses();
-    
-    setUpdated(true);
+            getExpenses();
 
-    setTimeout(() => {
-      setUpdated(false);
-      setStateForm(true);
-    }, 1400)
-
+            setTimeout(() => {
+              setUpdated(false);
+            }, 1400)
+        }  
+    }
+    catch (error) {
+        console.error("Error adding document: ", error);
+    }
   }
   
   //Get all expenses
@@ -239,7 +236,22 @@ export default function Expenses() {
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
-}
+  }
+
+//Get Document on expense by ID
+  async function getExpenseById(id: number) {
+    try {
+        const q = query(collection(db, "expenses"), where("idexpenses", "==", id));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.docs.map(doc => {
+            const expenseIdDocument = doc.id;
+            setCurrentDocument(expenseIdDocument);
+            return expenseIdDocument;
+        });
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
+  }
 
   //delete expense
   async function deleteExpense(id: number) {
@@ -351,10 +363,11 @@ async function getExpensesCurrent(valAccount: string) {
       inputRefValue.current!.value = numString;
       inputRefDate.current!.value = newDate.toISOString().slice(0, 10);
       inputRefCategory.current!.value = expense.categoryexpense;
-      inputRefCompte.current!.value = expense.compte.toString();
+      inputRefCompte.current!.value = expense.compte;
+      getExpenseById(idexpense);
     }
     setIdUpdateExpenses(idexpense);
-    setStateForm(false);
+    setStateForm(false); //change form to state update
   }
 
   useEffect(() => {

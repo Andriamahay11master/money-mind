@@ -6,7 +6,6 @@
     right: 20px;
     bottom: 20px;
     z-index: 200;
-    transform: translateX(+250px);
     width: 200px;
     height: 60px;
 	box-shadow: $grey-6A 0px 0px 10px 2px;
@@ -27,7 +26,6 @@
         background: $red;
     }
     &.show{
-        transform: translateX(0px);
         transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
         opacity: 1;
     }
