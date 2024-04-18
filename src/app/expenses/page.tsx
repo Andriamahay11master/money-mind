@@ -117,8 +117,10 @@ export default function Expenses() {
         const q = query(collection(db, "expenses"), orderBy("idexpenses", "desc"), limit(1)); // Limit to 1 document
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
-            const lastId = querySnapshot.docs[0].data().id;
+            const lastId = querySnapshot.docs[0].data().idexpenses;
+            console.log(lastId);
             setIdExpenses(lastId + 1); // Set the new ID as the last ID + 1
+            console.log("new id then", idExpenses);
         } else {
             setIdExpenses(1); // If no documents found, set ID to 1
         }
@@ -143,11 +145,12 @@ export default function Expenses() {
 
   async function addExpenses() {
     try{
-        if(date) {
+      const dateValue = inputRefDate.current?.value;
+        if(dateValue) {
             await addDoc(collection(db, "expenses"), {
                 idexpenses: idExpenses,
                 description: inputRefDescription.current?.value,
-                dateexpenses: Timestamp.fromDate(new Date(date.toString())),
+                dateexpenses: Timestamp.fromDate(new Date(dateValue.toString())),
                 categoryexpense: inputRefCategory.current?.value,
                 valueexpenses: inputRefValue.current?.value,
                 compte: inputRefCompte.current?.value,
