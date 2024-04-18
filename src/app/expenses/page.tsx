@@ -145,6 +145,17 @@ export default function Expenses() {
   //   compte.idcompte
   // ))
 
+  //Function test choice displaying expenses
+  function displayExpenses(){
+    const selectedDesc = inputFilterRefCompte.current?.value ?? '';
+    if(selectedDesc === 'ALL'){
+      getExpenses();
+    }
+    else{
+      getExpensesCurrent(selectedDesc);
+    }
+  }
+  //add expense in firebase
   async function addExpenses() {
     try{
       const dateValue = inputRefDate.current?.value;
@@ -166,7 +177,7 @@ export default function Expenses() {
             if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
             if (inputRefCompte.current) inputRefCompte.current.value = dataCompte[0];
 
-            getExpenses();
+            await displayExpenses();
 
             setTimeout(() => {
               setCreated(false);
@@ -178,6 +189,7 @@ export default function Expenses() {
     }
   }
 
+  //update expense in firebase
   async function updateExpenses() {
     try{
       const dateValue = inputRefDate.current?.value;
@@ -200,7 +212,7 @@ export default function Expenses() {
             if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
             if (inputRefCompte.current) inputRefCompte.current.value = dataCompte[0];
             setStateForm(true);
-            await getExpenses();
+            await displayExpenses();
 
             setTimeout(() => {
               setUpdated(false);
@@ -212,7 +224,7 @@ export default function Expenses() {
     }
   }
   
-  //Get all expenses
+  //Get all expenses in fireabse
   const getExpenses = async () => {
     try {
         const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
@@ -260,7 +272,7 @@ export default function Expenses() {
         const expenseRef = doc(db, "expenses", currentDocument);
         await deleteDoc(expenseRef);
         setDeleted(true);
-        await getExpenses();
+        await displayExpenses();
         setTimeout(() => {
             setDeleted(false);
         }, 1400)
@@ -308,22 +320,32 @@ export default function Expenses() {
     }
   }
 
-//Compte courant
-async function getExpensesCurrent(valAccount: string) {
-  const postData = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-  const res = await fetch(`api/expense?type=ACCOUNT&valAccount=${valAccount}`, postData);
-  const response = await res.json();
-  const expensesArray: ExpenseType[] = Object.values(response.expenses);
-  setExpenses(expensesArray);
-}
+  //Get Expenses for selected filter
+  async function getExpensesCurrent(valAccount: string) {
+    try {
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+            const dayL = dateTask.toDateString();
 
-  
-  
+            return {
+                idexpenses: doc.data().idexpenses,
+                compte: doc.data().compte,
+                dateexpenses: dayL.toString(),
+                categoryexpense: doc.data().categoryexpense,
+                uidUser: doc.data().uidUser,
+                valueexpenses: doc.data().valueexpenses,
+                description: doc.data().description
+            }
+        });
+        setExpenses(newData);
+        console.log("current", expenses)
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
+  }
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
@@ -369,10 +391,9 @@ async function getExpensesCurrent(valAccount: string) {
   useEffect(() => {
     getCategories();
     getComptes();
-    getExpenses();  
     fetchLastId();
     if(inputFilter === 'ALL'){
-      
+      getExpenses();  
     }
     else{
       getExpensesCurrent(inputFilter);
