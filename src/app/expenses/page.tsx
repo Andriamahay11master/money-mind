@@ -18,6 +18,7 @@ import { Timestamp, addDoc, collection, getDocs, limit, orderBy, query, where } 
 import { ExpenseType } from '@/src/models/ExpenseType'; 
 import { CategoryType } from '@/src/models/CategoryType';
 import { CompteType } from '@/src/models/CompteType';
+import Alert from '@/src/components/alert/Alert';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -139,9 +140,9 @@ export default function Expenses() {
     compte.description
   ))
 
-  const dataCompteID = Object.values(comptes).map((compte) => (
-    compte.idcompte
-  ))
+  // const dataCompteID = Object.values(comptes).map((compte) => (
+  //   compte.idcompte
+  // ))
 
   async function addExpenses() {
     try{
@@ -162,7 +163,7 @@ export default function Expenses() {
             if (inputRefValue.current) inputRefValue.current.value = "";
             if (inputRefDate.current) inputRefDate.current.value = "";
             if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
-            if (inputRefCompte.current) inputRefCompte.current.value = dataCompteID[0].toString();
+            if (inputRefCompte.current) inputRefCompte.current.value = dataCompte[0];
 
             getExpenses();
 
@@ -200,7 +201,7 @@ export default function Expenses() {
     if (inputRefValue.current) inputRefValue.current.value = "";
     if (inputRefDate.current) inputRefDate.current.value = "";
     if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
-    if (inputRefCompte.current) inputRefCompte.current.value = dataCompteID[0].toString();
+    if (inputRefCompte.current) inputRefCompte.current.value = dataCompte[0];
 
     // Now, fetch the updated expenses
     getExpenses();
@@ -359,8 +360,8 @@ async function getExpensesCurrent(valAccount: string) {
   useEffect(() => {
     getCategories();
     getComptes();
-    fetchLastId();
     getExpenses();  
+    fetchLastId();
     if(inputFilter === 'ALL'){
       
     }
@@ -379,7 +380,7 @@ async function getExpensesCurrent(valAccount: string) {
       }
     });
     
-  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter]);
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, idExpenses]);
   
     return (
         <div>
@@ -393,9 +394,9 @@ async function getExpensesCurrent(valAccount: string) {
                       <div className="main-section page-form-2">
                         <div className="section-form">
                           <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
-                          {created && <div className="alert alert-success">{t('message.insertedExpenseSuccess')}</div> }
-                          {updated && <div className="alert alert-success">{t('message.updatedExpenseSuccess')}</div> }
-                          {deleted && <div className="alert alert-danger">{t('message.deletedExpenseSuccess')}</div> }
+                          {created && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.insertedExpenseSuccess')}/> }
+                          {updated && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.updatedExpenseSuccess')}/> } 
+                          {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedExpenseSuccess')}/> }
                         </div>
                         <div className="section-list">
                           <div className="table-filter">
