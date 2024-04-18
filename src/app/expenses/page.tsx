@@ -14,7 +14,7 @@ import {monthNames} from '@/src/data/function';
 import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { Timestamp, addDoc, collection, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { ExpenseType } from '@/src/models/ExpenseType'; 
 import { CategoryType } from '@/src/models/CategoryType';
 import { CompteType } from '@/src/models/CompteType';
@@ -199,8 +199,8 @@ export default function Expenses() {
             if (inputRefDate.current) inputRefDate.current.value = "";
             if (inputRefCategory.current) inputRefCategory.current.value = dataCategory[0];
             if (inputRefCompte.current) inputRefCompte.current.value = dataCompte[0];
-
-            getExpenses();
+            setStateForm(true);
+            await getExpenses();
 
             setTimeout(() => {
               setUpdated(false);
@@ -255,23 +255,18 @@ export default function Expenses() {
 
   //delete expense
   async function deleteExpense(id: number) {
-    const postData = {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        idexpense: id
-      })
-    };
-    const res = await fetch("/api/deleteExpense?idexpense=" + id + "", postData);
-    const response = await res.json();
-    setExpenses(response.expenses);
-    getExpenses();
-    setDeleted(true);
-    setTimeout(() => {
-      setDeleted(false);
-    }, 1400)
+    try {
+        getExpenseById(id);
+        const expenseRef = doc(db, "expenses", currentDocument);
+        await deleteDoc(expenseRef);
+        setDeleted(true);
+        await getExpenses();
+        setTimeout(() => {
+            setDeleted(false);
+        }, 1400)
+    } catch (error) {
+        console.error("Error deleting document: ", error);
+    }
   }
 
   //get all comptes
@@ -351,6 +346,7 @@ async function getExpensesCurrent(valAccount: string) {
     }
   };
 
+  //Fetch data on update and Document ID for idexpense
   const callUpdateForm = (idexpense: number) => {
     const expense = expenses.find((expense) => expense.idexpenses === idexpense);
     if (expense) {
