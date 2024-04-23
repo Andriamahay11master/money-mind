@@ -155,15 +155,15 @@ export default function Compte(){
             if (inputRefDescription.current) inputRefDescription.current.value = "";
             setStateForm(true);
 
-            getComptes();
+            await getComptes();
 
             setTimeout(() => {
             setUpdated(false);
             }, 1400)
         }  
-          catch (error) {
-              console.error("Error adding document: ", error);
-          }
+        catch (error) {
+            console.error("Error adding document: ", error);
+        }
     }
 
     //get all comptes
@@ -201,7 +201,7 @@ export default function Compte(){
             const compteRef = doc(db, "compte", currentDocument);
             await deleteDoc(compteRef);
             setDeleted(true);
-            getComptes();
+            await getComptes();
             setTimeout(() => {
                 setDeleted(false);
             }, 1400)

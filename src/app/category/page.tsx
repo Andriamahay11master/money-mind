@@ -10,7 +10,7 @@ import FormCategory from '@/src/components/category/FormCategory';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
 import { useRouter } from 'next/navigation';
-import { addDoc, collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { CategoryType } from '@/src/models/CategoryType';
@@ -83,8 +83,24 @@ export default function Category(){
     const [userUID, setUserUID] = useState('');
     const [idCategory, setIdCategory] = useState(0);
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
+    const [currentDocument, setCurrentDocument] = useState('');
 
-    //get last ID inserted in document compte
+    //Get Document on category by ID
+    async function getCategoryById(id: number) {
+      try {
+          const q = query(collection(db, "category"), where("id", "==", id));
+          const querySnapshot = await getDocs(q);
+          querySnapshot.docs.map(doc => {
+              const compteIdDocument = doc.id;
+              setCurrentDocument(compteIdDocument);
+              return compteIdDocument;
+          });
+      } catch (error) {
+          console.error("Error fetching documents: ", error);
+      }
+    }
+
+    //get last ID inserted in document category
     const fetchLastId = async () => {
         try {
             const q = query(collection(db, "category"), orderBy("id", "desc"), limit(1)); // Limit to 1 document
@@ -123,35 +139,34 @@ export default function Category(){
         catch (error) {
             console.error("Error adding document: ", error);
         }
-      }
+    }
 
-      async function updateCategory(){
-        const postData = {
-          method: "PUT",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            idcategory: idUpdateCategory,
+    //update category
+    async function updateCategory(){
+      try{
+        const compteRef = doc(db, "category", currentDocument);
+        updateDoc(compteRef, {
+            id: idUpdateCategory,
             description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`/api/updateCategory?idcategory=${idUpdateCategory}&description=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        //Update list category
-        setCategory(response.categories);
+            uidUser: userUID
+        });  
+        setUpdated(true);
         // Reset form by updating refs to initial values
         if (inputRefDescription.current) inputRefDescription.current.value = "";
-        // Now, fetch the updated categories
-        getCategories();
-                
-        setUpdated(true);
+        setStateForm(true);
+
+        await getCategories();
 
         setTimeout(() => {
-            setUpdated(false);
+          setUpdated(false);
         }, 1400)
+      }  
+      catch (error) {
+          console.error("Error adding document: ", error);
       }
+    }
 
+    //get categories
     async function getCategories() {
       try {
         const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"));
@@ -185,6 +200,7 @@ export default function Category(){
         if (category) {
             inputRefDescription.current!.value = category.description;
         }
+        getCategoryById(idcategory);
         setIdUpdateCategory(idcategory);
         setStateForm(false);
     }
