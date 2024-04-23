@@ -42,7 +42,7 @@ export default function Compte(){
             name: `${t('menu.contact')}`,
             href: '/category'
         }
-      ];
+    ];
 
     //data footer
     const dataFooter = {

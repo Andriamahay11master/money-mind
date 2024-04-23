@@ -11,11 +11,16 @@ import ListExpenseFive from '../components/expense/ListExpenseFive';
 import ChartExpense from '../components/expense/ChartExpense';
 import Loader from '../components/loader/Loader';
 import { monthNames } from '../data/function';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { auth, db } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function Home() {
 
   const { t } = useTranslation('translation');
+  const router = useRouter();
+
   const balance = '1600000';
   interface ExpenseType {
     idexpenses: number;
@@ -45,6 +50,8 @@ export default function Home() {
   const date = dateTOday.getMonth();
   const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
   const [inputFilter, setInputFilter] = React.useState(defaultCompte);
+  const [userUID, setUserUID] = React.useState('');
+  const [userMail, setUserMail] = React.useState('');
 
   //List 5 last Expense
   async function getLastFiveExpensesCurrent(valAccount: string) {
@@ -61,16 +68,20 @@ export default function Home() {
   }
 
   async function getComptes() {
-    const postData = {
-        method: "GET",
-        headers: {
-        "Content-Type": "application/json",
-        },
-    };
-    const res = await fetch(`api/compte`, postData);
-    const response = await res.json();
-    const comptesArray: CompteType[] = Object.values(response.comptes);
-    setComptes(comptesArray);
+    try {
+      const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
+      const querySnapshot = await getDocs(q);
+      const newData = querySnapshot.docs.map(doc => {
+          return {
+              idcompte: doc.data().idcompte,
+              uidUser: doc.data().uidUser,
+              description: doc.data().description
+          }
+        });
+        setComptes(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
 }
 
   async function getLastFiveExpensesAll() {
@@ -271,17 +282,29 @@ export default function Home() {
       getTopExpenseCategoriesCurrent(inputFilter);
       getMonthExpense(inputFilter);
     }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const email = user.email;
+        const uid = user.uid
+        setUserMail(email ?? '');
+        setUserUID(uid ?? '');
+      } else {
+        router.push("/login");
+      }
+    });
   }, [inputFilterRefCompte.current, inputFilter]);
 
   return (
     <>
-    {((listData && listData.length) && (dataList2 && dataList2.length)) ? (
+    {(userMail !== '')  ? (
       <>
       <Header linkMenu={dataNav}/>
       <main className='main-page'>
         <div className="container">
           <div className="main-page-top">
             <Breadcrumb items={itemsBreadcrumb}/>
+            {(userMail !== '') &&  <p> User Email : {userMail}</p>}
             <div className="choice-compte">
               <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
                 {comptes.map((compte, index) => (
