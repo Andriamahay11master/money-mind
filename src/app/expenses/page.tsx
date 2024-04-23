@@ -100,11 +100,11 @@ export default function Expenses() {
   const [currentDocument, setCurrentDocument] = useState('');
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
-    const inputRefValue = React.useRef<HTMLInputElement>(null);
-    const inputRefCategory = React.useRef<HTMLSelectElement>(null);
-    const inputRefDate = React.useRef<HTMLInputElement>(null);
-    const inputRefCompte = React.useRef<HTMLSelectElement>(null);
-    const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
+  const inputRefValue = React.useRef<HTMLInputElement>(null);
+  const inputRefCategory = React.useRef<HTMLSelectElement>(null);
+  const inputRefDate = React.useRef<HTMLInputElement>(null);
+  const inputRefCompte = React.useRef<HTMLSelectElement>(null);
+  const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
 
     
   const dateTOday = new Date();

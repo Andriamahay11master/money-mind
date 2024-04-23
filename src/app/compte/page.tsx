@@ -9,7 +9,7 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
-import { addDoc, collection, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -196,23 +196,18 @@ export default function Compte(){
     };
 
     const deleteCompte = async (idcompte: number) => {
-        const postData = {
-            method: "DELETE",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                idcompte: idcompte
-            })
-        };
-        const res = await fetch(`/api/deleteCompte?idcompte=${idcompte}`, postData);
-        const response = await res.json();
-        setCompte(response.comptes);
-        getComptes();
-        setDeleted(true);
-        setTimeout(() => {
-            setDeleted(false);
-        }, 1400)
+        try {
+            getCompteById(idcompte);
+            const expenseRef = doc(db, "compte", currentDocument);
+            await deleteDoc(expenseRef);
+            setDeleted(true);
+            getComptes();
+            setTimeout(() => {
+                setDeleted(false);
+            }, 1400)
+        } catch (error) {
+            console.error("Error deleting document: ", error);
+        }
     }
 
     //mode update on form
