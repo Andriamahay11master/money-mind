@@ -210,7 +210,6 @@ export default function Home() {
 
       // Convertir l'objet en tableau de paires (catégorie, total)
       const categoryTotalsArray = Object.entries(categoryTotals);
-
       // Trier le tableau par valeur (total dépensé) dans l'ordre décroissant
       categoryTotalsArray.sort((a, b) => b[1] - a[1]);
 
