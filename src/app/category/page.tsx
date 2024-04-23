@@ -10,7 +10,7 @@ import FormCategory from '@/src/components/category/FormCategory';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
 import { useRouter } from 'next/navigation';
-import { addDoc, collection, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { CategoryType } from '@/src/models/CategoryType';
@@ -144,8 +144,8 @@ export default function Category(){
     //update category
     async function updateCategory(){
       try{
-        const compteRef = doc(db, "category", currentDocument);
-        updateDoc(compteRef, {
+        const categoryRef = doc(db, "category", currentDocument);
+        updateDoc(categoryRef, {
             id: idUpdateCategory,
             description: inputRefDescription.current?.value,
             uidUser: userUID
@@ -205,29 +205,20 @@ export default function Category(){
         setStateForm(false);
     }
 
-    //delete category in BDD
+    //delete category in Firebase
     const deleteCategory = async (idcategory: number) => {
-        const postData = {
-          method: "DELETE",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            idcategory: idcategory,
-          })
-        };
-        const res = await fetch(`/api/deleteCategory?idcategory=${idcategory}`, postData);
-        const response = await res.json();
-        //Update list category
-        setCategory(response.categories);
-
-        getCategories();
-                
-        setDeleted(true);
-
-        setTimeout(() => {
-          setDeleted(false);
-        }, 1400)
+      try {
+          getCategoryById(idcategory);
+          const categoryRef = doc(db, "category", currentDocument);
+          await deleteDoc(categoryRef);
+          setDeleted(true);
+          await getCategories();
+          setTimeout(() => {
+              setDeleted(false);
+          }, 1400)
+      } catch (error) {
+          console.error("Error deleting document: ", error);
+      }
     }
 
 
