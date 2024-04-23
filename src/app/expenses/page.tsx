@@ -89,7 +89,6 @@ export default function Expenses() {
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
   const [categories, setCagories] = useState(Array<CategoryType>);
   const [comptes, setComptes] = useState(Array<CompteType>);
-  const [comptesI, setComptesI] = useState(Array<CompteType>);
   const [stateForm, setStateForm] = useState(true);
   const [idUpdateExpenses, setIdUpdateExpenses] = useState(0);
   const [created, setCreated] = useState(false);
