@@ -10,10 +10,11 @@ import FormCategory from '@/src/components/category/FormCategory';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
 import { useRouter } from 'next/navigation';
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { addDoc, collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { CategoryType } from '@/src/models/CategoryType';
+import Alert from '@/src/components/alert/Alert';
 
 export default function Category(){
     const { t } = useTranslation('translation');
@@ -80,37 +81,48 @@ export default function Category(){
     const [deleted, setDeleted] = useState(false);
     const [userMail, setUserMail] = useState('');
     const [userUID, setUserUID] = useState('');
-
+    const [idCategory, setIdCategory] = useState(0);
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
+    //get last ID inserted in document compte
+    const fetchLastId = async () => {
+        try {
+            const q = query(collection(db, "category"), orderBy("id", "desc"), limit(1)); // Limit to 1 document
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const lastId = querySnapshot.docs[0].data().id;
+                setIdCategory(lastId + 1); // Set the new ID as the last ID + 1
+            } else {
+                setIdCategory(1); // If no documents found, set ID to 1
+            }
+        } catch (error) {
+            console.error("Error fetching last ID: ", error);
+        }
+    }
+
+    //add category
     async function addCategories() {
-        const postData = {
-          method: "POST",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+      try{
+        await addDoc(collection(db, "category"), {
+            id: idCategory,
             description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`/api/addCategory?description=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        //Update list category
-        setCategory(response.categories);
-    
-    
-        // Reset form by updating refs to initial values
-        if (inputRefDescription.current) inputRefDescription.current.value = "";
-    
-        // Now, fetch the updated categories
-        getCategories();
-        
-        setCreated(true);
-    
-        setTimeout(() => {
-          setCreated(false);
-          setStateForm(true);
-        }, 1400)
+            uidUser: userUID
+        });
+
+          setCreated(true);
+          // Reset form by updating refs to initial values
+          if (inputRefDescription.current) inputRefDescription.current.value = "";
+          
+          getCategories();
+
+          setTimeout(() => {
+              setCreated(false);
+          }, 1400)
+              
+        }
+        catch (error) {
+            console.error("Error adding document: ", error);
+        }
       }
 
       async function updateCategory(){
@@ -204,6 +216,7 @@ export default function Category(){
 
 
     useEffect(() => {
+      fetchLastId();
       getCategories();
 
       onAuthStateChanged(auth, (user) => {
@@ -217,7 +230,7 @@ export default function Category(){
         }
       });
 
-      }, []);
+      }, [idCategory]);
 
     return (
         <div>
@@ -231,9 +244,9 @@ export default function Category(){
                     <div className="main-section page-form">
                       <div className="section-form">
                       <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
-                        {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
-                        {updated && <div className="alert alert-success">{t('message.updatedCategorySuccess')}</div> }
-                        {deleted && <div className="alert alert-danger">{t('message.deletedCategorySuccess')}</div> }
+                        {created && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.insertedCategorySuccess')}/> }
+                        {updated && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.updatedCategorySuccess')}/> }
+                        {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedCategorySuccess')}/> }
                       </div>
                         <div className="section-list">
                           <div className="list-block list-view">
