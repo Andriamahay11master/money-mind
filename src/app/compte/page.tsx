@@ -18,6 +18,7 @@ import Alert from '@/src/components/alert/Alert';
 
 export default function Compte(){
     const { t } = useTranslation('translation');
+    const router = useRouter();
 
     //state pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -80,7 +81,6 @@ export default function Compte(){
     const [deleted, setDeleted] = useState(false);
     const [userUID, setUserUID] = useState('');
     const [userMail, setUserMail] = useState('');
-    const router = useRouter();
     const [idCompte, setIdCompte] = useState(0);
     const [currentDocument, setCurrentDocument] = useState('');
 
@@ -107,7 +107,6 @@ export default function Compte(){
             const querySnapshot = await getDocs(q);
             if (!querySnapshot.empty) {
                 const lastId = querySnapshot.docs[0].data().idcompte;
-                console.log("last ID",lastId);
                 setIdCompte(lastId + 1); // Set the new ID as the last ID + 1
             } else {
                 setIdCompte(1); // If no documents found, set ID to 1
@@ -145,9 +144,9 @@ export default function Compte(){
     //update Compte
     async function updateCompte() {
         try{
-            const expenseRef = doc(db, "compte", currentDocument);
-            updateDoc(expenseRef, {
-                idexpenses: currentDocument,
+            const compteRef = doc(db, "compte", currentDocument);
+            updateDoc(compteRef, {
+                idcompte: idUpdateCompte,
                 description: inputRefDescription.current?.value,
                 uidUser: userUID
             });  
@@ -195,11 +194,12 @@ export default function Compte(){
         setCurrentPage(newPage);
     };
 
+    //delete Compte
     const deleteCompte = async (idcompte: number) => {
         try {
             getCompteById(idcompte);
-            const expenseRef = doc(db, "compte", currentDocument);
-            await deleteDoc(expenseRef);
+            const compteRef = doc(db, "compte", currentDocument);
+            await deleteDoc(compteRef);
             setDeleted(true);
             getComptes();
             setTimeout(() => {
@@ -264,13 +264,13 @@ export default function Compte(){
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {comptes.map((list, index) => (
-                                        <tr key={index}>
-                                            <td>{list.idcompte}</td>
-                                            <td>{list.description}</td>
-                                            <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}> <i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCompte(list.idcompte)}><i className="icon-bin2"></i></button></div></td>
-                                        </tr>
-                                    ))}
+                                        {comptes.map((list, index) => (
+                                            <tr key={index}>
+                                                <td>{list.idcompte}</td>
+                                                <td>{list.description}</td>
+                                                <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}> <i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCompte(list.idcompte)}><i className="icon-bin2"></i></button></div></td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                     </table>
                                 </div>

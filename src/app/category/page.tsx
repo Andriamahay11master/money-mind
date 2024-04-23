@@ -6,22 +6,20 @@ import './page.scss'
 import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
-import { formatNumber } from '@/src/data/function';
 import FormCategory from '@/src/components/category/FormCategory';
-import ListCategory from '@/src/components/category/ListCategory';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
+import { useRouter } from 'next/navigation';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { CategoryType } from '@/src/models/CategoryType';
 
 export default function Category(){
     const { t } = useTranslation('translation');
+    const router = useRouter();
 
-    //interface CategoryType
-    interface CategoryType {
-        idcategory: number;
-        description: string;
-      }
-
-      //state pagination
+    //state pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // Choose the number of items to display per page
 
@@ -80,13 +78,10 @@ export default function Category(){
     const [created, setCreated] = useState(false);
     const [updated, setUpdated] = useState(false);
     const [deleted, setDeleted] = useState(false);
+    const [userMail, setUserMail] = useState('');
+    const [userUID, setUserUID] = useState('');
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
-
-    const dataList = Object.values(categories).map((category) => ({
-        idcategory: category["idcategory"],
-        description: category["description"]
-    }));
 
     async function addCategories() {
         const postData = {
@@ -146,16 +141,20 @@ export default function Category(){
       }
 
     async function getCategories() {
-        const postData = {
-            method: "GET",
-            headers: {
-            "Content-Type": "application/json",
-            },
-        };
-        const res = await fetch(`api/category`, postData);
-        const response = await res.json();
-        const categoriesArray: CategoryType[] = Object.values(response.categories);
-        setCategory(categoriesArray);
+      try {
+        const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            return {
+                id: doc.data().id,
+                uidUser: doc.data().uidUser,
+                description: doc.data().description
+            }
+        });
+        setCategory(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
     }
     
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -170,7 +169,7 @@ export default function Category(){
 
     //send the id category to formCategory for update
     const callUpdateForm = (idcategory: number) => {
-        const category = categories.find((category) => category.idcategory === idcategory);
+        const category = categories.find((category) => category.id === idcategory);
         if (category) {
             inputRefDescription.current!.value = category.description;
         }
@@ -206,16 +205,29 @@ export default function Category(){
 
     useEffect(() => {
       getCategories();
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const email = user.email;
+          const uid = user.uid
+          setUserMail(email ?? '');
+          setUserUID(uid ?? '');
+        } else {
+          router.push("/login");
+        }
+      });
+
       }, []);
 
     return (
         <div>
-          {(dataList && dataList.length) ? (
+          {(userMail !== '') ? (
             <>
             <Header linkMenu={dataNav}/>
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
+                        {(userMail !== '') &&  <p> User Email : {userMail}</p>}
                     <div className="main-section page-form">
                       <div className="section-form">
                       <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
@@ -234,16 +246,16 @@ export default function Category(){
                                   </tr>
                               </thead>
                               <tbody>
-                              {dataList.slice(startIndex, endIndex).map((list, index) => (
+                              {categories.map((list, index) => (
                                       <tr key={index}>
-                                          <td>{list.idcategory}</td>
+                                          <td>{list.id}</td>
                                           <td>{list.description}</td>
                                           <td>
                                               <div className="action-box">
-                                                  <button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}>
+                                                  <button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.id)}>
                                                       <i className="icon-pencil"></i>
                                                   </button>
-                                                  <button className="btn btn-icon" onClick={() => deleteCategory(list.idcategory)}>
+                                                  <button className="btn btn-icon" onClick={() => deleteCategory(list.id)}>
                                                       <i className="icon-bin2"></i>
                                                   </button>
                                               </div>
