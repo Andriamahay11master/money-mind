@@ -9,7 +9,7 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
-import { addDoc, collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -82,9 +82,24 @@ export default function Compte(){
     const [userMail, setUserMail] = useState('');
     const router = useRouter();
     const [idCompte, setIdCompte] = useState(0);
+    const [currentDocument, setCurrentDocument] = useState('');
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
+    //Get Document on compte by ID
+    async function getCompteById(id: number) {
+        try {
+            const q = query(collection(db, "compte"), where("idcompte", "==", id));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.docs.map(doc => {
+                const compteIdDocument = doc.id;
+                setCurrentDocument(compteIdDocument);
+                return compteIdDocument;
+            });
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
+    }
     //get last ID inserted in document compte
     const fetchLastId = async () => {
         try {
@@ -106,7 +121,7 @@ export default function Compte(){
     async function addComptes() {
         try{
             await addDoc(collection(db, "compte"), {
-                idCompte: idCompte,
+                idcompte: idCompte,
                 description: inputRefDescription.current?.value,
                 uidUser: userUID
             });
@@ -127,32 +142,29 @@ export default function Compte(){
           }
       }
 
+    //update Compte
     async function updateCompte() {
-        const postData = {
-          method: "PUT",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            idcompte: idUpdateCompte,
-            description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`/api/updateCompte?idcompte=${idUpdateCompte}&description=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        setCompte(response.comptes);
-        // Reset form by updating refs to initial values
-        if (inputRefDescription.current) inputRefDescription.current.value = "";
-    
-        // Now, fetch the updated comptes
-        getComptes();
-        
-        setUpdated(true);
-    
-        setTimeout(() => {
-            setUpdated(false);
+        try{
+            const expenseRef = doc(db, "compte", currentDocument);
+            updateDoc(expenseRef, {
+                idexpenses: currentDocument,
+                description: inputRefDescription.current?.value,
+                uidUser: userUID
+            });  
+            setUpdated(true);
+            // Reset form by updating refs to initial values
+            if (inputRefDescription.current) inputRefDescription.current.value = "";
             setStateForm(true);
-        }, 1400)
+
+            getComptes();
+
+            setTimeout(() => {
+            setUpdated(false);
+            }, 1400)
+        }  
+          catch (error) {
+              console.error("Error adding document: ", error);
+          }
     }
 
     //get all comptes
@@ -203,11 +215,13 @@ export default function Compte(){
         }, 1400)
     }
 
+    //mode update on form
     const callUpdateForm = (idcompte: number) => {
         const compte = comptes.find((compte) => compte.idcompte === idcompte);
         if (compte) {
             inputRefDescription.current!.value = compte.description;
         }
+        getCompteById(idcompte);
         setIdUpdateCompte(idcompte);
         setStateForm(false);
     }
