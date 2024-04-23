@@ -179,9 +179,9 @@ export default function Category(){
             }
         });
         setCategory(newData);
-    } catch (error) {
-        console.error("Error fetching documents: ", error);
-    }
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
     }
     
     const startIndex = (currentPage - 1) * itemsPerPage;

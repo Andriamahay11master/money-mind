@@ -25,14 +25,9 @@ export default function Home() {
 
   const balance = '1600000';
 
-  interface TopExpenseCatType{
-    categoryexpenses: string;
-    totalexpenses: number;
-  }
-
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
   const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);
-  const [expensesTC, setExpensesTC] = React.useState(Array<TopExpenseCatType>);
+  const [topCategoryExpenses, setTopCategoryExpenses] = React.useState<Array<[string, number]>>([]);
   const [comptes, setComptes] = React.useState(Array<CompteType>);
   const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
   const [counter, setCounter] = React.useState(0);
@@ -161,38 +156,78 @@ export default function Home() {
     }
   }
 
-  //List Sum Expense by category all compte
+  //List Sum of Expenses by category for all compte
   async function getTopExpenseCategories() {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense?type=CATEGORY`, postData);
-    const response = await res.json();
-    const expensesArray: TopExpenseCatType[] = Object.values(response.expenses);
-    setExpensesTC(expensesArray);
+    try {
+      const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+      const querySnapshot = await getDocs(q);
+
+      let categoryTotals: Record<string, number> = {};
+
+      querySnapshot.forEach(doc => {
+        const category = doc.data().categoryexpense;
+        const value = doc.data().valueexpenses;
+        if(categoryTotals[category]) {
+          categoryTotals[category] += value;
+        } else {
+          categoryTotals[category] = value;
+        }
+      });    
+
+      // Convertir l'objet en tableau de paires (catégorie, total)
+      const categoryTotalsArray = Object.entries(categoryTotals);
+
+      // Trier le tableau par valeur (total dépensé) dans l'ordre décroissant
+      categoryTotalsArray.sort((a, b) => b[1] - a[1]);
+
+       // Sélectionner les 5 premières catégories (les plus dépensées)
+      const topCategories = categoryTotalsArray.slice(0, 5);
+      
+      setTopCategoryExpenses(topCategories);
+      return topCategories;
+      } catch (error) {
+          console.error("Error fetching documents: ", error);
+      }
   }
 
   //List Sum Expense by category by chosen Compte
   async function getTopExpenseCategoriesCurrent(valAccount: string) {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense?type=CATEGORY_CURRENT&valAccount=${valAccount}`, postData);
-    const response = await res.json();
-    const expensesArray: TopExpenseCatType[] = Object.values(response.expenses);
-    setExpensesTC(expensesArray);
+    try {
+      const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
+      const querySnapshot = await getDocs(q);
+
+      let categoryTotals: Record<string, number> = {};
+
+      querySnapshot.forEach(doc => {
+        const category = doc.data().categoryexpense;
+        const value = doc.data().valueexpenses;
+        if(categoryTotals[category]) {
+          categoryTotals[category] += value;
+        } else {
+          categoryTotals[category] = value;
+        }
+      });    
+
+      // Convertir l'objet en tableau de paires (catégorie, total)
+      const categoryTotalsArray = Object.entries(categoryTotals);
+
+      // Trier le tableau par valeur (total dépensé) dans l'ordre décroissant
+      categoryTotalsArray.sort((a, b) => b[1] - a[1]);
+
+       // Sélectionner les 5 premières catégories (les plus dépensées)
+      const topCategories = categoryTotalsArray.slice(0, 5);
+      
+      setTopCategoryExpenses(topCategories);
+      return topCategories;
+      } catch (error) {
+          console.error("Error fetching documents: ", error);
+      }
   }
 
   //List oOp Expenses categories
-  const dataListTC = Object.values(expensesTC).map((expense) => ({
-    categoryexpenses: expense["categoryexpenses"],
-    totalexpenses: expense["totalexpenses"]
+  const dataListTC = Object.values(topCategoryExpenses).map((expense) => ({
+    name: expense[0],
+    value: expense[1]
   }))
 
   //Get the total ammount of the expenses of the month selected
@@ -260,9 +295,9 @@ export default function Home() {
   ];
 
   //data Chart Expense
-  const listCategory = Object.values(dataListTC).map((item) => (item['categoryexpenses']))
+  const listCategory = Object.values(dataListTC).map((item) => (item['name']))
 
-  const listData = Object.values(dataListTC).map((item) => (item['totalexpenses']))
+  const listData = Object.values(dataListTC).map((item) => (item['value']))
 
   const listColor = [
     '#336699',
