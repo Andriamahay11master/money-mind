@@ -9,11 +9,12 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { addDoc, collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { CompteType } from '@/src/models/CompteType';
+import Alert from '@/src/components/alert/Alert';
 
 export default function Compte(){
     const { t } = useTranslation('translation');
@@ -80,40 +81,50 @@ export default function Compte(){
     const [userUID, setUserUID] = useState('');
     const [userMail, setUserMail] = useState('');
     const router = useRouter();
+    const [idCompte, setIdCompte] = useState(0);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
-    const dataList = Object.values(comptes).map((compte) => ({
-        idcompte: compte.idcompte,
-        description: compte.description
-    }));
+    //get last ID inserted in document compte
+    const fetchLastId = async () => {
+        try {
+            const q = query(collection(db, "compte"), orderBy("idcompte", "desc"), limit(1)); // Limit to 1 document
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const lastId = querySnapshot.docs[0].data().idcompte;
+                console.log("last ID",lastId);
+                setIdCompte(lastId + 1); // Set the new ID as the last ID + 1
+            } else {
+                setIdCompte(1); // If no documents found, set ID to 1
+            }
+        } catch (error) {
+            console.error("Error fetching last ID: ", error);
+        }
+    }
 
+    //Add Comptes
     async function addComptes() {
-        const postData = {
-          method: "POST",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`api/addCompte?desc=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        setCompte(response.comptes);
-    
-    
-        // Reset form by updating refs to initial values
-        if (inputRefDescription.current) inputRefDescription.current.value = "";
-    
-        // Now, fetch the updated comptes
-        getComptes();
-        
-        setCreated(true);
-    
-        setTimeout(() => {
-          setCreated(false);
-        }, 1400)
+        try{
+            await addDoc(collection(db, "compte"), {
+                idCompte: idCompte,
+                description: inputRefDescription.current?.value,
+                uidUser: userUID
+            });
+
+            setCreated(true);
+            // Reset form by updating refs to initial values
+            if (inputRefDescription.current) inputRefDescription.current.value = "";
+            
+            getComptes();
+
+            setTimeout(() => {
+                setCreated(false);
+            }, 1400)
+                
+          }
+          catch (error) {
+              console.error("Error adding document: ", error);
+          }
       }
 
     async function updateCompte() {
@@ -144,6 +155,7 @@ export default function Compte(){
         }, 1400)
     }
 
+    //get all comptes
     async function getComptes() {
         try {
             const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
@@ -156,8 +168,6 @@ export default function Compte(){
                 }
             });
             setCompte(newData);
-            console.log("list comptes nnnnewData",newData)
-            console.log("list comptes",comptes)
         } catch (error) {
             console.error("Error fetching documents: ", error);
         }
@@ -203,6 +213,7 @@ export default function Compte(){
     }
 
     useEffect(() => {
+        fetchLastId();
         getComptes();
 
         onAuthStateChanged(auth, (user) => {
@@ -215,7 +226,7 @@ export default function Compte(){
               router.push("/login");
             }
           });
-      }, []);
+      }, [idCompte]);
 
     return (
         <div>
@@ -229,9 +240,9 @@ export default function Compte(){
                         <div className="main-section page-form">
                             <div className="section-form">
                                 <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
-                                {created && <div className="alert alert-success">{t('message.insertedCompteSuccess')}</div> }
-                                {updated && <div className="alert alert-success">{t('message.updatedCompteSuccess')}</div> }
-                                {deleted && <div className="alert alert-danger">{t('message.deletedCompteSuccess')}</div> }
+                                {created && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.insertedCompteSuccess')}/> }
+                                {updated && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.updatedCompteSuccess')}/> }
+                                {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedCompteSuccess')}/> }
                             </div>
                             <div className="section-list">
                                 <div className="list-block list-view">
@@ -244,7 +255,7 @@ export default function Compte(){
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {dataList.map((list, index) => (
+                                    {comptes.map((list, index) => (
                                         <tr key={index}>
                                             <td>{list.idcompte}</td>
                                             <td>{list.description}</td>
