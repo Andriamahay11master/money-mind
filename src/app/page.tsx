@@ -12,9 +12,11 @@ import ChartExpense from '../components/expense/ChartExpense';
 import Loader from '../components/loader/Loader';
 import { monthNames } from '../data/function';
 import { useRouter } from 'next/navigation';
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
+import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { ExpenseType } from '../models/ExpenseType';
+import { CompteType } from '../models/CompteType';
 
 export default function Home() {
 
@@ -22,22 +24,10 @@ export default function Home() {
   const router = useRouter();
 
   const balance = '1600000';
-  interface ExpenseType {
-    idexpenses: number;
-    descriptionform: string;
-    dateexpenses: string;
-    categoryexpenses: string;
-    valueexpenses: number;
-  }
 
   interface TopExpenseCatType{
     categoryexpenses: string;
     totalexpenses: number;
-  }
-
-  interface CompteType {
-    idcompte: number;
-    description: string;
   }
 
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
@@ -53,20 +43,32 @@ export default function Home() {
   const [userUID, setUserUID] = React.useState('');
   const [userMail, setUserMail] = React.useState('');
 
-  //List 5 last Expense
+  //List 5 last Expense of compte selected
   async function getLastFiveExpensesCurrent(valAccount: string) {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense?type=LAST_5&valAccount=${valAccount}`, postData);
-    const response = await res.json();
-    const expensesArray: ExpenseType[] = Object.values(response.expenses);
-    setExpenses(expensesArray);
+    try {
+      const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "desc"), limit(5));
+      const querySnapshot = await getDocs(q);
+      const newData = querySnapshot.docs.map(doc => {
+          const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+          const dayL = dateTask.toDateString();
+
+          return {
+              idexpenses: doc.data().idexpenses,
+              compte: doc.data().compte,
+              dateexpenses: dayL.toString(),
+              categoryexpense: doc.data().categoryexpense,
+              uidUser: doc.data().uidUser,
+              valueexpenses: doc.data().valueexpenses,
+              description: doc.data().description
+          }
+        });
+        setExpenses(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
   }
 
+  //List compte user active
   async function getComptes() {
     try {
       const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
@@ -82,19 +84,31 @@ export default function Home() {
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
-}
+  }
 
+  //List 5 last Expense of all compte
   async function getLastFiveExpensesAll() {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense?type=LAST_5_ALL`, postData);
-    const response = await res.json();
-    const expensesArray: ExpenseType[] = Object.values(response.expenses);
-    setExpenses(expensesArray);
+    try {
+      const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "desc"), limit(5));
+      const querySnapshot = await getDocs(q);
+      const newData = querySnapshot.docs.map(doc => {
+          const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+          const dayL = dateTask.toDateString();
+
+          return {
+              idexpenses: doc.data().idexpenses,
+              compte: doc.data().compte,
+              dateexpenses: dayL.toString(),
+              categoryexpense: doc.data().categoryexpense,
+              uidUser: doc.data().uidUser,
+              valueexpenses: doc.data().valueexpenses,
+              description: doc.data().description
+          }
+        });
+        setExpenses(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
   }
 
   //List Expense Month selected
@@ -153,21 +167,14 @@ export default function Home() {
     setExpensesTC(expensesArray);
   }
 
-  //Map the list of Expenses
-  const dataList2 = Object.values(expenses).map((expense) => ({
-    id: expense["idexpenses"],
-    description: expense["descriptionform"],
-    date: formatDate(expense["dateexpenses"]),
-    category: expense["categoryexpenses"],
-    value: expense["valueexpenses"]
-  }))
-
   const dataListM = Object.values(expensesM).map((expense) => ({
-    id: expense["idexpenses"],
-    description: expense["descriptionform"],
-    date: formatDate(expense["dateexpenses"]),
-    category: expense["categoryexpenses"],
-    valueexpenses: expense["valueexpenses"]
+    id: expense.idexpenses,
+    description: expense.description,
+    date: formatDate(expense.dateexpenses),
+    category: expense.categoryexpense,
+    valueexpenses: expense.valueexpenses,
+    uidUser: expense.uidUser,
+    compte: expense.compte
   }))
 
   //List TOp Expenses categories
@@ -326,7 +333,7 @@ export default function Home() {
               </div>
               <div className="detailKpi-item">
                   <h2 className="title-h2 detailKpi-title">{t('detailKpi.title')}</h2>
-                  <ListExpenseFive dataList={dataList2}/>
+                  <ListExpenseFive dataList={expenses}/>
               </div>
           </section>
         </div>
