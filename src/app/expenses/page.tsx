@@ -164,7 +164,7 @@ export default function Expenses() {
                 description: inputRefDescription.current?.value,
                 dateexpenses: Timestamp.fromDate(new Date(dateValue.toString())),
                 categoryexpense: inputRefCategory.current?.value,
-                valueexpenses: inputRefValue.current?.value,
+                valueexpenses: parseInt(inputRefValue.current?.value ?? "0"),
                 compte: inputRefCompte.current?.value,
                 uidUser: userUID
             });
@@ -199,7 +199,7 @@ export default function Expenses() {
               description: inputRefDescription.current?.value,
               dateexpenses: Timestamp.fromDate(new Date(dateValue.toString())),
               categoryexpense: inputRefCategory.current?.value,
-              valueexpenses: inputRefValue.current?.value,
+              valueexpenses: parseInt(inputRefValue.current?.value ?? "0"),
               compte: inputRefCompte.current?.value,
               uidUser: userUID
             });  

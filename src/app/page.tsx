@@ -113,30 +113,52 @@ export default function Home() {
 
   //List Expense Month selected
   async function getMonthExpense(valMonth: string) {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense?type=MONTH&valMonth=${valMonth}`, postData);
-    const response = await res.json();
-    const expensesArray: ExpenseType[] = Object.values(response.expenses);
-    setExpensesM(expensesArray);
+    try {
+      const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valMonth), orderBy("idexpenses", "asc"));
+      const querySnapshot = await getDocs(q);
+      const newData = querySnapshot.docs.map(doc => {
+          const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+          const dayL = dateTask.toDateString();
+
+          return {
+              idexpenses: doc.data().idexpenses,
+              compte: doc.data().compte,
+              dateexpenses: dayL.toString(),
+              categoryexpense: doc.data().categoryexpense,
+              uidUser: doc.data().uidUser,
+              valueexpenses: doc.data().valueexpenses,
+              description: doc.data().description
+          }
+        });
+          setExpensesM(newData);
+      } catch (error) {
+          console.error("Error fetching documents: ", error);
+      }
   }
 
-  // All expense 
-  async function getMonthExpenseDefault() {
-    const postData = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const res = await fetch(`api/expense`, postData);
-    const response = await res.json();
-    const expensesArray: ExpenseType[] = Object.values(response.expenses);
-    setExpensesM(expensesArray);
+  //Get all expense by default
+  async function getAllExpenses() {
+    try {
+      const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+      const querySnapshot = await getDocs(q);
+      const newData = querySnapshot.docs.map(doc => {
+          const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+          const dayL = dateTask.toDateString();
+
+          return {
+              idexpenses: doc.data().idexpenses,
+              compte: doc.data().compte,
+              dateexpenses: dayL.toString(),
+              categoryexpense: doc.data().categoryexpense,
+              uidUser: doc.data().uidUser,
+              valueexpenses: doc.data().valueexpenses,
+              description: doc.data().description
+          }
+        });
+        setExpensesM(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
   }
 
   //List Sum Expense by category all compte
@@ -167,27 +189,17 @@ export default function Home() {
     setExpensesTC(expensesArray);
   }
 
-  const dataListM = Object.values(expensesM).map((expense) => ({
-    id: expense.idexpenses,
-    description: expense.description,
-    date: formatDate(expense.dateexpenses),
-    category: expense.categoryexpense,
-    valueexpenses: expense.valueexpenses,
-    uidUser: expense.uidUser,
-    compte: expense.compte
-  }))
-
-  //List TOp Expenses categories
+  //List oOp Expenses categories
   const dataListTC = Object.values(expensesTC).map((expense) => ({
     categoryexpenses: expense["categoryexpenses"],
     totalexpenses: expense["totalexpenses"]
   }))
 
   //Get the total ammount of the expenses of the month selected
-  const sumAmount = dataListM.reduce((acc, expense) => {
-    return acc + parseInt(expense["valueexpenses"].toString());
+  const sumAmount = expensesM.reduce((acc, expense) => {
+    return acc + expense.valueexpenses;
   }, 0);
-
+ 
   //Get the rest of the expenses of the month selected
   function getRemainingBalance(balance: string, amount: string) : number{
     return parseInt(removeSpaceStringNumber(balance)) - parseInt(removeSpaceStringNumber(amount));
@@ -223,9 +235,9 @@ export default function Home() {
   //data KPI 
   const kpi = [
     {
-      title: inputFilterRefCompte.current?.value === 'ALL' ? `${t('kpi.nbCompte')}` : `${t('kpi.0.title')}`,
-      value: inputFilterRefCompte.current?.value === 'ALL' ? `${comptes.length}` : formatNumber(balance),
-      currency: inputFilterRefCompte.current?.value === 'ALL' ? '' : 'Ariary'
+      title: inputFilter === 'ALL' ? `${t('kpi.nbCompte')}` : `${t('kpi.0.title')}`,
+      value: inputFilter === 'ALL' ? `${comptes.length}` : formatNumber(balance),
+      currency: inputFilter === 'ALL' ? '' : 'Ariary'
     },
     {
       title: `${t('kpi.1.title')}`,
@@ -260,15 +272,16 @@ export default function Home() {
     '#5B5B5B'
   ];
 
+  //filter action function
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value;
-    setInputFilter(selectedDesc?.toString() || 'ALL');
+    setInputFilter(selectedDesc?.toString() ?? 'ALL');
     setCounter(counter + 1);
     
     if(inputFilter === 'ALL'){
       getLastFiveExpensesAll();
       getTopExpenseCategories();
-      getMonthExpenseDefault();
+      getAllExpenses();
     }
     else{
       getLastFiveExpensesCurrent(inputFilter);
@@ -282,7 +295,7 @@ export default function Home() {
     if(inputFilter === 'ALL'){
       getLastFiveExpensesAll();
       getTopExpenseCategories();
-      getMonthExpenseDefault();
+      getAllExpenses();
     }
     else{
       getLastFiveExpensesCurrent(inputFilter);
