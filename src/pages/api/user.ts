@@ -19,7 +19,6 @@ export default async function handler(
     // If no user found, return an error
     if (!user) throw new Error('User not found');
     
-    console.log('User exists:', user);
     
     // Respond with the user data
     return response.status(200).json({ user });

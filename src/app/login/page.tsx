@@ -31,12 +31,9 @@ export default function Login() {
             localStorage.setItem('isLoggedIn', 'true');
             setSuccess(true);
             router.push("/expenses");
-            console.log(user)
         })
         .catch((error : any) => {
             const errorCode = error.code;
-            // const errorMessage = error.message;
-            console.log(errorCode, error.message)
             setErrorExist(true)
             setCodeError(errorCode)
             manageMessageError();

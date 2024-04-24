@@ -119,9 +119,7 @@ export default function Expenses() {
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
             const lastId = querySnapshot.docs[0].data().idexpenses;
-            console.log(lastId);
             setIdExpenses(lastId + 1); // Set the new ID as the last ID + 1
-            console.log("new id then", idExpenses);
         } else {
             setIdExpenses(1); // If no documents found, set ID to 1
         }
@@ -243,7 +241,6 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
-        console.log(expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -339,7 +336,6 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
-        console.log("current", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
