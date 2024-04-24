@@ -84,6 +84,7 @@ export default function Header({linkMenu, userMail} : HeaderProps) {
                                     </figure>
                                 </Link>
                             </div>
+                            <p className='usermail-mobile'>{userMail}</p>
                             <div className="boxNavIntern"> 
                                 <nav className="menuNav"> 
                                     <div className="cntNavBox"> 
@@ -113,6 +114,9 @@ export default function Header({linkMenu, userMail} : HeaderProps) {
                                     <button className={`list-language-link ${!langMobile ? 'active' : ''}`} onClick={() => changeLanguageMobile('en') }>EN</button>
                                     <button className={`list-language-link ${langMobile ? 'active' : ''}`} onClick={() => changeLanguageMobile('fr')}>FR</button>
                                 </div>
+                                <button className="btn btn-link" title='Bouton to login' onClick={handleSignOut}>
+                                    <i className="icon-log-out"></i>
+                                </button>
                             </div>
                         </div> 
                         <div className="btnBox">

@@ -255,19 +255,28 @@
             padding-top: 24px;
         }
     }
-    .block-bottom-mobile{
+    .usermail-mobile{
         display: none;
         @include max(1200px){
             display: block;
+            margin-bottom: 20px;
+        }
+    }
+    .block-bottom-mobile{
+        display: none;
+        @include max(1200px){
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             position: absolute;
             left: 0;
             bottom: 0;
             width: 100%;
+            border-top: 1px solid rgba(#000, 0.2);
         }
         .list-language{
             @include max(1200px){
                 padding: 24px 50px;
-                border-top: 1px solid rgba(#000, 0.2);
             }
             .list-language-link{
                 text-transform: uppercase;
@@ -297,6 +306,9 @@
     .profil{
         display: flex;
         align-items: center;
+        @include max(1200px){
+            display: none;
+        }
         .profil-block{
             display: flex;
             align-items: center;
@@ -316,6 +328,7 @@
         }
         p{
             font-size: 13px;
+            text-decoration: underline;
         }
     }
 
