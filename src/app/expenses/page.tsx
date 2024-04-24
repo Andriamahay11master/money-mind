@@ -415,11 +415,10 @@ export default function Expenses() {
         <div>
           {(userMail !== '') ? 
             <>
-              <Header linkMenu={dataNav}/>
+              <Header linkMenu={dataNav} userMail={userMail}/>
               <main className='main-page'>
                   <div className="container">
                       <Breadcrumb items={itemsBreadcrumb}/>
-                      {(userMail !== '') &&  <p> User Email : {userMail}</p>}
                       <div className="main-section page-form-2">
                         <div className="section-form">
                           <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>

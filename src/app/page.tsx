@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next';
 import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
 import Kpi from '../components/kpi/Kpi';
-import {formatDate, formatNumber, removeSpaceStringNumber} from '../data/function';
+import {formatNumber, removeSpaceStringNumber} from '../data/function';
 import Breadcrumb from '../components/breadcrumb/Breadcrumb';
 import ListExpenseFive from '../components/expense/ListExpenseFive';
 import ChartExpense from '../components/expense/ChartExpense';
@@ -353,12 +353,11 @@ export default function Home() {
     <>
     {(userMail !== '')  ? (
       <>
-      <Header linkMenu={dataNav}/>
+      <Header linkMenu={dataNav} userMail={userMail}/>
       <main className='main-page'>
         <div className="container">
           <div className="main-page-top">
             <Breadcrumb items={itemsBreadcrumb}/>
-            {(userMail !== '') &&  <p> User Email : {userMail}</p>}
             <div className="choice-compte">
               <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
                 {comptes.map((compte, index) => (

@@ -294,5 +294,29 @@
         display: flex;
         align-items: center;
     }
+    .profil{
+        display: flex;
+        align-items: center;
+        .profil-block{
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            .profil-image{
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 25px;
+                height: 25px;
+                border-radius: 100%;
+                margin-right: 10px;
+            }
+            img{
+                margin-right: 10px;
+            }
+        }
+        p{
+            font-size: 13px;
+        }
+    }
 
 }

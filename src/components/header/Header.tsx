@@ -12,9 +12,10 @@ import { auth } from '@/src/app/firebase';
 
 interface HeaderProps {
     linkMenu: {name: string, href: string}[]
+    userMail: string
 }
 
-export default function Header({linkMenu} : HeaderProps) {
+export default function Header({linkMenu, userMail} : HeaderProps) {
     const [navbarOpen, setNavbarOpen] = useState(false);
     const [lang, setLang] = useState(false);
     const [langMobile, setLangMobile] = useState(false);
@@ -121,6 +122,18 @@ export default function Header({linkMenu} : HeaderProps) {
                         </div>  
                     </div>
                     <div className="headerIntern-right">
+                        <div className="profil">
+                            {userMail && 
+                            <div className='profil-block'>
+                                <div className="profil-image">
+                                    <Image src="/images/user.png" alt="Avatar" width={25} height={25} title='Avatar image'/>
+                                </div>
+                                <p>{userMail}</p>
+                            </div>}
+                            <button className="btn btn-link" title='Bouton to login' onClick={handleSignOut}>
+                                <i className="icon-log-out"></i>
+                            </button>
+                        </div>
                         <div className="dropdown-language" onClick={() => setLang(!lang)}>
                             <button className='dropdown-default'>{i18next.language}</button>
                             <ul className={`dropdown-language-list ${lang ? ' show-dropdown' : ''}`}>
@@ -128,11 +141,7 @@ export default function Header({linkMenu} : HeaderProps) {
                                 <li><button className='dropdown-link' onClick={() => changeLanguageMobile('fr')}>FR</button></li>
                             </ul>
                         </div>
-                        <div className="profil">
-                            <button className="btn btn-link" title='Bouton to login' onClick={handleSignOut}>
-                                <i className="icon-log-out"></i>
-                            </button>
-                        </div>
+                        
                     </div>
                 </div>
             </div>   

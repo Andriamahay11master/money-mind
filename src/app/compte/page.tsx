@@ -241,11 +241,10 @@ export default function Compte(){
         <div>
             {(userMail !== '') ? 
             <>
-                <Header linkMenu={dataNav}/>
+                <Header linkMenu={dataNav} userMail={userMail}/>
                 <main className='main-page'>
                     <div className="container">
                         <Breadcrumb items={itemsBreadcrumb}/>
-                        {(userMail !== '') &&  <p> User Email : {userMail}</p>}
                         <div className="main-section page-form">
                             <div className="section-form">
                                 <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
