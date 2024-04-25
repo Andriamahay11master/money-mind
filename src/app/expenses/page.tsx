@@ -14,7 +14,7 @@ import {monthNames} from '@/src/data/function';
 import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAt, updateDoc, where } from 'firebase/firestore';
 import { ExpenseType } from '@/src/models/ExpenseType'; 
 import { CategoryType } from '@/src/models/CategoryType';
 import { CompteType } from '@/src/models/CompteType';
@@ -98,6 +98,8 @@ export default function Expenses() {
   const [userUID, setUserUID] = useState('');
   const [idExpenses, setIdExpenses] = useState<number | null>(null);
   const [currentDocument, setCurrentDocument] = useState('');
+  const [next, setNext] = useState(true);
+  const [prev, setPrev] = useState(false);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
   const inputRefValue = React.useRef<HTMLInputElement>(null);
@@ -224,7 +226,7 @@ export default function Expenses() {
   //Get all expenses in fireabse
   const getExpenses = async () => {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
@@ -279,7 +281,6 @@ export default function Expenses() {
 
   //get all comptes
   async function getComptes() {
-    const offset = (currentPage - 1) * itemsPerPage;
     try {
       const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
       const querySnapshot = await getDocs(q);
@@ -319,7 +320,7 @@ export default function Expenses() {
   //Get Expenses for selected filter
   async function getExpensesCurrent(valAccount: string) {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
@@ -346,9 +347,24 @@ export default function Expenses() {
 
   //pagination control
   const totalPages = Math.ceil(expenses.length / itemsPerPage);
+  
+  console.log(expenses)
+  console.log(totalPages)
 
-  const handlePageChange = (newPage : any) => {
-    setCurrentPage(newPage);
+  const handlePageChangePrev = () => {
+    const index = currentPage;
+    if(index > 1){
+      setCurrentPage(index-itemsPerPage);
+      displayExpenses();
+    }
+  };
+
+  const handlePageChangeNext = () => {
+    const index = currentPage; 
+    if(index >= 1){
+      setCurrentPage(index+itemsPerPage);
+      displayExpenses();
+    }
   };
 
   const handleFilterCompteChange = () => {
@@ -405,7 +421,7 @@ export default function Expenses() {
       }
     });
     
-  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, idExpenses]);
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, idExpenses, currentPage]);
   
     return (
         <div>
@@ -460,15 +476,12 @@ export default function Expenses() {
                             </table>
                           </div>
                           <div className="pagination-table">
-                              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                                <button
-                                  key={page}
-                                  onClick={() => handlePageChange(page)}
-                                  className={page === currentPage ? "active" : ""}
-                                >
-                                  {page}
-                                </button>
-                              ))}
+                            {expenses.length < 7 && 
+                            <>
+                                <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
+                                <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
+                            </>
+                            }
                           </div>
                         </div>
                       </div>
