@@ -295,6 +295,8 @@ export default function Expenses() {
   async function deleteExpense(id: number) {
     try {
         getExpenseById(id);
+        console.log("element à supprimer",id);
+        console.log("currentDocument",currentDocument);
         const expenseRef = doc(db, "expenses", currentDocument);
         await deleteDoc(expenseRef);
         setDeleted(true);
