@@ -87,6 +87,7 @@ export default function Expenses() {
   ]
   
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
+  const [expensesWP, setExpensesWP] = useState(Array<ExpenseType>);
   const [categories, setCagories] = useState(Array<CategoryType>);
   const [comptes, setComptes] = useState(Array<CompteType>);
   const [stateForm, setStateForm] = useState(true);
@@ -223,7 +224,32 @@ export default function Expenses() {
     }
   }
   
-  //Get all expenses in fireabse
+  //Get all expenses in firebase without pagination
+  const getExpensesWitoutPagination = async () => {
+    try {
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+            const dayL = dateTask.toDateString();
+
+            return {
+                idexpenses: doc.data().idexpenses,
+                compte: doc.data().compte,
+                dateexpenses: dayL.toString(),
+                categoryexpense: doc.data().categoryexpense,
+                uidUser: doc.data().uidUser,
+                valueexpenses: doc.data().valueexpenses,
+                description: doc.data().description
+            }
+        });
+        setExpensesWP(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
+  }
+
+  //Get all expenses in firebase
   const getExpenses = async () => {
     try {
         const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
@@ -342,28 +368,55 @@ export default function Expenses() {
     }
   }
 
+  //Get Expenses for selected filter without pagination
+  async function getExpensesCurrentWithoutPagination(valAccount: string) {
+    try {
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+            const dayL = dateTask.toDateString();
+
+            return {
+                idexpenses: doc.data().idexpenses,
+                compte: doc.data().compte,
+                dateexpenses: dayL.toString(),
+                categoryexpense: doc.data().categoryexpense,
+                uidUser: doc.data().uidUser,
+                valueexpenses: doc.data().valueexpenses,
+                description: doc.data().description
+            }
+        });
+        setExpensesWP(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
+  }
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  //pagination control
-  const totalPages = Math.ceil(expenses.length / itemsPerPage);
-  
   console.log(expenses)
-  console.log(totalPages)
 
   const handlePageChangePrev = () => {
-    const index = currentPage;
-    if(index > 1){
-      setCurrentPage(index-itemsPerPage);
-      displayExpenses();
+    // const index = currentPage;
+    setNext(true);
+    setCurrentPage(currentPage-itemsPerPage);
+    displayExpenses();
+    console.log('currentpage prev', currentPage)
+    if((currentPage) == 1 ){
+      setPrev(false);
     }
   };
 
   const handlePageChangeNext = () => {
-    const index = currentPage; 
-    if(index >= 1){
-      setCurrentPage(index+itemsPerPage);
-      displayExpenses();
+    // const index = currentPage; 
+    setPrev(true);
+    setCurrentPage(currentPage+itemsPerPage);
+    displayExpenses();
+    const totalExpense = expensesWP.length
+    if((totalExpense - currentPage) < 7){
+      setNext(false)
     }
   };
 
@@ -421,7 +474,7 @@ export default function Expenses() {
       }
     });
     
-  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, idExpenses, currentPage]);
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, idExpenses, currentPage, prev, next]);
   
     return (
         <div>
@@ -476,12 +529,8 @@ export default function Expenses() {
                             </table>
                           </div>
                           <div className="pagination-table">
-                            {expenses.length < 7 && 
-                            <>
                                 <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
                                 <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
-                            </>
-                            }
                           </div>
                         </div>
                       </div>

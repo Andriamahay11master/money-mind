@@ -7,6 +7,9 @@
         display: inline-flex;
         padding: 5px 10px;
         border-radius: 2px;
+        &:last-child{
+            margin-left: 10px;
+        }
         &.active{
             font-weight: 700;
             color: #FFF;
