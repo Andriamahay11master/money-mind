@@ -150,9 +150,11 @@ export default function Expenses() {
     const selectedDesc = inputFilterRefCompte.current?.value ?? '';
     if(selectedDesc === 'ALL'){
       getExpenses();
+      getExpensesWitoutPagination();
     }
     else{
       getExpensesCurrent(selectedDesc);
+      getExpensesCurrentWithoutPagination(selectedDesc);
     }
   }
   //add expense in firebase
@@ -393,37 +395,35 @@ export default function Expenses() {
     }
   }
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-
-  console.log(expenses)
-
+  //action prev pagination
   const handlePageChangePrev = () => {
-    // const index = currentPage;
+    const newPage = currentPage - itemsPerPage;
+    setCurrentPage(newPage >= 1 ? newPage : 1);
     setNext(true);
-    setCurrentPage(currentPage-itemsPerPage);
-    displayExpenses();
-    console.log('currentpage prev', currentPage)
-    if((currentPage) == 1 ){
-      setPrev(false);
+    if (newPage === 1) {
+        setPrev(false);
     }
   };
 
+
+  //action next pagination
   const handlePageChangeNext = () => {
-    // const index = currentPage; 
+    const totalExpense = expensesWP.length;
+    const newPage = currentPage + itemsPerPage;
+    setCurrentPage(newPage);
     setPrev(true);
-    setCurrentPage(currentPage+itemsPerPage);
-    displayExpenses();
-    const totalExpense = expensesWP.length
-    if((totalExpense - currentPage) < 7){
-      setNext(false)
+    if (totalExpense - newPage < itemsPerPage) {
+        setNext(false);
     }
   };
 
+  //action filter compte change
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value || '';
     setInputFilter(selectedDesc);
     setCurrentPage(1);
+    setPrev(false);
+    setNext(true);
     if(selectedDesc === 'ALL'){
       getExpenses();
     }
@@ -458,9 +458,11 @@ export default function Expenses() {
     fetchLastId();
     if(inputFilter === 'ALL'){
       getExpenses();  
+      getExpensesWitoutPagination();
     }
     else{
       getExpensesCurrent(inputFilter);
+      getExpensesCurrentWithoutPagination(inputFilter)
     }
 
     onAuthStateChanged(auth, (user) => {
@@ -494,7 +496,7 @@ export default function Expenses() {
                         <div className="section-list">
                           <div className="table-filter">
                             <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
-                              {comptes.slice(startIndex, endIndex).map((compte, index) => (
+                              {comptes.map((compte, index) => (
                                 <option key={index} value={compte.description}>{compte.description}</option>
                               ))}
                               <option value="ALL">Tous</option>
@@ -529,8 +531,12 @@ export default function Expenses() {
                             </table>
                           </div>
                           <div className="pagination-table">
+                            {(expensesWP.length >= 7) && 
+                              <>
                                 <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
                                 <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
+                              </>
+                            }
                           </div>
                         </div>
                       </div>
