@@ -10,7 +10,7 @@ import FormCategory from '@/src/components/category/FormCategory';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
 import { useRouter } from 'next/navigation';
-import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAt, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { CategoryType } from '@/src/models/CategoryType';
@@ -74,6 +74,7 @@ export default function Category(){
     ]
 
     const [categories, setCategory] = useState(Array<CategoryType>);
+    const [categoriesWP, setCategoryWP] = useState(Array<CategoryType>);
     const [stateForm, setStateForm] = useState(true);
     const [idUpdateCategory, setIdUpdateCategory] = useState(0);
     const [created, setCreated] = useState(false);
@@ -84,6 +85,8 @@ export default function Category(){
     const [idCategory, setIdCategory] = useState(0);
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
     const [currentDocument, setCurrentDocument] = useState('');
+    const [next, setNext] = useState(true);
+    const [prev, setPrev] = useState(false);
 
     //Get Document on category by ID
     async function getCategoryById(id: number) {
@@ -169,7 +172,7 @@ export default function Category(){
     //get categories
     async function getCategories() {
       try {
-        const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"));
+        const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"), startAt(currentPage), limit(itemsPerPage));
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             return {
@@ -183,15 +186,45 @@ export default function Category(){
             console.error("Error fetching documents: ", error);
         }
     }
-    
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
 
-    //pagination control
-    const totalPages = Math.ceil(categories.length / itemsPerPage);
+    //get categories
+    async function getCategoriesWP() {
+      try {
+        const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            return {
+                id: doc.data().id,
+                uidUser: doc.data().uidUser,
+                description: doc.data().description
+            }
+        });
+        setCategoryWP(newData);
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
+    }
 
-    const handlePageChange = (newPage : any) => {
-        setCurrentPage(newPage);
+    //action prev pagination
+    const handlePageChangePrev = () => {
+      const newPage = currentPage - itemsPerPage;
+      setCurrentPage(newPage >= 1 ? newPage : 1);
+      setNext(true);
+      if (newPage === 1) {
+          setPrev(false);
+      }
+    };
+
+
+    //action next pagination
+    const handlePageChangeNext = () => {
+      const totalCategoriesWP = categoriesWP.length;
+      const newPage = currentPage + itemsPerPage;
+      setCurrentPage(newPage);
+      setPrev(true);
+      if (totalCategoriesWP - newPage < itemsPerPage) {
+          setNext(false);
+      }
     };
 
     //send the id category to formCategory for update
@@ -225,6 +258,7 @@ export default function Category(){
     useEffect(() => {
       fetchLastId();
       getCategories();
+      getCategoriesWP();
 
       onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -237,7 +271,7 @@ export default function Category(){
         }
       });
 
-      }, [idCategory]);
+      }, [idCategory, currentPage]);
 
     return (
         <div>
@@ -285,15 +319,12 @@ export default function Category(){
                               </table>
                           </div>
                           <div className="pagination-table">
-                            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                              <button
-                                key={page}
-                                onClick={() => handlePageChange(page)}
-                                className={page === currentPage ? "active" : ""}
-                              >
-                                {page}
-                              </button>
-                            ))}
+                            {(categoriesWP.length >= 7) && 
+                              <>
+                                <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
+                                <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
+                              </>
+                            }
                           </div>
                         </div>
                     </div>
