@@ -9,7 +9,7 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
-import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAt, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -74,6 +74,7 @@ export default function Compte(){
     ]
 
     const [comptes, setCompte] = useState(Array<CompteType>);
+    const [comptesWP, setCompteWP] = useState(Array<CompteType>);
     const [stateForm, setStateForm] = useState(true);
     const [idUpdateCompte, setIdUpdateCompte] = useState(0);
     const [created, setCreated] = useState(false);
@@ -83,6 +84,8 @@ export default function Compte(){
     const [userMail, setUserMail] = useState('');
     const [idCompte, setIdCompte] = useState(0);
     const [currentDocument, setCurrentDocument] = useState('');
+    const [next, setNext] = useState(true);
+    const [prev, setPrev] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
@@ -169,7 +172,7 @@ export default function Compte(){
     //get all comptes
     async function getComptes() {
         try {
-            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
+            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"), startAt(currentPage), limit(itemsPerPage));
             const querySnapshot = await getDocs(q);
             const newData = querySnapshot.docs.map(doc => {
                 return {
@@ -183,16 +186,46 @@ export default function Compte(){
             console.error("Error fetching documents: ", error);
         }
     }
-    
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
 
-    //pagination control
-    const totalPages = Math.ceil(comptes.length / itemsPerPage);
+    //get all comptes
+    async function getComptesWP() {
+        try {
+            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
+            const querySnapshot = await getDocs(q);
+            const newData = querySnapshot.docs.map(doc => {
+                return {
+                    idcompte: doc.data().idcompte,
+                    uidUser: doc.data().uidUser,
+                    description: doc.data().description
+                }
+            });
+            setCompteWP(newData);
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
+    }
 
-    const handlePageChange = (newPage : any) => {
-        setCurrentPage(newPage);
+    //action prev pagination
+    const handlePageChangePrev = () => {
+        const newPage = currentPage - itemsPerPage;
+        setCurrentPage(newPage >= 1 ? newPage : 1);
+        setNext(true);
+        if (newPage === 1) {
+            setPrev(false);
+        }
     };
+  
+  
+      //action next pagination
+      const handlePageChangeNext = () => {
+        const totalComptesWP = comptesWP.length;
+        const newPage = currentPage + itemsPerPage;
+        setCurrentPage(newPage);
+        setPrev(true);
+        if (totalComptesWP - newPage < itemsPerPage) {
+            setNext(false);
+        }
+      };
 
     //delete Compte
     const deleteCompte = async (idcompte: number) => {
@@ -224,6 +257,7 @@ export default function Compte(){
     useEffect(() => {
         fetchLastId();
         getComptes();
+        getComptesWP();
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -235,7 +269,7 @@ export default function Compte(){
               router.push("/login");
             }
           });
-      }, [idCompte]);
+      }, [idCompte, currentPage]);
 
     return (
         <div>
@@ -274,15 +308,12 @@ export default function Compte(){
                                     </table>
                                 </div>
                                 <div className="pagination-table">
-                                {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                                    <button
-                                    key={page}
-                                    onClick={() => handlePageChange(page)}
-                                    className={page === currentPage ? "active" : ""}
-                                    >
-                                    {page}
-                                    </button>
-                                ))}
+                                    {(comptesWP.length >= 7) && 
+                                    <>
+                                        <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
+                                        <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
+                                    </>
+                                    }
                                 </div>
                             </div>
                         </div>
