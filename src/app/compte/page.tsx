@@ -15,6 +15,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { CompteType } from '@/src/models/CompteType';
 import Alert from '@/src/components/alert/Alert';
+import ExportCsvCompte from '@/src/components/csv/ExportCsvCompte';
 
 export default function Compte(){
     const { t } = useTranslation('translation');
@@ -287,6 +288,7 @@ export default function Compte(){
                                 {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedCompteSuccess')}/> }
                             </div>
                             <div className="section-list">
+                                <ExportCsvCompte data={comptesWP} />
                                 <div className="list-block list-view">
                                     <table className='list-table'>
                                     <thead>
