@@ -15,6 +15,7 @@ import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { CategoryType } from '@/src/models/CategoryType';
 import Alert from '@/src/components/alert/Alert';
+import ExportCsvCategory from '@/src/components/csv/ExportCsvCategory';
 
 export default function Category(){
     const { t } = useTranslation('translation');
@@ -289,6 +290,7 @@ export default function Category(){
                         {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedCategorySuccess')}/> }
                       </div>
                         <div className="section-list">
+                        <ExportCsvCategory data={categoriesWP} />
                           <div className="list-block list-view">
                               <table className='list-table'>
                               <thead>
