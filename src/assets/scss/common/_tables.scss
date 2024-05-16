@@ -93,6 +93,9 @@
 .table-filter{
     display: flex;
     justify-content: flex-end;
+    a{
+        margin-right: 5px;
+    }
     select{
         padding: 5px;
         border-radius: 4px;

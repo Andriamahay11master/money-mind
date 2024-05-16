@@ -19,6 +19,7 @@ import { ExpenseType } from '@/src/models/ExpenseType';
 import { CategoryType } from '@/src/models/CategoryType';
 import { CompteType } from '@/src/models/CompteType';
 import Alert from '@/src/components/alert/Alert';
+import ExportCSV from '@/src/components/csv/ExportCsv';
 
 export default function Expenses() {
     const { t } = useTranslation('translation');
@@ -497,6 +498,7 @@ export default function Expenses() {
                         </div>
                         <div className="section-list">
                           <div className="table-filter">
+                            <ExportCSV data={expensesWP} />
                             <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
                               {comptes.map((compte, index) => (
                                 <option key={index} value={compte.description}>{compte.description}</option>
