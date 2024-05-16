@@ -93,8 +93,19 @@
 .table-filter{
     display: flex;
     justify-content: flex-end;
-    a{
-        margin-right: 5px;
+    @include max(768px){
+        flex-direction: column;
+    }
+    .btn-primary{
+        margin-right: 10px;
+        text-align: center;
+        line-height: 16px;
+        display: flex;
+        align-items: center;
+        @include max(768px){
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
     }
     select{
         padding: 5px;
