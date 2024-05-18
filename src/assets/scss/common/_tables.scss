@@ -112,5 +112,12 @@
         border-radius: 4px;
         border: 1px solid $color-secondary;
         width: 200px;
+        &:first-of-type{
+            margin-right: 10px;
+            @include max(768px){
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
     }
 }

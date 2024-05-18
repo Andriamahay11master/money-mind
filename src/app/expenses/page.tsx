@@ -110,12 +110,14 @@ export default function Expenses() {
   const inputRefDate = React.useRef<HTMLInputElement>(null);
   const inputRefCompte = React.useRef<HTMLSelectElement>(null);
   const inputFilterRefCompte = React.useRef<HTMLSelectElement>(null);
+  const inputFilterRefCategory = React.useRef<HTMLSelectElement>(null);
 
     
   const dateTOday = new Date();
   const date = dateTOday.getMonth();
   const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
   const [inputFilter, setInputFilter] = React.useState(defaultCompte);
+  const [inputFilterCategory, setInputFilterCategory] = React.useState('ALL');
  
   //get last ID inserted in document expenses
   const fetchLastId = async () => {
@@ -293,6 +295,31 @@ export default function Expenses() {
     }
   }
 
+  //Get Document on expense by ID
+  const getExpensesByCategory = async (val : string) => {
+    try {
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), where("compte", "==", inputRefCompte.current?.value), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+            const dayL = dateTask.toDateString();
+
+            return {
+                idexpenses: doc.data().idexpenses,
+                compte: doc.data().compte,
+                dateexpenses: dayL.toString(),
+                categoryexpense: doc.data().categoryexpense,
+                uidUser: doc.data().uidUser,
+                valueexpenses: doc.data().valueexpenses,
+                description: doc.data().description
+            }
+        });
+        setExpenses(newData);
+    } catch (error) {
+        console.error("Error fetching documents: ", error);
+    }
+  }
+
   //delete expense
   async function deleteExpense(id: number) {
     try {
@@ -352,7 +379,7 @@ export default function Expenses() {
   //Get Expenses for selected filter
   async function getExpensesCurrent(valAccount: string) {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
@@ -377,7 +404,7 @@ export default function Expenses() {
   //Get Expenses for selected filter without pagination
   async function getExpensesCurrentWithoutPagination(valAccount: string) {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
@@ -436,6 +463,23 @@ export default function Expenses() {
     }
   };
 
+  //action filter category change
+  const handleFilterCategoryChange = () => {
+    const selectedDesc = inputFilterRefCategory.current?.value || '';
+    setInputFilterCategory(selectedDesc);
+    setCurrentPage(1);
+    setPrev(false);
+    setNext(true);
+    if(selectedDesc === 'ALL'){
+      getExpenses();
+      alert("niditra tato")
+    }
+    else{
+      getExpensesByCategory(selectedDesc);
+      alert("niditra teto")
+    }
+  };
+
   //Fetch data on update and Document ID for idexpense
   const callUpdateForm = (idexpense: number) => {
     const expense = expenses.find((expense) => expense.idexpenses === idexpense);
@@ -467,6 +511,7 @@ export default function Expenses() {
     else{
       getExpensesCurrent(inputFilter);
       getExpensesCurrentWithoutPagination(inputFilter)
+      alert('niditra ato')
     }
 
     onAuthStateChanged(auth, (user) => {
@@ -480,7 +525,7 @@ export default function Expenses() {
       }
     });
     
-  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, idExpenses, currentPage, prev, next]);
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, inputFilterRefCategory.current, inputFilterCategory,idExpenses, currentPage, prev, next]);
   
     return (
         <div>
@@ -501,6 +546,12 @@ export default function Expenses() {
                           <div className="table-filter">
                             <ExportCSV data={expensesWP} />
                             <ExportExcel data={expensesWP} nameFile='expenses' nameSheet='Expenses'/>
+                            <select name="filter-category" id="filter-category" ref={inputFilterRefCategory} onChange={handleFilterCategoryChange} value={inputFilterCategory} defaultValue={'ALL'}>
+                              {categories.map((category, index) => (
+                                <option key={index} value={category.description}>{category.description}</option>
+                              ))}
+                              <option value="ALL">Tous</option>
+                            </select>   
                             <select name="filter-compte" id="filter-compte" ref={inputFilterRefCompte} onChange={handleFilterCompteChange} value={inputFilter}>
                               {comptes.map((compte, index) => (
                                 <option key={index} value={compte.description}>{compte.description}</option>
