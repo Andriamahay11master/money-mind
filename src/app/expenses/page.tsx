@@ -275,6 +275,7 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
+        console.log("list expense general", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -298,11 +299,16 @@ export default function Expenses() {
   //Get Document on expense by ID
   const getExpensesByCategory = async (val : string) => {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), where("compte", "==", inputRefCompte.current?.value), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
-        const querySnapshot = await getDocs(q);
-        const newData = querySnapshot.docs.map(doc => {
-            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
-            const dayL = dateTask.toDateString();
+      let q;
+      if(val === 'ALL'){
+        q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+      }else{
+        q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+      }
+      const querySnapshot = await getDocs(q);
+      const newData = querySnapshot.docs.map(doc => {
+      const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
+      const dayL = dateTask.toDateString();
 
             return {
                 idexpenses: doc.data().idexpenses,
@@ -315,6 +321,7 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
+        console.log("list expense", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -379,7 +386,12 @@ export default function Expenses() {
   //Get Expenses for selected filter
   async function getExpensesCurrent(valAccount: string) {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+      let q;
+        if(inputFilterCategory !== "ALL"){
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+        }else{
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+        }  
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
@@ -396,6 +408,7 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
+        console.log("curent filter", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -467,16 +480,18 @@ export default function Expenses() {
   const handleFilterCategoryChange = () => {
     const selectedDesc = inputFilterRefCategory.current?.value || '';
     setInputFilterCategory(selectedDesc);
+    console.log("val*****************",selectedDesc);
     setCurrentPage(1);
     setPrev(false);
     setNext(true);
     if(selectedDesc === 'ALL'){
       getExpenses();
-      alert("niditra tato")
+      // alert("niditra tato")
     }
     else{
       getExpensesByCategory(selectedDesc);
-      alert("niditra teto")
+      console.log("niditra tato")
+      // alert("niditra teto")
     }
   };
 
@@ -511,7 +526,7 @@ export default function Expenses() {
     else{
       getExpensesCurrent(inputFilter);
       getExpensesCurrentWithoutPagination(inputFilter)
-      alert('niditra ato')
+      // alert('niditra ato')
     }
 
     onAuthStateChanged(auth, (user) => {
