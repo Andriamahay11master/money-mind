@@ -300,10 +300,27 @@ export default function Expenses() {
   const getExpensesByCategory = async (val : string) => {
     try {
       let q;
+      console.log('val inut filter compte',inputFilter)
       if(val === 'ALL'){
-        q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+        if(inputFilter === 'ALL'){
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          console.log("there all")
+        }
+        else{
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          console.log("there not all")
+        }
       }else{
-        q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+        if(inputFilter === 'ALL'){
+          console.log("inpuFilter",inputFilter)
+          console.log("val cateogry",val)
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          console.log("there")
+        }
+        else{
+           q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+           console.log("not there")
+        }
       }
       const querySnapshot = await getDocs(q);
       const newData = querySnapshot.docs.map(doc => {
@@ -388,9 +405,19 @@ export default function Expenses() {
     try {
       let q;
         if(inputFilterCategory !== "ALL"){
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          if(valAccount !== 'ALL'){
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          }
+          else{
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          }
         }else{
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          if(valAccount !== 'ALL'){
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          }
+          else{
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          }
         }  
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
@@ -470,9 +497,11 @@ export default function Expenses() {
     setNext(true);
     if(selectedDesc === 'ALL'){
       getExpenses();
+      console.log("5")
     }
     else{
       getExpensesCurrent(selectedDesc);
+      console.log("6")
     }
   };
 
@@ -487,6 +516,7 @@ export default function Expenses() {
     if(selectedDesc === 'ALL'){
       getExpenses();
       // alert("niditra tato")
+      console.log("7")
     }
     else{
       getExpensesByCategory(selectedDesc);
@@ -520,8 +550,8 @@ export default function Expenses() {
     getComptes();
     fetchLastId();
     if(inputFilter === 'ALL'){
-      getExpenses();  
-      getExpensesWitoutPagination();
+      //getExpenses();  
+      //getExpensesWitoutPagination();
     }
     else{
       getExpensesCurrent(inputFilter);
