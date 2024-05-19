@@ -550,8 +550,13 @@ export default function Expenses() {
     getComptes();
     fetchLastId();
     if(inputFilter === 'ALL'){
-      //getExpenses();  
-      //getExpensesWitoutPagination();
+      if(inputFilterCategory === 'ALL'){
+        getExpenses();
+        getExpensesWitoutPagination();
+      }
+      else{
+        getExpensesByCategory(inputFilterCategory);
+      }
     }
     else{
       getExpensesCurrent(inputFilter);
