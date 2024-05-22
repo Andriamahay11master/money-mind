@@ -154,7 +154,7 @@ export default function Expenses() {
     const selectedDesc = inputFilterRefCompte.current?.value ?? '';
     if(selectedDesc === 'ALL'){
       getExpenses();
-      getExpensesWitoutPagination();
+      getExpensesWithoutPagination();
     }
     else{
       getExpensesCurrent(selectedDesc);
@@ -231,9 +231,15 @@ export default function Expenses() {
   }
   
   //Get all expenses in firebase without pagination
-  const getExpensesWitoutPagination = async () => {
+  const getExpensesWithoutPagination = async () => {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+      let q;
+      if(inputFilterCategory !== 'ALL'){
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense","==", inputFilterCategory), orderBy("idexpenses", "asc"));
+      }
+      else{
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+      }
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
@@ -275,7 +281,6 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
-        console.log("list expense general", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -300,26 +305,19 @@ export default function Expenses() {
   const getExpensesByCategory = async (val : string) => {
     try {
       let q;
-      console.log('val inut filter compte',inputFilter)
       if(val === 'ALL'){
         if(inputFilter === 'ALL'){
           q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
-          console.log("there all")
         }
         else{
           q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
-          console.log("there not all")
         }
       }else{
         if(inputFilter === 'ALL'){
-          console.log("inpuFilter",inputFilter)
-          console.log("val cateogry",val)
           q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
-          console.log("there")
         }
         else{
            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
-           console.log("not there")
         }
       }
       const querySnapshot = await getDocs(q);
@@ -338,7 +336,6 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
-        console.log("list expense", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -348,8 +345,6 @@ export default function Expenses() {
   async function deleteExpense(id: number) {
     try {
         getExpenseById(id);
-        console.log("element à supprimer",id);
-        console.log("currentDocument",currentDocument);
         const expenseRef = doc(db, "expenses", currentDocument);
         await deleteDoc(expenseRef);
         setDeleted(true);
@@ -435,7 +430,6 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
-        console.log("curent filter", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -513,11 +507,9 @@ export default function Expenses() {
     setNext(true);
     if(selectedDesc === 'ALL'){
       getExpenses();
-      console.log("5")
     }
     else{
       getExpensesCurrent(selectedDesc);
-      console.log("6")
     }
   };
 
@@ -525,19 +517,14 @@ export default function Expenses() {
   const handleFilterCategoryChange = () => {
     const selectedDesc = inputFilterRefCategory.current?.value || '';
     setInputFilterCategory(selectedDesc);
-    console.log("val*****************",selectedDesc);
     setCurrentPage(1);
     setPrev(false);
     setNext(true);
     if(selectedDesc === 'ALL'){
       getExpenses();
-      // alert("niditra tato")
-      console.log("7")
     }
     else{
       getExpensesByCategory(selectedDesc);
-      console.log("niditra tato")
-      // alert("niditra teto")
     }
   };
 
@@ -568,7 +555,7 @@ export default function Expenses() {
     if(inputFilter === 'ALL'){
       if(inputFilterCategory === 'ALL'){
         getExpenses();
-        getExpensesWitoutPagination();
+        getExpensesWithoutPagination();
       }
       else{
         getExpensesByCategory(inputFilterCategory);
@@ -577,7 +564,6 @@ export default function Expenses() {
     else{
       getExpensesCurrent(inputFilter);
       getExpensesCurrentWithoutPagination(inputFilter)
-      // alert('niditra ato')
     }
 
     onAuthStateChanged(auth, (user) => {
