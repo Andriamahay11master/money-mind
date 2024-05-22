@@ -444,7 +444,23 @@ export default function Expenses() {
   //Get Expenses for selected filter without pagination
   async function getExpensesCurrentWithoutPagination(valAccount: string) {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
+      let q;
+      if(inputFilterCategory !== "ALL"){
+        if(valAccount !== 'ALL'){
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
+        }
+        else{
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
+        }
+      }
+      else{
+        if(valAccount !== 'ALL'){
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
+        }
+        else{
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
+        }
+      }
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
