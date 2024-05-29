@@ -413,6 +413,8 @@ export default function Expenses() {
         }else{
           if(valAccount !== 'ALL'){
             q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+            console.log("currentPage", currentPage);
+            console.log("itemsPerPage", itemsPerPage);
           }
           else{
             q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
@@ -434,6 +436,8 @@ export default function Expenses() {
             }
         });
         setExpenses(newData);
+        console.log("list expenses", newData)
+        console.log("list expenses", expenses)
     } catch (error) {
         console.error("Error fetching documents: ", error);
     }
@@ -567,6 +571,7 @@ export default function Expenses() {
     }
     else{
       getExpensesCurrent(inputFilter);
+      console.log("expenses current", expenses)
       getExpensesCurrentWithoutPagination(inputFilter)
     }
 
