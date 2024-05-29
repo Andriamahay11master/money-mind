@@ -37,11 +37,8 @@
     color: #FFF;
     font-weight: 600;
     font-size: 17px;
-
-    @include max(1440px) {
-      padding: 10px 20px;
-      font-size: 14px;
-    }
+    padding: 10px 20px;
+    font-size: 14px;
 
     &:hover {
       background: $color-secondary;
