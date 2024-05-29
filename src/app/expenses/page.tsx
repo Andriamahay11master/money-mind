@@ -126,7 +126,10 @@ export default function Expenses() {
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
             const lastId = querySnapshot.docs[0].data().idexpenses;
-            setIdExpenses(lastId + 1); // Set the new ID as the last ID + 1
+            const newID = lastId + 1;
+            setIdExpenses(newID); // Set the new ID as the last ID + 1
+            console.log("LastID", lastId);
+            console.log("NewID", idExpenses); 
         } else {
             setIdExpenses(1); // If no documents found, set ID to 1
         }
@@ -165,6 +168,7 @@ export default function Expenses() {
   async function addExpenses() {
     try{
       const dateValue = inputRefDate.current?.value;
+      await fetchLastId();
         if(dateValue) {
             await addDoc(collection(db, "expenses"), {
                 idexpenses: idExpenses,
@@ -577,7 +581,7 @@ export default function Expenses() {
       }
     });
     
-  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, inputFilterRefCategory.current, inputFilterCategory,idExpenses, currentPage, prev, next]);
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, inputFilterRefCategory.current, inputFilterCategory, currentPage, prev, next]);
   
     return (
         <div>
