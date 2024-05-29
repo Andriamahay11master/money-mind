@@ -1,7 +1,8 @@
 
 import type { Metadata } from 'next';
-import './globals.scss'
-import '../assets/scss/main.scss'
+import './globals.scss';
+import '../assets/scss/main.scss';
+import SessionProvider from "./SessionProvider";
 
 
 export const metadata: Metadata = {
@@ -30,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-      <link rel="manifest" href="manifest.json" />
+      <link rel="manifest" href="/manifest.json" />
       <link rel="icon" href="favicon.ico" sizes="any" />
       <link
           rel="icon"
@@ -45,7 +46,9 @@ export default function RootLayout({
           sizes="180*180"
         />
       </head>
-      <body>{children}</body>
+      <body>
+       {children}
+      </body>
     </html>
   );
 }

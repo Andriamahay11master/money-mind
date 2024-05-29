@@ -6,22 +6,23 @@ import './page.scss'
 import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
-import { formatNumber } from '@/src/data/function';
 import FormCategory from '@/src/components/category/FormCategory';
-import ListCategory from '@/src/components/category/ListCategory';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
+import { useRouter } from 'next/navigation';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAt, updateDoc, where } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { CategoryType } from '@/src/models/CategoryType';
+import Alert from '@/src/components/alert/Alert';
+import ExportCsvCategory from '@/src/components/csv/ExportCsvCategory';
+import ExportExcel from '@/src/components/excel/ExportExcel';
 
 export default function Category(){
     const { t } = useTranslation('translation');
+    const router = useRouter();
 
-    //interface CategoryType
-    interface CategoryType {
-        idcategory: number;
-        description: string;
-      }
-
-      //state pagination
+    //state pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // Choose the number of items to display per page
 
@@ -75,155 +76,225 @@ export default function Category(){
     ]
 
     const [categories, setCategory] = useState(Array<CategoryType>);
+    const [categoriesWP, setCategoryWP] = useState(Array<CategoryType>);
     const [stateForm, setStateForm] = useState(true);
     const [idUpdateCategory, setIdUpdateCategory] = useState(0);
     const [created, setCreated] = useState(false);
     const [updated, setUpdated] = useState(false);
     const [deleted, setDeleted] = useState(false);
-
+    const [userMail, setUserMail] = useState('');
+    const [userUID, setUserUID] = useState('');
+    const [idCategory, setIdCategory] = useState(0);
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
+    const [currentDocument, setCurrentDocument] = useState('');
+    const [next, setNext] = useState(true);
+    const [prev, setPrev] = useState(false);
 
-    const dataList = Object.values(categories).map((category) => ({
-        idcategory: category["idcategory"],
-        description: category["description"]
-    }));
-
-    async function addCategories() {
-        const postData = {
-          method: "POST",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`/api/addCategory?description=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        //Update list category
-        setCategory(response.categories);
-    
-    
-        // Reset form by updating refs to initial values
-        if (inputRefDescription.current) inputRefDescription.current.value = "";
-    
-        // Now, fetch the updated categories
-        getCategories();
-        
-        setCreated(true);
-    
-        setTimeout(() => {
-          setCreated(false);
-          setStateForm(true);
-        }, 1400)
+    //Get Document on category by ID
+    async function getCategoryById(id: number) {
+      try {
+          const q = query(collection(db, "category"), where("id", "==", id));
+          const querySnapshot = await getDocs(q);
+          querySnapshot.docs.map(doc => {
+              const compteIdDocument = doc.id;
+              setCurrentDocument(compteIdDocument);
+              return compteIdDocument;
+          });
+      } catch (error) {
+          console.error("Error fetching documents: ", error);
       }
-
-      async function updateCategory(){
-        const postData = {
-          method: "PUT",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            idcategory: idUpdateCategory,
-            description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`/api/updateCategory?idcategory=${idUpdateCategory}&description=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        //Update list category
-        setCategory(response.categories);
-        // Reset form by updating refs to initial values
-        if (inputRefDescription.current) inputRefDescription.current.value = "";
-        // Now, fetch the updated categories
-        getCategories();
-                
-        setUpdated(true);
-
-        setTimeout(() => {
-            setUpdated(false);
-        }, 1400)
-      }
-
-    async function getCategories() {
-        const postData = {
-            method: "GET",
-            headers: {
-            "Content-Type": "application/json",
-            },
-        };
-        const res = await fetch(`api/category`, postData);
-        const response = await res.json();
-        const categoriesArray: CategoryType[] = Object.values(response.categories);
-        setCategory(categoriesArray);
     }
-    
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
 
-    //pagination control
-    const totalPages = Math.ceil(categories.length / itemsPerPage);
+    //get last ID inserted in document category
+    const fetchLastId = async () => {
+        try {
+            const q = query(collection(db, "category"), orderBy("id", "desc"), limit(1)); // Limit to 1 document
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const lastId = querySnapshot.docs[0].data().id;
+                setIdCategory(lastId + 1); // Set the new ID as the last ID + 1
+            } else {
+                setIdCategory(1); // If no documents found, set ID to 1
+            }
+        } catch (error) {
+            console.error("Error fetching last ID: ", error);
+        }
+    }
 
-    const handlePageChange = (newPage : any) => {
-        setCurrentPage(newPage);
+    //add category
+    async function addCategories() {
+      try{
+        await addDoc(collection(db, "category"), {
+            id: idCategory,
+            description: inputRefDescription.current?.value,
+            uidUser: userUID
+        });
+
+          setCreated(true);
+          // Reset form by updating refs to initial values
+          if (inputRefDescription.current) inputRefDescription.current.value = "";
+          
+          getCategories();
+
+          setTimeout(() => {
+              setCreated(false);
+          }, 1400)
+              
+        }
+        catch (error) {
+            console.error("Error adding document: ", error);
+        }
+    }
+
+    //update category
+    async function updateCategory(){
+      try{
+        const categoryRef = doc(db, "category", currentDocument);
+        updateDoc(categoryRef, {
+            id: idUpdateCategory,
+            description: inputRefDescription.current?.value,
+            uidUser: userUID
+        });  
+        setUpdated(true);
+        // Reset form by updating refs to initial values
+        if (inputRefDescription.current) inputRefDescription.current.value = "";
+        setStateForm(true);
+
+        await getCategories();
+
+        setTimeout(() => {
+          setUpdated(false);
+        }, 1400)
+      }  
+      catch (error) {
+          console.error("Error adding document: ", error);
+      }
+    }
+
+    //get categories
+    async function getCategories() {
+      try {
+        const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"), startAt(currentPage), limit(itemsPerPage));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            return {
+                id: doc.data().id,
+                uidUser: doc.data().uidUser,
+                description: doc.data().description
+            }
+        });
+        setCategory(newData);
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
+    }
+
+    //get categories
+    async function getCategoriesWP() {
+      try {
+        const q = query(collection(db, "category"), where("uidUser", "==", userUID), orderBy("id", "asc"));
+        const querySnapshot = await getDocs(q);
+        const newData = querySnapshot.docs.map(doc => {
+            return {
+                id: doc.data().id,
+                uidUser: doc.data().uidUser,
+                description: doc.data().description
+            }
+        });
+        setCategoryWP(newData);
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
+    }
+
+    //action prev pagination
+    const handlePageChangePrev = () => {
+      const newPage = currentPage - itemsPerPage;
+      setCurrentPage(newPage >= 1 ? newPage : 1);
+      setNext(true);
+      if (newPage === 1) {
+          setPrev(false);
+      }
+    };
+
+
+    //action next pagination
+    const handlePageChangeNext = () => {
+      const totalCategoriesWP = categoriesWP.length;
+      const newPage = currentPage + itemsPerPage;
+      setCurrentPage(newPage);
+      setPrev(true);
+      if (totalCategoriesWP - newPage < itemsPerPage) {
+          setNext(false);
+      }
     };
 
     //send the id category to formCategory for update
     const callUpdateForm = (idcategory: number) => {
-        const category = categories.find((category) => category.idcategory === idcategory);
+        const category = categories.find((category) => category.id === idcategory);
         if (category) {
             inputRefDescription.current!.value = category.description;
         }
+        getCategoryById(idcategory);
         setIdUpdateCategory(idcategory);
         setStateForm(false);
     }
 
-    //delete category in BDD
+    //delete category in Firebase
     const deleteCategory = async (idcategory: number) => {
-        const postData = {
-          method: "DELETE",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            idcategory: idcategory,
-          })
-        };
-        const res = await fetch(`/api/deleteCategory?idcategory=${idcategory}`, postData);
-        const response = await res.json();
-        //Update list category
-        setCategory(response.categories);
-
-        getCategories();
-                
-        setDeleted(true);
-
-        setTimeout(() => {
-          setDeleted(false);
-        }, 1400)
+      try {
+          getCategoryById(idcategory);
+          const categoryRef = doc(db, "category", currentDocument);
+          await deleteDoc(categoryRef);
+          setDeleted(true);
+          await getCategories();
+          setTimeout(() => {
+              setDeleted(false);
+          }, 1400)
+      } catch (error) {
+          console.error("Error deleting document: ", error);
+      }
     }
 
 
     useEffect(() => {
+      fetchLastId();
       getCategories();
-      }, []);
+      getCategoriesWP();
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const email = user.email;
+          const uid = user.uid
+          setUserMail(email ?? '');
+          setUserUID(uid ?? '');
+        } else {
+          router.push("/login");
+        }
+      });
+
+      }, [idCategory, currentPage]);
 
     return (
         <div>
-          {(dataList && dataList.length) ? (
+          {(userMail !== '') ? (
             <>
-            <Header linkMenu={dataNav}/>
+            <Header linkMenu={dataNav} userMail={userMail}/>
             <main className='main-page'>
                 <div className="container">
                     <Breadcrumb items={itemsBreadcrumb}/>
                     <div className="main-section page-form">
                       <div className="section-form">
                       <FormCategory labelData={labelData} inputRefDescription={inputRefDescription} stateInsert={stateForm} actionBDD={stateForm ? addCategories : updateCategory} />
-                        {created && <div className="alert alert-success">{t('message.insertedCategorySuccess')}</div> }
-                        {updated && <div className="alert alert-success">{t('message.updatedCategorySuccess')}</div> }
-                        {deleted && <div className="alert alert-danger">{t('message.deletedCategorySuccess')}</div> }
+                        {created && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.insertedCategorySuccess')}/> }
+                        {updated && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.updatedCategorySuccess')}/> }
+                        {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedCategorySuccess')}/> }
                       </div>
                         <div className="section-list">
+                            <div className="table-filter">
+                                <ExportCsvCategory data={categoriesWP} />
+                                <ExportExcel data={categoriesWP} nameFile='categories' nameSheet='Categories'/>
+                            </div>
                           <div className="list-block list-view">
                               <table className='list-table'>
                               <thead>
@@ -234,16 +305,16 @@ export default function Category(){
                                   </tr>
                               </thead>
                               <tbody>
-                              {dataList.slice(startIndex, endIndex).map((list, index) => (
+                              {categories.map((list, index) => (
                                       <tr key={index}>
-                                          <td>{list.idcategory}</td>
+                                          <td>{list.id}</td>
                                           <td>{list.description}</td>
                                           <td>
                                               <div className="action-box">
-                                                  <button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.idcategory)}>
+                                                  <button type="button" className="btn btn-icon" onClick={() => callUpdateForm(list.id)}>
                                                       <i className="icon-pencil"></i>
                                                   </button>
-                                                  <button className="btn btn-icon" onClick={() => deleteCategory(list.idcategory)}>
+                                                  <button className="btn btn-icon" onClick={() => deleteCategory(list.id)}>
                                                       <i className="icon-bin2"></i>
                                                   </button>
                                               </div>
@@ -254,15 +325,12 @@ export default function Category(){
                               </table>
                           </div>
                           <div className="pagination-table">
-                            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                              <button
-                                key={page}
-                                onClick={() => handlePageChange(page)}
-                                className={page === currentPage ? "active" : ""}
-                              >
-                                {page}
-                              </button>
-                            ))}
+                            {(categoriesWP.length >= 7) && 
+                              <>
+                                <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
+                                <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
+                              </>
+                            }
                           </div>
                         </div>
                     </div>

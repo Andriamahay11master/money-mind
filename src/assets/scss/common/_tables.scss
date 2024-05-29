@@ -93,10 +93,31 @@
 .table-filter{
     display: flex;
     justify-content: flex-end;
+    @include max(768px){
+        flex-direction: column;
+    }
+    .btn-primary{
+        margin-right: 10px;
+        text-align: center;
+        line-height: 16px;
+        display: flex;
+        align-items: center;
+        @include max(768px){
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+    }
     select{
         padding: 5px;
         border-radius: 4px;
         border: 1px solid $color-secondary;
         width: 200px;
+        &:first-of-type{
+            margin-right: 10px;
+            @include max(768px){
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
     }
 }

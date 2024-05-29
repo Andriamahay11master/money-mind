@@ -30,13 +30,14 @@
             row-gap: 20px;
         }
         .chart-legend-item{
-            display: flex;
+            display: grid;
+            grid-template-columns: 15px auto;
+            column-gap: 5px;
             align-items: center;
             .chart-legend-color{
                 width: 15px;
                 height: 15px;
                 border-radius: 100%;
-                margin-right: 5px;
             }
             p{
                 font-size: 12px;

@@ -9,6 +9,9 @@
         padding: 5px 10px;
         border-radius: 2px;
         color: #000;
+        &:last-child{
+            margin-left: 10px;
+        }
         &.active{
             font-weight: 700;
             color: #FFF;

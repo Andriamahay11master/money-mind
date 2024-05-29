@@ -6,22 +6,23 @@ import './page.scss'
 import * as React from 'react';
 import Footer from '@/src/components/footer/Footer';
 import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
-import { formatNumber } from '@/src/data/function';
 import FormCompte from '@/src/components/compte/FormCompte';
-import { useEffect, useState, useRef } from 'react';
-import { sql } from "@vercel/postgres";
+import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAt, updateDoc, where } from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { CompteType } from '@/src/models/CompteType';
+import Alert from '@/src/components/alert/Alert';
+import ExportCsvCompte from '@/src/components/csv/ExportCsvCompte';
+import ExportExcel from '@/src/components/excel/ExportExcel';
 
 export default function Compte(){
     const { t } = useTranslation('translation');
+    const router = useRouter();
 
-    //interface CompteType
-    interface CompteType {
-        idcompte: number;
-        description: string;
-      }
-
-      //state pagination
+    //state pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5; // Choose the number of items to display per page
 
@@ -43,7 +44,7 @@ export default function Compte(){
             name: `${t('menu.contact')}`,
             href: '/category'
         }
-      ];
+    ];
 
     //data footer
     const dataFooter = {
@@ -75,189 +76,260 @@ export default function Compte(){
     ]
 
     const [comptes, setCompte] = useState(Array<CompteType>);
+    const [comptesWP, setCompteWP] = useState(Array<CompteType>);
     const [stateForm, setStateForm] = useState(true);
     const [idUpdateCompte, setIdUpdateCompte] = useState(0);
     const [created, setCreated] = useState(false);
     const [updated, setUpdated] = useState(false);
     const [deleted, setDeleted] = useState(false);
+    const [userUID, setUserUID] = useState('');
+    const [userMail, setUserMail] = useState('');
+    const [idCompte, setIdCompte] = useState(0);
+    const [currentDocument, setCurrentDocument] = useState('');
+    const [next, setNext] = useState(true);
+    const [prev, setPrev] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
-    const dataList = Object.values(comptes).map((compte) => ({
-        idcompte: compte["idcompte"],
-        description: compte["description"]
-    }));
+    //Get Document on compte by ID
+    async function getCompteById(id: number) {
+        try {
+            const q = query(collection(db, "compte"), where("idcompte", "==", id));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.docs.map(doc => {
+                const compteIdDocument = doc.id;
+                setCurrentDocument(compteIdDocument);
+                return compteIdDocument;
+            });
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
+    }
+    //get last ID inserted in document compte
+    const fetchLastId = async () => {
+        try {
+            const q = query(collection(db, "compte"), orderBy("idcompte", "desc"), limit(1)); // Limit to 1 document
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const lastId = querySnapshot.docs[0].data().idcompte;
+                setIdCompte(lastId + 1); // Set the new ID as the last ID + 1
+            } else {
+                setIdCompte(1); // If no documents found, set ID to 1
+            }
+        } catch (error) {
+            console.error("Error fetching last ID: ", error);
+        }
+    }
 
+    //Add Comptes
     async function addComptes() {
-        const postData = {
-          method: "POST",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`api/addCompte?desc=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        setCompte(response.comptes);
-    
-    
-        // Reset form by updating refs to initial values
-        if (inputRefDescription.current) inputRefDescription.current.value = "";
-    
-        // Now, fetch the updated comptes
-        getComptes();
-        
-        setCreated(true);
-    
-        setTimeout(() => {
-          setCreated(false);
-        }, 1400)
+        try{
+            await addDoc(collection(db, "compte"), {
+                idcompte: idCompte,
+                description: inputRefDescription.current?.value,
+                uidUser: userUID
+            });
+
+            setCreated(true);
+            // Reset form by updating refs to initial values
+            if (inputRefDescription.current) inputRefDescription.current.value = "";
+            
+            getComptes();
+
+            setTimeout(() => {
+                setCreated(false);
+            }, 1400)
+                
+          }
+          catch (error) {
+              console.error("Error adding document: ", error);
+          }
       }
 
+    //update Compte
     async function updateCompte() {
-        const postData = {
-          method: "PUT",
-          headers :{
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            idcompte: idUpdateCompte,
-            description: inputRefDescription.current?.value,
-          })
-        };
-        const res = await fetch(`/api/updateCompte?idcompte=${idUpdateCompte}&description=${inputRefDescription.current?.value}`, postData);
-        const response = await res.json();
-        setCompte(response.comptes);
-        // Reset form by updating refs to initial values
-        if (inputRefDescription.current) inputRefDescription.current.value = "";
-    
-        // Now, fetch the updated comptes
-        getComptes();
-        
-        setUpdated(true);
-    
-        setTimeout(() => {
-            setUpdated(false);
+        try{
+            const compteRef = doc(db, "compte", currentDocument);
+            updateDoc(compteRef, {
+                idcompte: idUpdateCompte,
+                description: inputRefDescription.current?.value,
+                uidUser: userUID
+            });  
+            setUpdated(true);
+            // Reset form by updating refs to initial values
+            if (inputRefDescription.current) inputRefDescription.current.value = "";
             setStateForm(true);
-        }, 1400)
+
+            await getComptes();
+
+            setTimeout(() => {
+            setUpdated(false);
+            }, 1400)
+        }  
+        catch (error) {
+            console.error("Error adding document: ", error);
+        }
     }
 
+    //get all comptes
     async function getComptes() {
-        const offset = (currentPage - 1) * itemsPerPage;
-        const postData = {
-            method: "GET",
-            headers: {
-            "Content-Type": "application/json",
-            },
-        };
-        const res = await fetch(`api/compte?offset=${offset}&limit=${itemsPerPage}`, postData);
-        const response = await res.json();
-        const comptesArray: CompteType[] = Object.values(response.comptes);
-        setCompte(comptesArray);
+        try {
+            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"), startAt(currentPage), limit(itemsPerPage));
+            const querySnapshot = await getDocs(q);
+            const newData = querySnapshot.docs.map(doc => {
+                return {
+                    idcompte: doc.data().idcompte,
+                    uidUser: doc.data().uidUser,
+                    description: doc.data().description
+                }
+            });
+            setCompte(newData);
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
     }
-    
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
 
-    //pagination control
-    const totalPages = Math.ceil(comptes.length / itemsPerPage);
+    //get all comptes
+    async function getComptesWP() {
+        try {
+            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
+            const querySnapshot = await getDocs(q);
+            const newData = querySnapshot.docs.map(doc => {
+                return {
+                    idcompte: doc.data().idcompte,
+                    uidUser: doc.data().uidUser,
+                    description: doc.data().description
+                }
+            });
+            setCompteWP(newData);
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
+    }
 
-    const handlePageChange = (newPage : any) => {
-        setCurrentPage(newPage);
+    //action prev pagination
+    const handlePageChangePrev = () => {
+        const newPage = currentPage - itemsPerPage;
+        setCurrentPage(newPage >= 1 ? newPage : 1);
+        setNext(true);
+        if (newPage === 1) {
+            setPrev(false);
+        }
     };
+  
+  
+      //action next pagination
+      const handlePageChangeNext = () => {
+        const totalComptesWP = comptesWP.length;
+        const newPage = currentPage + itemsPerPage;
+        setCurrentPage(newPage);
+        setPrev(true);
+        if (totalComptesWP - newPage < itemsPerPage) {
+            setNext(false);
+        }
+      };
 
+    //delete Compte
     const deleteCompte = async (idcompte: number) => {
-        const postData = {
-            method: "DELETE",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                idcompte: idcompte
-            })
-        };
-        const res = await fetch(`/api/deleteCompte?idcompte=${idcompte}`, postData);
-        const response = await res.json();
-        setCompte(response.comptes);
-        getComptes();
-        setDeleted(true);
-        setTimeout(() => {
-            setDeleted(false);
-        }, 1400)
+        try {
+            getCompteById(idcompte);
+            const compteRef = doc(db, "compte", currentDocument);
+            await deleteDoc(compteRef);
+            setDeleted(true);
+            await getComptes();
+            setTimeout(() => {
+                setDeleted(false);
+            }, 1400)
+        } catch (error) {
+            console.error("Error deleting document: ", error);
+        }
     }
 
+    //mode update on form
     const callUpdateForm = (idcompte: number) => {
         const compte = comptes.find((compte) => compte.idcompte === idcompte);
         if (compte) {
             inputRefDescription.current!.value = compte.description;
         }
+        getCompteById(idcompte);
         setIdUpdateCompte(idcompte);
         setStateForm(false);
     }
 
     useEffect(() => {
+        fetchLastId();
         getComptes();
-      }, []);
+        getComptesWP();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+              const email = user.email;
+              const uid = user.uid
+              setUserMail(email ?? '');
+              setUserUID(uid ?? '');
+            } else {
+              router.push("/login");
+            }
+          });
+      }, [idCompte, currentPage]);
 
     return (
         <div>
-            {(dataList && dataList.length) ? (
-                <>
-                <Header linkMenu={dataNav}/>
-            <main className='main-page'>
-                <div className="container">
-                    <Breadcrumb items={itemsBreadcrumb}/>
-                    <div className="main-section page-form">
-                        <div className="section-form">
-                            <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
-                            {created && <div className="alert alert-success">{t('message.insertedCompteSuccess')}</div> }
-                            {updated && <div className="alert alert-success">{t('message.updatedCompteSuccess')}</div> }
-                            {deleted && <div className="alert alert-danger">{t('message.deletedCompteSuccess')}</div> }
-                        </div>
-                        <div className="section-list">
-                            <div className="list-block list-view">
-                                <table className='list-table'>
-                                <thead>
-                                    <tr>
-                                        <th>{t('table.id')}</th>
-                                        <th>{t('table.description')}</th>
-                                        <th>{t('table.action')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {dataList.slice(startIndex, endIndex).map((list, index) => (
-                                    <tr key={index}>
-                                        <td>{list.idcompte}</td>
-                                        <td>{list.description}</td>
-                                        <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}> <i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCompte(list.idcompte)}><i className="icon-bin2"></i></button></div></td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                                </table>
+            {(userMail !== '') ? 
+            <>
+                <Header linkMenu={dataNav} userMail={userMail}/>
+                <main className='main-page'>
+                    <div className="container">
+                        <Breadcrumb items={itemsBreadcrumb}/>
+                        <div className="main-section page-form">
+                            <div className="section-form">
+                                <FormCompte labelData={labelData} inputRefDescription={inputRefDescription} stateForm={stateForm} actionBDD={stateForm ? addComptes : updateCompte}/>
+                                {created && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.insertedCompteSuccess')}/> }
+                                {updated && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.updatedCompteSuccess')}/> }
+                                {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedCompteSuccess')}/> }
                             </div>
-                            <div className="pagination-table">
-                            {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                                <button
-                                key={page}
-                                onClick={() => handlePageChange(page)}
-                                className={page === currentPage ? "active" : ""}
-                                >
-                                {page}
-                                </button>
-                            ))}
+                            <div className="section-list">
+                                <div className="table-filter">
+                                    <ExportCsvCompte data={comptesWP} />
+                                    <ExportExcel data={comptesWP} nameFile='comptes' nameSheet='Comptes'/>
+                                </div>
+                                <div className="list-block list-view">
+                                    <table className='list-table'>
+                                    <thead>
+                                        <tr>
+                                            <th>{t('table.id')}</th>
+                                            <th>{t('table.description')}</th>
+                                            <th>{t('table.action')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {comptes.map((list, index) => (
+                                            <tr key={index}>
+                                                <td>{list.idcompte}</td>
+                                                <td>{list.description}</td>
+                                                <td><div className="action-box"><button type="button" className='btn btn-icon' onClick={() => callUpdateForm(list.idcompte)}> <i className="icon-pencil"></i></button> <button className="btn btn-icon" onClick={() => deleteCompte(list.idcompte)}><i className="icon-bin2"></i></button></div></td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    </table>
+                                </div>
+                                <div className="pagination-table">
+                                    {(comptesWP.length >= 7) && 
+                                    <>
+                                        <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
+                                        <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
+                                    </>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </main>
-            <Footer {...dataFooter}/>
-                </>
-            ) : (
+                </main>
+                <Footer {...dataFooter}/>
+            </> : 
+            (
                 <Loader/>
             )}
-            
         </div>    
     )
 }

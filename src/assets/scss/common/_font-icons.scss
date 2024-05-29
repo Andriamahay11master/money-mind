@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url($font-path-icon + 'icomoon.eot?px04o6');
-  src:  url($font-path-icon + 'icomoon.eot?px04o6#iefix') format('embedded-opentype'),
-    url($font-path-icon + 'icomoon.ttf?px04o6') format('truetype'),
-    url($font-path-icon + 'icomoon.woff?px04o6') format('woff'),
-    url($font-path-icon + 'icomoon.svg?px04o6#icomoon') format('svg');
+  src:  url($font-path-icon + 'icomoon.eot?5o3sf4');
+  src:  url($font-path-icon + 'icomoon.eot?5o3sf4#iefix') format('embedded-opentype'),
+    url($font-path-icon + 'icomoon.ttf?5o3sf4') format('truetype'),
+    url($font-path-icon + 'icomoon.woff?5o3sf4') format('woff'),
+    url($font-path-icon + 'icomoon.svg?5o3sf4#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-log-out:before {
+  content: "\e909";
+}
+.icon-lock:before {
+  content: "\e904";
+}
+.icon-mail:before {
+  content: "\e906";
+}
+.icon-eye-off:before {
+  content: "\e907";
+}
+.icon-eye:before {
+  content: "\e908";
+}
 .icon-burger:before {
   content: "\e902";
 }
@@ -46,5 +61,3 @@
 .icon-bin2:before {
   content: "\e9ad";
 }
-
-
