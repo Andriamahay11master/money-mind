@@ -7,6 +7,7 @@
     min-height: calc(100vh - 54px);
     @include max(768px){
         min-height: auto;
+        height: calc(100vh - 72px);
     }
     .main-page-top{
         display: flex;
