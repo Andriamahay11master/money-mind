@@ -14,7 +14,7 @@ import {monthNames} from '@/src/data/function';
 import { redirect, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAt, updateDoc, where } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { ExpenseType } from '@/src/models/ExpenseType'; 
 import { CategoryType } from '@/src/models/CategoryType';
 import { CompteType } from '@/src/models/CompteType';
@@ -25,11 +25,6 @@ import ExportExcel from '@/src/components/excel/ExportExcel';
 export default function Expenses() {
     const { t } = useTranslation('translation');
     const router = useRouter();
-
-    //state pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 7; // Choose the number of items to display per page
-
 
     //Data Nav
     const dataNav = [
@@ -157,11 +152,9 @@ export default function Expenses() {
     const selectedDesc = inputFilterRefCompte.current?.value ?? '';
     if(selectedDesc === 'ALL'){
       getExpenses();
-      getExpensesWithoutPagination();
     }
     else{
       getExpensesCurrent(selectedDesc);
-      getExpensesCurrentWithoutPagination(selectedDesc);
     }
   }
   //add expense in firebase
@@ -268,7 +261,7 @@ export default function Expenses() {
   //Get all expenses in firebase
   const getExpenses = async () => {
     try {
-        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+        const q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
         const querySnapshot = await getDocs(q);
         const newData = querySnapshot.docs.map(doc => {
             const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
@@ -311,17 +304,17 @@ export default function Expenses() {
       let q;
       if(val === 'ALL'){
         if(inputFilter === 'ALL'){
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
         }
         else{
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"));
         }
       }else{
         if(inputFilter === 'ALL'){
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), orderBy("idexpenses", "asc"));
         }
         else{
-           q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+           q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", val), where("compte", "==", inputFilter), orderBy("idexpenses", "asc"));
         }
       }
       const querySnapshot = await getDocs(q);
@@ -405,19 +398,17 @@ export default function Expenses() {
       let q;
         if(inputFilterCategory !== "ALL"){
           if(valAccount !== 'ALL'){
-            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
           }
           else{
-            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
           }
         }else{
           if(valAccount !== 'ALL'){
-            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
-            console.log("currentPage", currentPage);
-            console.log("itemsPerPage", itemsPerPage);
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
           }
           else{
-            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"), startAt(currentPage), limit(itemsPerPage));
+            q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
           }
         }  
         const querySnapshot = await getDocs(q);
@@ -484,33 +475,10 @@ export default function Expenses() {
     }
   }
 
-  //action prev pagination
-  const handlePageChangePrev = () => {
-    const newPage = currentPage - itemsPerPage;
-    setCurrentPage(newPage >= 1 ? newPage : 1);
-    setNext(true);
-    if (newPage === 1) {
-        setPrev(false);
-    }
-  };
-
-
-  //action next pagination
-  const handlePageChangeNext = () => {
-    const totalExpense = expensesWP.length;
-    const newPage = currentPage + itemsPerPage;
-    setCurrentPage(newPage);
-    setPrev(true);
-    if (totalExpense - newPage < itemsPerPage) {
-        setNext(false);
-    }
-  };
-
   //action filter compte change
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value || '';
     setInputFilter(selectedDesc);
-    setCurrentPage(1);
     setPrev(false);
     setNext(true);
     if(selectedDesc === 'ALL'){
@@ -525,7 +493,6 @@ export default function Expenses() {
   const handleFilterCategoryChange = () => {
     const selectedDesc = inputFilterRefCategory.current?.value || '';
     setInputFilterCategory(selectedDesc);
-    setCurrentPage(1);
     setPrev(false);
     setNext(true);
     if(selectedDesc === 'ALL'){
@@ -586,7 +553,7 @@ export default function Expenses() {
       }
     });
     
-  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, inputFilterRefCategory.current, inputFilterCategory, currentPage, prev, next]);
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, inputFilterRefCategory.current, inputFilterCategory, prev, next]);
   
     return (
         <div>
@@ -605,8 +572,8 @@ export default function Expenses() {
                         </div>
                         <div className="section-list">
                           <div className="table-filter">
-                            <ExportCSV data={expensesWP} />
-                            <ExportExcel data={expensesWP} nameFile='expenses' nameSheet='Expenses'/>
+                            <ExportCSV data={expenses} />
+                            <ExportExcel data={expenses} nameFile='expenses' nameSheet='Expenses'/>
                             <select name="filter-category" id="filter-category" ref={inputFilterRefCategory} onChange={handleFilterCategoryChange} value={inputFilterCategory} defaultValue={'ALL'}>
                               {categories.map((category, index) => (
                                 <option key={index} value={category.description}>{category.description}</option>
@@ -647,14 +614,6 @@ export default function Expenses() {
                               ))}
                               </tbody>
                             </table>
-                          </div>
-                          <div className="pagination-table">
-                            {(expensesWP.length >= 7) && 
-                              <>
-                                <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
-                                <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
-                              </>
-                            }
                           </div>
                         </div>
                       </div>
