@@ -1,5 +1,7 @@
 .list-block{
     margin-top: 30px;
+    max-height: 300px;
+    overflow-y: auto;
     &.list-view{
         @include max(768px){
             overflow-x: auto;
