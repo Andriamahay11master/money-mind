@@ -84,7 +84,6 @@ export default function Expenses() {
   ]
   
   const [expenses, setExpenses] = useState(Array<ExpenseType>);
-  const [expensesWP, setExpensesWP] = useState(Array<ExpenseType>);
   const [categories, setCagories] = useState(Array<CategoryType>);
   const [comptes, setComptes] = useState(Array<CompteType>);
   const [stateForm, setStateForm] = useState(true);
@@ -96,8 +95,6 @@ export default function Expenses() {
   const [userUID, setUserUID] = useState('');
   const [idExpenses, setIdExpenses] = useState<number | null>(null);
   const [currentDocument, setCurrentDocument] = useState('');
-  const [next, setNext] = useState(true);
-  const [prev, setPrev] = useState(false);
 
   const inputRefDescription = React.useRef<HTMLInputElement>(null);
   const inputRefValue = React.useRef<HTMLInputElement>(null);
@@ -227,37 +224,6 @@ export default function Expenses() {
     }
   }
   
-  //Get all expenses in firebase without pagination
-  const getExpensesWithoutPagination = async () => {
-    try {
-      let q;
-      if(inputFilterCategory !== 'ALL'){
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense","==", inputFilterCategory), orderBy("idexpenses", "asc"));
-      }
-      else{
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
-      }
-        const querySnapshot = await getDocs(q);
-        const newData = querySnapshot.docs.map(doc => {
-            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
-            const dayL = dateTask.toDateString();
-
-            return {
-                idexpenses: doc.data().idexpenses,
-                compte: doc.data().compte,
-                dateexpenses: dayL.toString(),
-                categoryexpense: doc.data().categoryexpense,
-                uidUser: doc.data().uidUser,
-                valueexpenses: doc.data().valueexpenses,
-                description: doc.data().description
-            }
-        });
-        setExpensesWP(newData);
-    } catch (error) {
-        console.error("Error fetching documents: ", error);
-    }
-  }
-
   //Get all expenses in firebase
   const getExpenses = async () => {
     try {
@@ -434,53 +400,10 @@ export default function Expenses() {
     }
   }
 
-  //Get Expenses for selected filter without pagination
-  async function getExpensesCurrentWithoutPagination(valAccount: string) {
-    try {
-      let q;
-      if(inputFilterCategory !== "ALL"){
-        if(valAccount !== 'ALL'){
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
-        }
-        else{
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("categoryexpense", "==", inputFilterCategory), orderBy("idexpenses", "asc"));
-        }
-      }
-      else{
-        if(valAccount !== 'ALL'){
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), where("compte", "==", valAccount), orderBy("idexpenses", "asc"));
-        }
-        else{
-          q = query(collection(db, "expenses"), where("uidUser", "==", userUID), orderBy("idexpenses", "asc"));
-        }
-      }
-        const querySnapshot = await getDocs(q);
-        const newData = querySnapshot.docs.map(doc => {
-            const dateTask = new Date(doc.data().dateexpenses.seconds * 1000);
-            const dayL = dateTask.toDateString();
-
-            return {
-                idexpenses: doc.data().idexpenses,
-                compte: doc.data().compte,
-                dateexpenses: dayL.toString(),
-                categoryexpense: doc.data().categoryexpense,
-                uidUser: doc.data().uidUser,
-                valueexpenses: doc.data().valueexpenses,
-                description: doc.data().description
-            }
-        });
-        setExpensesWP(newData);
-    } catch (error) {
-        console.error("Error fetching documents: ", error);
-    }
-  }
-
   //action filter compte change
   const handleFilterCompteChange = () => {
     const selectedDesc = inputFilterRefCompte.current?.value || '';
     setInputFilter(selectedDesc);
-    setPrev(false);
-    setNext(true);
     if(selectedDesc === 'ALL'){
       getExpenses();
     }
@@ -493,8 +416,6 @@ export default function Expenses() {
   const handleFilterCategoryChange = () => {
     const selectedDesc = inputFilterRefCategory.current?.value || '';
     setInputFilterCategory(selectedDesc);
-    setPrev(false);
-    setNext(true);
     if(selectedDesc === 'ALL'){
       getExpenses();
     }
@@ -530,7 +451,6 @@ export default function Expenses() {
     if(inputFilter === 'ALL'){
       if(inputFilterCategory === 'ALL'){
         getExpenses();
-        getExpensesWithoutPagination();
       }
       else{
         getExpensesByCategory(inputFilterCategory);
@@ -539,7 +459,6 @@ export default function Expenses() {
     else{
       getExpensesCurrent(inputFilter);
       console.log("expenses current", expenses)
-      getExpensesCurrentWithoutPagination(inputFilter)
     }
 
     onAuthStateChanged(auth, (user) => {
@@ -553,7 +472,7 @@ export default function Expenses() {
       }
     });
     
-  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, inputFilterRefCategory.current, inputFilterCategory, prev, next]);
+  }, [inputRefCompte.current, inputFilterRefCompte.current, inputFilter, inputFilterRefCategory.current, inputFilterCategory]);
   
     return (
         <div>
