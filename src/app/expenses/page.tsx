@@ -109,6 +109,7 @@ export default function Expenses() {
   const date = dateTOday.getMonth();
   const defaultCompte = monthNames[date] + " " + dateTOday.getFullYear();
   const [inputFilter, setInputFilter] = React.useState(defaultCompte);
+  const [inputAddFilter, setInputAddFilter] = React.useState(defaultCompte);
   const [inputFilterCategory, setInputFilterCategory] = React.useState('ALL');
  
   //get last ID inserted in document expenses
@@ -484,7 +485,7 @@ export default function Expenses() {
                       <Breadcrumb items={itemsBreadcrumb}/>
                       <div className="main-section page-form-2">
                         <div className="section-form">
-                          <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
+                          <FormExpense labelData={labelData} dataCategory={dataCategory} dataCompte={dataCompte} placeholderInput={placeholderInput} inputRefDescription={inputRefDescription} inputRefDateValue={inputRefDate} inputRefValue={inputRefValue} inputRefCategory={inputRefCategory} inputRefCompte={inputRefCompte} inputAddFilter={inputAddFilter} stateForm={stateForm} actionBDD={stateForm ? addExpenses : updateExpenses}/>
                           {created && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.insertedExpenseSuccess')}/> }
                           {updated && <Alert state={true} icon="icon-checkmark" type="success" message={t('message.updatedExpenseSuccess')}/> } 
                           {deleted && <Alert state={true} icon="icon-close" type="danger" message={t('message.deletedExpenseSuccess')}/> }

@@ -14,10 +14,11 @@ interface FormExpenseProps {
     inputRefDateValue : React.RefObject<HTMLInputElement>
     inputRefCategory : React.RefObject<HTMLSelectElement>
     inputRefCompte : React.RefObject<HTMLSelectElement>
+    inputAddFilter : string
     stateForm : boolean
     actionBDD : () => void
 }
-export default function FormExpense({labelData, dataCategory, dataCompte, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory, inputRefCompte , stateForm, actionBDD} : FormExpenseProps) {
+export default function FormExpense({labelData, dataCategory, dataCompte, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory, inputRefCompte, inputAddFilter, stateForm, actionBDD} : FormExpenseProps) {
     
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
       // Remove non-numeric characters and spaces
@@ -63,7 +64,7 @@ export default function FormExpense({labelData, dataCategory, dataCompte, placeh
                 </div>
                 <div className="form-group">
                     <label htmlFor="compteForm">{labelData[5]}</label>
-                    <select name="compteForm" id="compteForm" ref={inputRefCompte}>
+                    <select name="compteForm" id="compteForm" ref={inputRefCompte} value={inputAddFilter}>
                         {dataCompte.map((compte, index) => (
                             <option key={index} value={compte}>{compte}</option>
                         ))}
