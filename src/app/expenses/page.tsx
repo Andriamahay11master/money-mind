@@ -158,7 +158,7 @@ export default function Expenses() {
   async function addExpenses() {
     try{
       const dateValue = inputRefDate.current?.value;
-      await fetchLastId();
+      fetchLastId();
         if(dateValue) {
             await addDoc(collection(db, "expenses"), {
                 idexpenses: idExpenses,
