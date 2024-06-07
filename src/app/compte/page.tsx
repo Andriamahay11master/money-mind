@@ -9,7 +9,7 @@ import Breadcrumb from '@/src/components/breadcrumb/Breadcrumb';
 import FormCompte from '@/src/components/compte/FormCompte';
 import { useEffect, useState } from 'react';
 import Loader from '@/src/components/loader/Loader';
-import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, startAt, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -21,10 +21,6 @@ import ExportExcel from '@/src/components/excel/ExportExcel';
 export default function Compte(){
     const { t } = useTranslation('translation');
     const router = useRouter();
-
-    //state pagination
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5; // Choose the number of items to display per page
 
     //Data Nav
     const dataNav = [
@@ -76,7 +72,6 @@ export default function Compte(){
     ]
 
     const [comptes, setCompte] = useState(Array<CompteType>);
-    const [comptesWP, setCompteWP] = useState(Array<CompteType>);
     const [stateForm, setStateForm] = useState(true);
     const [idUpdateCompte, setIdUpdateCompte] = useState(0);
     const [created, setCreated] = useState(false);
@@ -86,8 +81,6 @@ export default function Compte(){
     const [userMail, setUserMail] = useState('');
     const [idCompte, setIdCompte] = useState(0);
     const [currentDocument, setCurrentDocument] = useState('');
-    const [next, setNext] = useState(true);
-    const [prev, setPrev] = useState(false);
 
     const inputRefDescription = React.useRef<HTMLInputElement>(null);
 
@@ -174,7 +167,7 @@ export default function Compte(){
     //get all comptes
     async function getComptes() {
         try {
-            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"), startAt(currentPage), limit(itemsPerPage));
+            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
             const querySnapshot = await getDocs(q);
             const newData = querySnapshot.docs.map(doc => {
                 return {
@@ -188,46 +181,6 @@ export default function Compte(){
             console.error("Error fetching documents: ", error);
         }
     }
-
-    //get all comptes
-    async function getComptesWP() {
-        try {
-            const q = query(collection(db, "compte"), where("uidUser", "==", userUID), orderBy("idcompte", "asc"));
-            const querySnapshot = await getDocs(q);
-            const newData = querySnapshot.docs.map(doc => {
-                return {
-                    idcompte: doc.data().idcompte,
-                    uidUser: doc.data().uidUser,
-                    description: doc.data().description
-                }
-            });
-            setCompteWP(newData);
-        } catch (error) {
-            console.error("Error fetching documents: ", error);
-        }
-    }
-
-    //action prev pagination
-    const handlePageChangePrev = () => {
-        const newPage = currentPage - itemsPerPage;
-        setCurrentPage(newPage >= 1 ? newPage : 1);
-        setNext(true);
-        if (newPage === 1) {
-            setPrev(false);
-        }
-    };
-  
-  
-      //action next pagination
-      const handlePageChangeNext = () => {
-        const totalComptesWP = comptesWP.length;
-        const newPage = currentPage + itemsPerPage;
-        setCurrentPage(newPage);
-        setPrev(true);
-        if (totalComptesWP - newPage < itemsPerPage) {
-            setNext(false);
-        }
-      };
 
     //delete Compte
     const deleteCompte = async (idcompte: number) => {
@@ -259,7 +212,6 @@ export default function Compte(){
     useEffect(() => {
         fetchLastId();
         getComptes();
-        getComptesWP();
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -271,7 +223,7 @@ export default function Compte(){
               router.push("/login");
             }
           });
-      }, [idCompte, currentPage]);
+      }, [idCompte]);
 
     return (
         <div>
@@ -290,8 +242,8 @@ export default function Compte(){
                             </div>
                             <div className="section-list">
                                 <div className="table-filter">
-                                    <ExportCsvCompte data={comptesWP} />
-                                    <ExportExcel data={comptesWP} nameFile='comptes' nameSheet='Comptes'/>
+                                    <ExportCsvCompte data={comptes} />
+                                    <ExportExcel data={comptes} nameFile='comptes' nameSheet='Comptes'/>
                                 </div>
                                 <div className="list-block list-view">
                                     <table className='list-table'>
@@ -312,14 +264,6 @@ export default function Compte(){
                                         ))}
                                     </tbody>
                                     </table>
-                                </div>
-                                <div className="pagination-table">
-                                    {(comptesWP.length >= 7) && 
-                                    <>
-                                        <button className={prev ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangePrev()}>Previous</button>
-                                        <button className={next ? "btn btn-primary" : "btn btn-primary disabled"} onClick={() => handlePageChangeNext()}>Next</button>
-                                    </>
-                                    }
                                 </div>
                             </div>
                         </div>
