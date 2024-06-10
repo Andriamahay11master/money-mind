@@ -31,6 +31,10 @@
             height: 40px;
             padding: 0 10px;
             color: #000;
+            background: $white;
+            @include max(768px){
+                width: 100%;
+            }
             &:focus{
                 outline: none;
                 box-shadow: 0 0 0 0.1rem rgba($color-primary, 0.25);
@@ -45,6 +49,8 @@ input, select{
     border-radius: 3px;
     height: 40px;
     padding: 0 10px;
+    color: #000;
+    background: $white;
     &:focus{
         outline: none;
     }
