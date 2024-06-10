@@ -122,6 +122,8 @@
         border-radius: 4px;
         border: 1px solid $color-secondary;
         width: 200px;
+        background: $white;
+        color: #000;
         &:first-of-type{
             margin-right: 10px;
             @include max(768px){
