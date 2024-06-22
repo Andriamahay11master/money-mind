@@ -20,6 +20,9 @@ interface FormExpenseProps {
 }
 export default function FormExpense({labelData, dataCategory, dataCompte, placeholderInput, inputRefDescription, inputRefDateValue, inputRefValue, inputRefCategory, inputRefCompte, inputAddFilter, stateForm, actionBDD} : FormExpenseProps) {
     
+    // Initialize state for inputAddFilter
+    const [inputAddFilterr, setInputAddFilterr] = useState(inputAddFilter);
+
     const handleInputChange = (e : React.ChangeEvent<HTMLInputElement>) => {
       // Remove non-numeric characters and spaces
       const numericValue = e.currentTarget.value.replace(/[^\d]/g, '');
@@ -35,6 +38,10 @@ export default function FormExpense({labelData, dataCategory, dataCompte, placeh
         // Pass the values to the actionBDD function
         actionBDD();
     };
+
+    const changeValFilter = (compte : string) => {
+        setInputAddFilterr(compte);
+    }
 
     
     return (
@@ -64,7 +71,7 @@ export default function FormExpense({labelData, dataCategory, dataCompte, placeh
                 </div>
                 <div className="form-group">
                     <label htmlFor="compteForm">{labelData[5]}</label>
-                    <select name="compteForm" id="compteForm" ref={inputRefCompte} value={inputAddFilter}>
+                    <select name="compteForm" id="compteForm" ref={inputRefCompte} value={inputAddFilterr} onChange={(e) => changeValFilter(e.target.value)}>
                         {dataCompte.map((compte, index) => (
                             <option key={index} value={compte}>{compte}</option>
                         ))}
