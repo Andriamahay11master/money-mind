@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Application de Suivi des Dépenses personelles
 
-## Getting Started
+Cette application de gestion financière, développée avec **Next.js**, **TypeScript**, **HTML**, **SCSS**, et **Firebase**, permet de suivre efficacement ses finances personnelles. Elle offre la possibilité d'ajouter des dépenses, de créer des comptes et des catégories spécifiques, ainsi que de suivre les ventes. L'application intègre également une fonctionnalité d'exportation des données en formats CSV ou Excel.
 
-First, run the development server:
+Le dashboard fournit une vue d'ensemble intuitive des finances, affichant le total des dépenses pour le mois sélectionné, un graphique détaillant les catégories où les dépenses sont les plus élevées, ainsi qu'un aperçu des dernières transactions.
+
+## Fonctionnalités principales
+
+- **Suivi des ventes :** Visualisez le nombre d'articles vendus, non vendus, les bénéfices, et les montants des ventes par mois pour une année donnée.
+- **Ajout d'articles :** Ajoutez facilement de nouveaux articles à vendre, avec gestion des quantités et des tailles.
+- **Filtres avancés :** Filtrez les articles par état (vendu ou non vendu), par mois et année.
+- **Export de données :** Exportez les listes d'articles et les rapports de ventes en fichiers CSV ou Excel.
+- **Interface utilisateur réactive :** Design adapté pour les appareils mobiles et de bureau, avec un style moderne.
+
+## Technologies utilisées
+
+- **Next JS & TypeScript :** Pour une architecture modulaire et un typage strict.
+- **SCSS :** Pour une gestion avancée des styles avec un design réactif.
+- **Firebase Firestore :** Base de données utilisée pour stocker et gérer les articles et les ventes.
+- **i18next :** Pour la gestion des langues.
+
+## Installation et démarrage
+
+1. Clonez le dépôt :
+
+```bash
+git clone https://github.com/Andriamahay11master/money-mind.git
+cd MoneyMind
+```
+
+2. Installez les dépendances :
+
+```bash
+npm install
+```
+
+3. Lancez l'application en mode développement :
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Accédez à l'application sur `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Structure du projet
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **src/** : Contient le code source de l'application.
+  - **components/** : Composants réutilisables tels que les formulaires, alertes, tableaux, loader, breadcrumbs,etc.
+  - **app/** : Pages principales de l'application et configuration firebase.
+  - **assets/** : Fichiers SCSS pour la gestion des styles globaux et des composants.
+  - **models/** : Pour le typage des données.
+  - **data/** : Pour les données statiques utilisés par l'application.
 
-## Learn More
+## Commandes utiles
 
-To learn more about Next.js, take a look at the following resources:
+- **`npm run dev`** : Démarre l'application en mode développement.
+- **`npm run build`** : Génère un build de production.
+- **`npm run lint`** : Vérifie et corrige le code avec ESLint.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contribution
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Les contributions sont les bienvenues. Si vous souhaitez contribuer, ouvrez un problème ou une pull request.
