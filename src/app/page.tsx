@@ -23,7 +23,7 @@ export default function Home() {
   const { t } = useTranslation('translation');
   const router = useRouter();
 
-  const balance = '1600000';
+  const balance = '15000';
 
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
   const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);
@@ -271,17 +271,17 @@ export default function Home() {
     {
       title: inputFilter === 'ALL' ? `${t('kpi.nbCompte')}` : `${t('kpi.0.title')}`,
       value: inputFilter === 'ALL' ? `${comptes.length}` : formatNumber(balance),
-      currency: inputFilter === 'ALL' ? '' : 'Ariary'
+      currency: inputFilter === 'ALL' ? '' : 'ruppes'
     },
     {
       title: `${t('kpi.1.title')}`,
       value: sumAmount ? formatNumber(sumAmount.toString()) : '0',
-      currency: 'Ariary'
+      currency: 'ruppes'
     },
     {
       title: `${t('kpi.2.title')}`,
       value: sumAmount ? formatNumber(getRemainingBalance(balance, sumAmount.toString()).toString()) : formatNumber(balance),
-      currency: 'Ariary'
+      currency: 'ruppes'
     }
   ];
 
