@@ -23,7 +23,7 @@ export default function Home() {
   const { t } = useTranslation('translation');
   const router = useRouter();
 
-  const balance = '15000';
+  const balance = '25000';
 
   const [expenses, setExpenses] = React.useState(Array<ExpenseType>);
   const [expensesM, setExpensesM] = React.useState(Array<ExpenseType>);

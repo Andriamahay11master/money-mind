@@ -513,7 +513,7 @@ export default function Expenses() {
                                 <tr>
                                   <th>{t('table.id')}</th>
                                   <th>{t('table.description')}</th>
-                                  <th>{t('table.value')} (en Ariary)</th>
+                                  <th>{t('table.value')} (en ruppes)</th>
                                   <th>{t('table.date')}</th>
                                   <th>{t('table.category')}</th>
                                   <th>{t('table.compte')}</th>
@@ -525,7 +525,7 @@ export default function Expenses() {
                                 <tr key={index}>
                                     <td>{list.idexpenses}</td>
                                     <td>{list.description}</td>
-                                    <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Ar' : 'N/A'}</td>
+                                    <td>{list.valueexpenses ? formatNumber(list.valueexpenses.toString()) + ' Rup' : 'N/A'}</td>
                                     <td>{list.dateexpenses}</td>
                                     <td>{list.categoryexpense}</td>
                                     <td>{list.compte}</td>
